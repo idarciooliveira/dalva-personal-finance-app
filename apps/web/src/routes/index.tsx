@@ -69,10 +69,13 @@ function Nav() {
 
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-background/80 backdrop-blur-md">
-      <div className="mx-auto flex h-16 max-w-[1440px] items-center justify-between px-6 lg:px-20">
-        <span className="font-heading text-xl font-semibold text-foreground">
-          DALVA
-        </span>
+      <div className="mx-auto flex h-16 max-w-360 items-center justify-between px-6 lg:px-20">
+        <div className="flex items-center gap-2">
+          <img src="/logo.svg" alt="DALVA logo" className="size-10 " />
+          <span className="font-heading text-xl font-semibold text-foreground">
+            DALVA
+          </span>
+        </div>
         <div className="flex items-center gap-3">
           <Button
             variant="ghost"
@@ -137,7 +140,9 @@ function Hero() {
           </p>
           <h1 className="font-heading text-4xl font-semibold leading-tight tracking-tight md:text-5xl lg:text-6xl">
             Take control of{" "}
-            <span className="text-wise-forest-green dark:text-wise-bright-green">your money</span>
+            <span className="text-wise-forest-green dark:text-wise-bright-green">
+              your money
+            </span>
           </h1>
           <p className="mt-6 text-lg leading-relaxed text-muted-foreground md:text-xl">
             Track accounts, budgets, goals, and debts — all in one place. No
@@ -221,48 +226,57 @@ const features = [
     title: "Accounts",
     description:
       "Track cash, bank accounts, credit cards, and digital wallets — all in one place.",
-    color: "bg-wise-bright-green/15 text-wise-forest-green dark:text-wise-bright-green",
+    color:
+      "bg-wise-bright-green/15 text-wise-forest-green dark:text-wise-bright-green",
   },
   {
     icon: ArrowLeftRight,
     title: "Transactions",
     description:
       "Record every income and expense. Filter, search, and stay on top of your money flow.",
-    color: "bg-wise-bright-blue/20 text-wise-forest-green dark:text-wise-bright-blue",
+    color:
+      "bg-wise-bright-blue/20 text-wise-forest-green dark:text-wise-bright-blue",
   },
   {
     icon: PieChart,
     title: "Budgets",
     description:
       "Set monthly spending limits by category and get real-time feedback.",
-    color: "bg-wise-bright-orange/20 text-wise-forest-green dark:text-wise-bright-orange",
+    color:
+      "bg-wise-bright-orange/20 text-wise-forest-green dark:text-wise-bright-orange",
   },
   {
     icon: Target,
     title: "Goals",
     description:
       "Save toward what matters. Track progress on vacations, emergency funds, and more.",
-    color: "bg-wise-bright-yellow/20 text-wise-forest-green dark:text-wise-bright-yellow",
+    color:
+      "bg-wise-bright-yellow/20 text-wise-forest-green dark:text-wise-bright-yellow",
   },
   {
     icon: TrendingDown,
     title: "Debts",
     description:
       "Log what you owe and track every payment until you're debt-free.",
-    color: "bg-wise-bright-pink/20 text-wise-forest-green dark:text-wise-bright-pink",
+    color:
+      "bg-wise-bright-pink/20 text-wise-forest-green dark:text-wise-bright-pink",
   },
   {
     icon: LayoutDashboard,
     title: "Dashboard",
     description:
       "See your net worth, cashflow, budget status, and goal progress at a glance.",
-    color: "bg-wise-bright-green/15 text-wise-forest-green dark:text-wise-bright-green",
+    color:
+      "bg-wise-bright-green/15 text-wise-forest-green dark:text-wise-bright-green",
   },
 ];
 
 function Features() {
   return (
-    <section id="features" className="border-t border-border bg-secondary/40 py-20 md:py-28">
+    <section
+      id="features"
+      className="border-t border-border bg-secondary/40 py-20 md:py-28"
+    >
       <div className="mx-auto max-w-[1440px] px-6 lg:px-20">
         <div className="mx-auto max-w-2xl text-center">
           <h2 className="font-heading text-3xl font-semibold tracking-tight md:text-4xl">

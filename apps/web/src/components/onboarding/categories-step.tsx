@@ -1,6 +1,14 @@
 import { Wallet, ArrowRight, ArrowLeft } from "lucide-react";
 import { Button } from "#/components/ui/button";
 import { Checkbox } from "#/components/ui/checkbox";
+import { getCategoryIcon } from "#/lib/category-icons";
+
+interface DefaultCategory {
+  name: string;
+  type: "income" | "expense";
+  icon: string;
+  color: string;
+}
 
 export function CategoriesStep({
   defaultCategories,
@@ -10,7 +18,7 @@ export function CategoriesStep({
   onBack,
   isSubmitting,
 }: {
-  defaultCategories: Array<{ name: string; type: "income" | "expense" }>;
+  defaultCategories: DefaultCategory[];
   selectedCategories: string[];
   onSelectedChange: (names: string[]) => void;
   onFinish: () => void;
@@ -77,6 +85,8 @@ export function CategoriesStep({
             <CategoryCheckbox
               key={c.name}
               name={c.name}
+              icon={c.icon}
+              color={c.color}
               checked={selectedCategories.includes(c.name)}
               onToggle={() => toggleCategory(c.name)}
             />
@@ -94,6 +104,8 @@ export function CategoriesStep({
             <CategoryCheckbox
               key={c.name}
               name={c.name}
+              icon={c.icon}
+              color={c.color}
               checked={selectedCategories.includes(c.name)}
               onToggle={() => toggleCategory(c.name)}
             />
@@ -126,16 +138,28 @@ export function CategoriesStep({
 
 function CategoryCheckbox({
   name,
+  icon,
+  color,
   checked,
   onToggle,
 }: {
   name: string;
+  icon: string;
+  color: string;
   checked: boolean;
   onToggle: () => void;
 }) {
+  const Icon = getCategoryIcon(icon);
+
   return (
     <label className="flex cursor-pointer items-center gap-2.5 rounded-lg border border-border px-3 py-2.5 transition-colors hover:bg-muted/50 has-[[data-state=checked]]:border-primary/30 has-[[data-state=checked]]:bg-primary/5">
       <Checkbox checked={checked} onCheckedChange={onToggle} />
+      <div
+        className="flex size-6 items-center justify-center rounded-md"
+        style={{ backgroundColor: color + "20" }}
+      >
+        <Icon className="size-3.5" style={{ color }} />
+      </div>
       <span className="text-sm font-medium text-foreground">{name}</span>
     </label>
   );

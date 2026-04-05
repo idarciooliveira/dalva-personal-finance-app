@@ -42,6 +42,25 @@ export default defineSchema({
     userId: v.string(),
     name: v.string(),
     type: v.union(v.literal("income"), v.literal("expense")),
+    icon: v.string(), // Lucide icon name (e.g. "utensils", "car")
+    color: v.string(), // Hex color (e.g. "#9FE870")
     isDefault: v.boolean(), // true = seeded by the system
-  }).index("by_userId", ["userId"]),
+    archived: v.boolean(), // soft-delete: hidden from pickers but preserved on historical records
+    sortOrder: v.number(), // user-defined ordering within type group
+  })
+    .index("by_userId", ["userId"])
+    .index("by_userId_and_type", ["userId", "type"]),
+
+  /* ------------------------------------------------------------------ */
+  /*  Subcategories (one level deep)                                    */
+  /* ------------------------------------------------------------------ */
+  subcategories: defineTable({
+    userId: v.string(),
+    categoryId: v.id("categories"), // parent category
+    name: v.string(),
+    archived: v.boolean(),
+    sortOrder: v.number(),
+  })
+    .index("by_categoryId", ["categoryId"])
+    .index("by_userId", ["userId"]),
 });
