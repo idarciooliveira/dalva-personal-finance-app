@@ -1,6 +1,9 @@
 import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
 import { useConvexAuth } from "convex/react";
 import { useAuthActions } from "@convex-dev/auth/react";
+import { useQuery } from "@tanstack/react-query";
+import { convexQuery } from "@convex-dev/react-query";
+import { api } from "@mpf/backend/convex/_generated/api";
 import { useEffect } from "react";
 import { LogOut, LayoutDashboard } from "lucide-react";
 
@@ -19,21 +22,34 @@ function DashboardPage() {
   const { isLoading, isAuthenticated } = useConvexAuth();
   const router = useRouter();
   const { signOut } = useAuthActions();
+  const { data: profile, isLoading: profileLoading } = useQuery({
+    ...convexQuery(api.userProfiles.getProfile, {}),
+    enabled: isAuthenticated,
+  });
 
   // Redirect to login once we know the user is unauthenticated.
-  // Using useEffect avoids the "setState during render" React warning.
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
       router.navigate({ to: "/login" });
     }
   }, [isLoading, isAuthenticated, router]);
 
-  if (isLoading) {
+  // Redirect to onboarding if user hasn't completed it yet.
+  useEffect(() => {
+    if (isAuthenticated && !profileLoading && !profile?.onboardingCompleted) {
+      router.navigate({ to: "/onboarding" });
+    }
+  }, [isAuthenticated, profileLoading, profile, router]);
+
+  if (isLoading || profileLoading) {
     return <DashboardSkeleton />;
   }
 
   if (!isAuthenticated) {
-    // Still show skeleton while the redirect effect fires
+    return <DashboardSkeleton />;
+  }
+
+  if (!profile?.onboardingCompleted) {
     return <DashboardSkeleton />;
   }
 

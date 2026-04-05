@@ -40,11 +40,12 @@ function RegisterPage() {
   const router = useRouter();
   const [authError, setAuthError] = useState<string | null>(null);
 
-  // Navigate to dashboard reactively once the auth handshake completes.
-  // This also handles the case where an already-authenticated user visits /register.
+  // Navigate to onboarding reactively once the auth handshake completes.
+  // New users need to complete onboarding before reaching the dashboard.
+  // Already-authenticated users visiting /register are also redirected.
   useEffect(() => {
     if (isAuthenticated) {
-      router.navigate({ to: "/dashboard" });
+      router.navigate({ to: "/onboarding" });
     }
   }, [isAuthenticated, router]);
 

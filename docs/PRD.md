@@ -129,7 +129,7 @@ Users can:
 Users can:
 
 - create multiple financial accounts
-- define account types such as cash, checking, savings, credit card, loan, investment, or e-wallet
+- define account types such as cash, Bank, savings, credit card, loan, investment, or e-wallet
 - set opening balances
 - view current balances
 - archive or close accounts
