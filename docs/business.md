@@ -127,7 +127,7 @@ Debts represent money the user currently owes — a loan, a credit balance, mone
 
 ## Module 8 — Dashboard & Reports
 
-The **home screen and analytics layer** that brings all modules tDALVAther into a single coherent picture.
+The **home screen and analytics layer** that brings all modules DALVA into a single coherent picture.
 
 ### Requirements:
 

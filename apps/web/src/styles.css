@@ -169,6 +169,61 @@
 }
 
 /* --------------------------------------------------------------------------
+   Dark theme -- Wise approach: dark greens/charcoals, Bright Green accent
+   Ref: docs/design-system.md "Dark Mode" section
+   -------------------------------------------------------------------------- */
+.dark {
+  /* Surfaces -- deep charcoal/green tones */
+  --background: #0e0f0c;                    /* Dark charcoal base */
+  --foreground: #f0f1ef;                    /* Light text */
+  --card: #1a1c18;                          /* Elevated surface */
+  --card-foreground: #f0f1ef;
+  --popover: #1a1c18;
+  --popover-foreground: #f0f1ef;
+
+  /* Primary: Bright Green on dark (inverted) */
+  --primary: #9fe870;
+  --primary-foreground: #163300;
+
+  /* Secondary */
+  --secondary: #f0f1ef14;                   /* 8% light on dark */
+  --secondary-foreground: #f0f1ef;
+
+  /* Muted */
+  --muted: #f0f1ef14;
+  --muted-foreground: #9a9c98;
+
+  /* Accent: Bright Green stays */
+  --accent: #9fe870;
+  --accent-foreground: #163300;
+
+  /* Destructive */
+  --destructive: #ef4444;
+
+  /* Borders & inputs */
+  --border: #f0f1ef1f;                     /* 12% light border */
+  --input: #6a6c6a;
+  --ring: #9fe870;
+
+  /* Chart colors stay the same */
+  --chart-1: #9fe870;
+  --chart-2: #a0e1e1;
+  --chart-3: #ffc091;
+  --chart-4: #ffeb69;
+  --chart-5: #ffd7ef;
+
+  /* Sidebar */
+  --sidebar: #0e0f0c;
+  --sidebar-foreground: #f0f1ef;
+  --sidebar-primary: #9fe870;
+  --sidebar-primary-foreground: #163300;
+  --sidebar-accent: #f0f1ef14;
+  --sidebar-accent-foreground: #f0f1ef;
+  --sidebar-border: #f0f1ef1f;
+  --sidebar-ring: #9fe870;
+}
+
+/* --------------------------------------------------------------------------
    Base layer
    -------------------------------------------------------------------------- */
 @layer base {

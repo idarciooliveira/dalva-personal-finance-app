@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useCallback, useEffect, useState } from "react";
 import {
   Wallet,
   ArrowLeftRight,
@@ -9,6 +10,8 @@ import {
   Shield,
   Globe,
   Smartphone,
+  Moon,
+  Sun,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -32,19 +35,53 @@ function LandingPage() {
 }
 
 /* -------------------------------------------------------------------------- */
+/*  Dark mode hook                                                            */
+/* -------------------------------------------------------------------------- */
+
+function useTheme() {
+  const [dark, setDark] = useState(false);
+
+  // Sync state with the DOM on mount (SSR-safe)
+  useEffect(() => {
+    setDark(document.documentElement.classList.contains("dark"));
+  }, []);
+
+  const toggle = useCallback(() => {
+    const next = !document.documentElement.classList.contains("dark");
+    document.documentElement.classList.toggle("dark", next);
+    localStorage.setItem("theme", next ? "dark" : "light");
+    setDark(next);
+  }, []);
+
+  return { dark, toggle };
+}
+
+/* -------------------------------------------------------------------------- */
 /*  Nav                                                                       */
 /* -------------------------------------------------------------------------- */
 
 function Nav() {
+  const { dark, toggle } = useTheme();
+
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-background/80 backdrop-blur-md">
       <div className="mx-auto flex h-16 max-w-[1440px] items-center justify-between px-6 lg:px-20">
         <span className="font-heading text-xl font-semibold text-foreground">
           DALVA
         </span>
-        <Button variant="accent" size="sm">
-          Get Started
-        </Button>
+        <div className="flex items-center gap-3">
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            onClick={toggle}
+            aria-label={dark ? "Switch to light mode" : "Switch to dark mode"}
+          >
+            {dark ? <Sun className="size-4" /> : <Moon className="size-4" />}
+          </Button>
+          <Button variant="accent" size="sm">
+            Get Started
+          </Button>
+        </div>
       </div>
     </header>
   );
@@ -60,12 +97,12 @@ function Hero() {
       <div className="mx-auto grid max-w-[1440px] gap-12 px-6 py-20 md:py-28 lg:grid-cols-2 lg:items-center lg:gap-16 lg:px-20 lg:py-36">
         {/* Copy */}
         <div className="max-w-xl">
-          <p className="mb-4 text-sm font-semibold uppercase tracking-wider text-accent-foreground/60">
+          <p className="mb-4 text-sm font-semibold uppercase tracking-wider text-muted-foreground">
             Privacy-first finance
           </p>
           <h1 className="font-heading text-4xl font-semibold leading-tight tracking-tight md:text-5xl lg:text-6xl">
             Take control of{" "}
-            <span className="text-wise-forest-green">your money</span>
+            <span className="text-wise-forest-green dark:text-wise-bright-green">your money</span>
           </h1>
           <p className="mt-6 text-lg leading-relaxed text-muted-foreground md:text-xl">
             Track accounts, budgets, goals, and debts — all in one place. No
@@ -95,7 +132,7 @@ function Hero() {
               <p className="mt-1 text-3xl font-semibold text-foreground">
                 $24,850
               </p>
-              <div className="mt-3 flex items-center gap-2 text-sm font-medium text-wise-positive">
+              <div className="mt-3 flex items-center gap-2 text-sm font-medium text-wise-positive dark:text-wise-bright-green">
                 <TrendingDown className="size-4 rotate-180" />
                 +12.3% this month
               </div>
@@ -145,42 +182,42 @@ const features = [
     title: "Accounts",
     description:
       "Track cash, bank accounts, credit cards, and digital wallets — all in one place.",
-    color: "bg-wise-bright-green/15 text-wise-forest-green",
+    color: "bg-wise-bright-green/15 text-wise-forest-green dark:text-wise-bright-green",
   },
   {
     icon: ArrowLeftRight,
     title: "Transactions",
     description:
       "Record every income and expense. Filter, search, and stay on top of your money flow.",
-    color: "bg-wise-bright-blue/20 text-wise-forest-green",
+    color: "bg-wise-bright-blue/20 text-wise-forest-green dark:text-wise-bright-blue",
   },
   {
     icon: PieChart,
     title: "Budgets",
     description:
       "Set monthly spending limits by category and get real-time feedback.",
-    color: "bg-wise-bright-orange/20 text-wise-forest-green",
+    color: "bg-wise-bright-orange/20 text-wise-forest-green dark:text-wise-bright-orange",
   },
   {
     icon: Target,
     title: "Goals",
     description:
       "Save toward what matters. Track progress on vacations, emergency funds, and more.",
-    color: "bg-wise-bright-yellow/20 text-wise-forest-green",
+    color: "bg-wise-bright-yellow/20 text-wise-forest-green dark:text-wise-bright-yellow",
   },
   {
     icon: TrendingDown,
     title: "Debts",
     description:
       "Log what you owe and track every payment until you're debt-free.",
-    color: "bg-wise-bright-pink/20 text-wise-forest-green",
+    color: "bg-wise-bright-pink/20 text-wise-forest-green dark:text-wise-bright-pink",
   },
   {
     icon: LayoutDashboard,
     title: "Dashboard",
     description:
       "See your net worth, cashflow, budget status, and goal progress at a glance.",
-    color: "bg-wise-bright-green/15 text-wise-forest-green",
+    color: "bg-wise-bright-green/15 text-wise-forest-green dark:text-wise-bright-green",
   },
 ];
 
@@ -193,8 +230,8 @@ function Features() {
             Everything you need to manage your finances
           </h2>
           <p className="mt-4 text-lg text-muted-foreground">
-            Six powerful modules that work tDALVAther to give you complete
-            visibility and control.
+            Six powerful modules that work DALVA to give you complete visibility
+            and control.
           </p>
         </div>
 
