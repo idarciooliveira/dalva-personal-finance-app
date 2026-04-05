@@ -1,3 +1,6 @@
+import { useQuery } from "@tanstack/react-query";
+import { convexQuery } from "@convex-dev/react-query";
+import { api } from "@mpf/backend/convex/_generated/api";
 import { Cell, Pie, PieChart, Tooltip } from "recharts";
 import {
   Card,
@@ -6,27 +9,102 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { ChartContainer, type ChartConfig } from "@/components/ui/chart";
-import {
-  type SpendingByCategoryData,
-  formatCurrency,
-} from "@/lib/mock-dashboard-data";
+import { formatCurrency } from "@/lib/format";
+import { Skeleton } from "@/components/ui/skeleton";
 
-interface SpendingCategoryCardProps {
-  data: SpendingByCategoryData;
+/* -------------------------------------------------------------------------- */
+/*  Chart color palette                                                       */
+/* -------------------------------------------------------------------------- */
+
+const CHART_COLORS = [
+  "var(--color-chart-1)",
+  "var(--color-chart-2)",
+  "var(--color-chart-3)",
+  "var(--color-chart-4)",
+  "var(--color-chart-5)",
+  "var(--color-muted-foreground)",
+];
+
+function getColor(index: number): string {
+  return CHART_COLORS[index % CHART_COLORS.length]!;
 }
 
-export function SpendingCategoryCard({ data }: SpendingCategoryCardProps) {
+/* -------------------------------------------------------------------------- */
+/*  Component                                                                 */
+/* -------------------------------------------------------------------------- */
+
+interface SpendingCategoryCardProps {
+  /** Month to display, e.g. "2026-04". */
+  month: string;
+  /** Currency code for formatting. */
+  currency?: string;
+}
+
+export function SpendingCategoryCard({
+  month,
+  currency = "USD",
+}: SpendingCategoryCardProps) {
+  const { data, isLoading } = useQuery(
+    convexQuery(api.transactions.getSpendingByCategory, { month }),
+  );
+
+  if (isLoading) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-sm font-medium text-muted-foreground">
+            Spending by Category
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="flex flex-col items-center gap-4">
+          <Skeleton className="size-[160px] rounded-full" />
+          <div className="w-full space-y-3">
+            <Skeleton className="h-4 w-full" />
+            <Skeleton className="h-4 w-3/4" />
+            <Skeleton className="h-4 w-1/2" />
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  const categories = data?.categories ?? [];
+  const total = data?.total ?? 0;
+
+  if (categories.length === 0) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-sm font-medium text-muted-foreground">
+            Spending by Category
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p className="py-8 text-center text-sm text-muted-foreground">
+            No expenses recorded this month.
+          </p>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  // Assign colors and build chart data
+  const coloredCategories = categories.map((cat, i) => ({
+    ...cat,
+    fill: getColor(i),
+  }));
+
   // Build chart config from categories
   const chartConfig: ChartConfig = {};
-  data.categories.forEach((cat) => {
+  for (const cat of coloredCategories) {
     chartConfig[cat.name] = {
       label: cat.name,
       color: cat.fill,
     };
-  });
+  }
 
-  // Convert cents to dollars for chart
-  const chartData = data.categories.map((cat) => ({
+  // Convert cents to dollars for chart display
+  const chartData = coloredCategories.map((cat) => ({
     name: cat.name,
     value: cat.amount / 100,
     fill: cat.fill,
@@ -78,7 +156,7 @@ export function SpendingCategoryCard({ data }: SpendingCategoryCardProps) {
                       <span className="font-medium tabular-nums">
                         {formatCurrency(
                           (item.value as number) * 100,
-                          data.currency,
+                          currency,
                         )}
                       </span>
                     </div>
@@ -91,8 +169,8 @@ export function SpendingCategoryCard({ data }: SpendingCategoryCardProps) {
 
         {/* Legend list */}
         <div className="flex flex-col gap-2">
-          {data.categories.map((cat) => {
-            const pct = Math.round((cat.amount / data.total) * 100);
+          {coloredCategories.map((cat) => {
+            const pct = total > 0 ? Math.round((cat.amount / total) * 100) : 0;
             return (
               <div
                 key={cat.name}
@@ -107,7 +185,7 @@ export function SpendingCategoryCard({ data }: SpendingCategoryCardProps) {
                 </div>
                 <div className="flex items-center gap-3">
                   <span className="font-medium tabular-nums text-foreground">
-                    {formatCurrency(cat.amount, data.currency)}
+                    {formatCurrency(cat.amount, currency)}
                   </span>
                   <span className="w-8 text-right text-xs tabular-nums text-muted-foreground">
                     {pct}%

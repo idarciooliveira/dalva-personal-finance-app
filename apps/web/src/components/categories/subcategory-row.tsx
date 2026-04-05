@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { useConvexMutation } from "@convex-dev/react-query";
 import { api } from "@mpf/backend/convex/_generated/api";
@@ -12,6 +13,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
+import { ConfirmDeleteDialog } from "@/components/confirm-delete-dialog";
 import { cn } from "@/lib/utils";
 
 interface SubcategoryRowProps {
@@ -20,6 +22,8 @@ interface SubcategoryRowProps {
 }
 
 export function SubcategoryRow({ subcategory, parentColor }: SubcategoryRowProps) {
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+
   const { mutate: archiveSub } = useMutation({
     mutationFn: useConvexMutation(api.categories.archiveSubcategory),
   });
@@ -70,17 +74,21 @@ export function SubcategoryRow({ subcategory, parentColor }: SubcategoryRowProps
           )}
           <DropdownMenuItem
             className="text-destructive focus:text-destructive"
-            onClick={() => {
-              if (confirm("Delete this subcategory? This cannot be undone.")) {
-                deleteSub({ id: subcategory._id });
-              }
-            }}
+            onClick={() => setDeleteDialogOpen(true)}
           >
             <Trash2 className="mr-2 size-4" />
             Delete
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
+
+      <ConfirmDeleteDialog
+        open={deleteDialogOpen}
+        onOpenChange={setDeleteDialogOpen}
+        title="Delete subcategory"
+        description="Delete this subcategory? This cannot be undone."
+        onConfirm={() => deleteSub({ id: subcategory._id })}
+      />
     </div>
   );
 }

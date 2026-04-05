@@ -876,4 +876,446 @@ describe("transactions", () => {
       expect(summary.recentTransactions).toHaveLength(0);
     });
   });
+
+  /* ------------------------------------------------------------------ */
+  /*  getSpendingByCategory                                              */
+  /* ------------------------------------------------------------------ */
+  describe("getSpendingByCategory", () => {
+    it("aggregates expense amounts by category for the given month", async () => {
+      const t = setupTest();
+      const user = asUser(t);
+      const accountId = await createTestAccount(user);
+
+      const foodCatId = await createTestCategory(user, {
+        name: "Food",
+        type: "expense",
+      });
+      const transportCatId = await createTestCategory(user, {
+        name: "Transport",
+        type: "expense",
+      });
+
+      // Two food expenses
+      await user.mutation(api.transactions.createTransaction, {
+        type: "expense",
+        amount: 5_000,
+        accountId,
+        categoryId: foodCatId,
+        date: "2026-04-01",
+      });
+      await user.mutation(api.transactions.createTransaction, {
+        type: "expense",
+        amount: 3_000,
+        accountId,
+        categoryId: foodCatId,
+        date: "2026-04-15",
+      });
+
+      // One transport expense
+      await user.mutation(api.transactions.createTransaction, {
+        type: "expense",
+        amount: 10_000,
+        accountId,
+        categoryId: transportCatId,
+        date: "2026-04-10",
+      });
+
+      const result = await user.query(
+        api.transactions.getSpendingByCategory,
+        { month: "2026-04" },
+      );
+
+      expect(result.total).toBe(18_000);
+      expect(result.categories).toHaveLength(2);
+
+      // Categories should be sorted descending by amount
+      expect(result.categories[0]).toMatchObject({
+        name: "Transport",
+        amount: 10_000,
+      });
+      expect(result.categories[1]).toMatchObject({
+        name: "Food",
+        amount: 8_000,
+      });
+    });
+
+    it("excludes income and adjustment transactions", async () => {
+      const t = setupTest();
+      const user = asUser(t);
+      const accountId = await createTestAccount(user);
+
+      const catId = await createTestCategory(user, {
+        name: "Salary",
+        type: "income",
+      });
+
+      // Income should not appear
+      await user.mutation(api.transactions.createTransaction, {
+        type: "income",
+        amount: 100_000,
+        accountId,
+        categoryId: catId,
+        date: "2026-04-01",
+      });
+
+      // Adjustment should not appear
+      await user.mutation(api.transactions.createTransaction, {
+        type: "adjustment",
+        amount: 5_000,
+        accountId,
+        date: "2026-04-01",
+      });
+
+      const result = await user.query(
+        api.transactions.getSpendingByCategory,
+        { month: "2026-04" },
+      );
+
+      expect(result.total).toBe(0);
+      expect(result.categories).toHaveLength(0);
+    });
+
+    it("groups expenses without a category under 'Uncategorized'", async () => {
+      const t = setupTest();
+      const user = asUser(t);
+      const accountId = await createTestAccount(user);
+
+      await user.mutation(api.transactions.createTransaction, {
+        type: "expense",
+        amount: 7_500,
+        accountId,
+        date: "2026-04-05",
+      });
+
+      const result = await user.query(
+        api.transactions.getSpendingByCategory,
+        { month: "2026-04" },
+      );
+
+      expect(result.total).toBe(7_500);
+      expect(result.categories).toHaveLength(1);
+      expect(result.categories[0]).toMatchObject({
+        name: "Uncategorized",
+        amount: 7_500,
+      });
+    });
+
+    it("only includes transactions within the specified month", async () => {
+      const t = setupTest();
+      const user = asUser(t);
+      const accountId = await createTestAccount(user);
+
+      const catId = await createTestCategory(user, {
+        name: "Food",
+        type: "expense",
+      });
+
+      // March expense — should be excluded
+      await user.mutation(api.transactions.createTransaction, {
+        type: "expense",
+        amount: 5_000,
+        accountId,
+        categoryId: catId,
+        date: "2026-03-31",
+      });
+
+      // April expense — should be included
+      await user.mutation(api.transactions.createTransaction, {
+        type: "expense",
+        amount: 8_000,
+        accountId,
+        categoryId: catId,
+        date: "2026-04-15",
+      });
+
+      // May expense — should be excluded
+      await user.mutation(api.transactions.createTransaction, {
+        type: "expense",
+        amount: 6_000,
+        accountId,
+        categoryId: catId,
+        date: "2026-05-01",
+      });
+
+      const result = await user.query(
+        api.transactions.getSpendingByCategory,
+        { month: "2026-04" },
+      );
+
+      expect(result.total).toBe(8_000);
+      expect(result.categories).toHaveLength(1);
+      expect(result.categories[0]).toMatchObject({
+        name: "Food",
+        amount: 8_000,
+      });
+    });
+
+    it("isolates data between users", async () => {
+      const t = setupTest();
+      const alice = asUser(t, { name: "Alice", subject: "alice-id|s1" });
+      const bob = asUser(t, { name: "Bob", subject: "bob-id|s2" });
+
+      const aliceAccount = await createTestAccount(alice);
+      const bobAccount = await createTestAccount(bob);
+
+      const aliceCat = await createTestCategory(alice, {
+        name: "Food",
+        type: "expense",
+      });
+      const bobCat = await createTestCategory(bob, {
+        name: "Food",
+        type: "expense",
+      });
+
+      await alice.mutation(api.transactions.createTransaction, {
+        type: "expense",
+        amount: 5_000,
+        accountId: aliceAccount,
+        categoryId: aliceCat,
+        date: "2026-04-01",
+      });
+
+      await bob.mutation(api.transactions.createTransaction, {
+        type: "expense",
+        amount: 20_000,
+        accountId: bobAccount,
+        categoryId: bobCat,
+        date: "2026-04-01",
+      });
+
+      const aliceResult = await alice.query(
+        api.transactions.getSpendingByCategory,
+        { month: "2026-04" },
+      );
+      expect(aliceResult.total).toBe(5_000);
+
+      const bobResult = await bob.query(
+        api.transactions.getSpendingByCategory,
+        { month: "2026-04" },
+      );
+      expect(bobResult.total).toBe(20_000);
+    });
+
+    it("returns empty result when not authenticated", async () => {
+      const t = setupTest();
+
+      const result = await t.query(
+        api.transactions.getSpendingByCategory,
+        { month: "2026-04" },
+      );
+
+      expect(result.total).toBe(0);
+      expect(result.categories).toHaveLength(0);
+    });
+  });
+
+  /* ------------------------------------------------------------------ */
+  /*  getCashflow                                                        */
+  /* ------------------------------------------------------------------ */
+  describe("getCashflow", () => {
+    it("returns income and expenses for the current month", async () => {
+      const t = setupTest();
+      const user = asUser(t);
+      const accountId = await createTestAccount(user);
+      const incomeCat = await createTestCategory(user, {
+        name: "Salary",
+        type: "income",
+      });
+      const expenseCat = await createTestCategory(user, {
+        name: "Food",
+        type: "expense",
+      });
+
+      await user.mutation(api.transactions.createTransaction, {
+        type: "income",
+        amount: 500_000,
+        accountId,
+        categoryId: incomeCat,
+        date: "2026-04-01",
+      });
+      await user.mutation(api.transactions.createTransaction, {
+        type: "expense",
+        amount: 120_000,
+        accountId,
+        categoryId: expenseCat,
+        date: "2026-04-10",
+      });
+      await user.mutation(api.transactions.createTransaction, {
+        type: "expense",
+        amount: 30_000,
+        accountId,
+        categoryId: expenseCat,
+        date: "2026-04-15",
+      });
+
+      const result = await user.query(api.transactions.getCashflow, {
+        month: "2026-04",
+      });
+
+      expect(result.currentMonth.income).toBe(500_000);
+      expect(result.currentMonth.expenses).toBe(150_000);
+      expect(result.currentMonth.net).toBe(350_000);
+    });
+
+    it("returns trend data for the specified number of months", async () => {
+      const t = setupTest();
+      const user = asUser(t);
+      const accountId = await createTestAccount(user, { balance: 1_000_000 });
+
+      // Add transactions across multiple months
+      await user.mutation(api.transactions.createTransaction, {
+        type: "income",
+        amount: 100_000,
+        accountId,
+        date: "2026-02-15",
+      });
+      await user.mutation(api.transactions.createTransaction, {
+        type: "expense",
+        amount: 40_000,
+        accountId,
+        date: "2026-02-20",
+      });
+      await user.mutation(api.transactions.createTransaction, {
+        type: "income",
+        amount: 200_000,
+        accountId,
+        date: "2026-03-10",
+      });
+      await user.mutation(api.transactions.createTransaction, {
+        type: "expense",
+        amount: 80_000,
+        accountId,
+        date: "2026-03-25",
+      });
+      await user.mutation(api.transactions.createTransaction, {
+        type: "income",
+        amount: 300_000,
+        accountId,
+        date: "2026-04-05",
+      });
+
+      const result = await user.query(api.transactions.getCashflow, {
+        month: "2026-04",
+        trendMonths: 3,
+      });
+
+      // trend should contain 3 months: Feb, Mar, Apr
+      expect(result.trend).toHaveLength(3);
+
+      expect(result.trend[0]).toMatchObject({
+        month: "Feb",
+        income: 100_000,
+        expenses: 40_000,
+      });
+      expect(result.trend[1]).toMatchObject({
+        month: "Mar",
+        income: 200_000,
+        expenses: 80_000,
+      });
+      expect(result.trend[2]).toMatchObject({
+        month: "Apr",
+        income: 300_000,
+        expenses: 0,
+      });
+
+      // currentMonth should match the last trend entry
+      expect(result.currentMonth.income).toBe(300_000);
+      expect(result.currentMonth.expenses).toBe(0);
+      expect(result.currentMonth.net).toBe(300_000);
+    });
+
+    it("excludes adjustment transactions from cashflow", async () => {
+      const t = setupTest();
+      const user = asUser(t);
+      const accountId = await createTestAccount(user);
+
+      await user.mutation(api.transactions.createTransaction, {
+        type: "income",
+        amount: 100_000,
+        accountId,
+        date: "2026-04-01",
+      });
+      await user.mutation(api.transactions.createTransaction, {
+        type: "adjustment",
+        amount: 50_000,
+        accountId,
+        date: "2026-04-01",
+      });
+
+      const result = await user.query(api.transactions.getCashflow, {
+        month: "2026-04",
+      });
+
+      // Adjustment should not be counted
+      expect(result.currentMonth.income).toBe(100_000);
+      expect(result.currentMonth.expenses).toBe(0);
+      expect(result.currentMonth.net).toBe(100_000);
+    });
+
+    it("returns zeros for months with no transactions", async () => {
+      const t = setupTest();
+      const user = asUser(t);
+
+      const result = await user.query(api.transactions.getCashflow, {
+        month: "2026-04",
+        trendMonths: 2,
+      });
+
+      expect(result.trend).toHaveLength(2);
+      expect(result.trend[0]).toMatchObject({
+        month: "Mar",
+        income: 0,
+        expenses: 0,
+      });
+      expect(result.trend[1]).toMatchObject({
+        month: "Apr",
+        income: 0,
+        expenses: 0,
+      });
+      expect(result.currentMonth).toEqual({ income: 0, expenses: 0, net: 0 });
+    });
+
+    it("isolates data between users", async () => {
+      const t = setupTest();
+      const alice = asUser(t, { name: "Alice", subject: "alice-id|s1" });
+      const bob = asUser(t, { name: "Bob", subject: "bob-id|s2" });
+
+      const aliceAccount = await createTestAccount(alice);
+      const bobAccount = await createTestAccount(bob);
+
+      await alice.mutation(api.transactions.createTransaction, {
+        type: "income",
+        amount: 50_000,
+        accountId: aliceAccount,
+        date: "2026-04-01",
+      });
+      await bob.mutation(api.transactions.createTransaction, {
+        type: "income",
+        amount: 200_000,
+        accountId: bobAccount,
+        date: "2026-04-01",
+      });
+
+      const aliceResult = await alice.query(api.transactions.getCashflow, {
+        month: "2026-04",
+      });
+      expect(aliceResult.currentMonth.income).toBe(50_000);
+
+      const bobResult = await bob.query(api.transactions.getCashflow, {
+        month: "2026-04",
+      });
+      expect(bobResult.currentMonth.income).toBe(200_000);
+    });
+
+    it("returns empty result when not authenticated", async () => {
+      const t = setupTest();
+
+      const result = await t.query(api.transactions.getCashflow, {
+        month: "2026-04",
+      });
+
+      expect(result.currentMonth).toEqual({ income: 0, expenses: 0, net: 0 });
+      expect(result.trend).toHaveLength(0);
+    });
+  });
 });

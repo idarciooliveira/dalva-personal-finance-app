@@ -23,6 +23,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
+import { ConfirmDeleteDialog } from "@/components/confirm-delete-dialog";
 import { getCategoryIcon } from "@/lib/category-icons";
 import { cn } from "@/lib/utils";
 import { SubcategoryRow } from "./subcategory-row";
@@ -41,6 +42,8 @@ export function CategoryRow({
   onAddSubcategory,
 }: CategoryRowProps) {
   const [expanded, setExpanded] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+
   const Icon = getCategoryIcon(category.icon ?? "circle");
 
   const { mutate: archiveCategory } = useMutation({
@@ -144,17 +147,21 @@ export function CategoryRow({
             )}
             <DropdownMenuItem
               className="text-destructive focus:text-destructive"
-              onClick={() => {
-                if (confirm("Delete this category and all its subcategories? This cannot be undone.")) {
-                  deleteCategory({ id: category._id });
-                }
-              }}
+              onClick={() => setDeleteDialogOpen(true)}
             >
               <Trash2 className="mr-2 size-4" />
               Delete
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
+
+        <ConfirmDeleteDialog
+          open={deleteDialogOpen}
+          onOpenChange={setDeleteDialogOpen}
+          title="Delete category"
+          description="Delete this category and all its subcategories? This cannot be undone."
+          onConfirm={() => deleteCategory({ id: category._id })}
+        />
       </div>
 
       {/* Subcategories (expanded) */}

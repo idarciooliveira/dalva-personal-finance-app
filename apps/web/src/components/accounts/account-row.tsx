@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { useConvexMutation } from "@convex-dev/react-query";
 import { api } from "@mpf/backend/convex/_generated/api";
@@ -20,6 +21,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
+import { ConfirmDeleteDialog } from "@/components/confirm-delete-dialog";
 import { cn } from "@/lib/utils";
 import { formatCurrency } from "@/lib/format";
 import { ACCOUNT_TYPES, ACCOUNT_THEMES } from "@/lib/accounts";
@@ -31,6 +33,8 @@ interface AccountRowProps {
 }
 
 export function AccountRow({ account, onEdit, onAdjustBalance }: AccountRowProps) {
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+
   const accountType = ACCOUNT_TYPES.find((t) => t.value === account.type);
   const Icon = accountType?.icon;
   const theme = ACCOUNT_THEMES.find((t) => t.id === (account.theme ?? "default")) ?? ACCOUNT_THEMES[0];
@@ -130,21 +134,21 @@ export function AccountRow({ account, onEdit, onAdjustBalance }: AccountRowProps
           )}
           <DropdownMenuItem
             className="text-destructive focus:text-destructive"
-            onClick={() => {
-              if (
-                confirm(
-                  "Delete this account? This cannot be undone.",
-                )
-              ) {
-                deleteAccount({ id: account._id });
-              }
-            }}
+            onClick={() => setDeleteDialogOpen(true)}
           >
             <Trash2 className="mr-2 size-4" />
             Delete
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
+
+      <ConfirmDeleteDialog
+        open={deleteDialogOpen}
+        onOpenChange={setDeleteDialogOpen}
+        title="Delete account"
+        description="Delete this account? This cannot be undone."
+        onConfirm={() => deleteAccount({ id: account._id })}
+      />
     </div>
   );
 }

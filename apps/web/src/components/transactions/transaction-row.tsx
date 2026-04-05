@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useConvexMutation, convexQuery } from "@convex-dev/react-query";
 import { api } from "@mpf/backend/convex/_generated/api";
@@ -18,6 +19,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { ConfirmDeleteDialog } from "@/components/confirm-delete-dialog";
 import { cn } from "@/lib/utils";
 import { formatCurrency, formatDate } from "@/lib/format";
 
@@ -51,6 +53,8 @@ const typeConfig = {
 } as const;
 
 export function TransactionRow({ transaction, onEdit }: TransactionRowProps) {
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+
   const config = typeConfig[transaction.type];
   const Icon = config.icon;
 
@@ -139,21 +143,21 @@ export function TransactionRow({ transaction, onEdit }: TransactionRowProps) {
           )}
           <DropdownMenuItem
             className="text-destructive focus:text-destructive"
-            onClick={() => {
-              if (
-                confirm(
-                  "Delete this transaction? This cannot be undone.",
-                )
-              ) {
-                deleteTransaction({ id: transaction._id });
-              }
-            }}
+            onClick={() => setDeleteDialogOpen(true)}
           >
             <Trash2 className="mr-2 size-4" />
             Delete
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
+
+      <ConfirmDeleteDialog
+        open={deleteDialogOpen}
+        onOpenChange={setDeleteDialogOpen}
+        title="Delete transaction"
+        description="Delete this transaction? This cannot be undone."
+        onConfirm={() => deleteTransaction({ id: transaction._id })}
+      />
     </div>
   );
 }

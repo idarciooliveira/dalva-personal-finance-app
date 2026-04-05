@@ -1,5 +1,6 @@
 import { v } from "convex/values";
 import { query, mutation } from "./_generated/server";
+import type { Id } from "./_generated/dataModel";
 import { getAuthUserId } from "@convex-dev/auth/server";
 
 /* -------------------------------------------------------------------------- */
@@ -337,6 +338,183 @@ export const getTransactionSummary = query({
       totalExpenses,
       totalAdjustments,
       recentTransactions: txs.slice(0, 10),
+    };
+  },
+});
+
+/**
+ * Get spending aggregated by category for a given month.
+ * Only includes expense transactions. Returns categories sorted by amount descending.
+ */
+export const getSpendingByCategory = query({
+  args: { month: v.string() }, // e.g. "2026-04"
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) {
+      return { categories: [], total: 0 };
+    }
+
+    const dateFrom = `${args.month}-01`;
+    const dateTo = `${args.month}-31`;
+
+    const txs = await ctx.db
+      .query("transactions")
+      .withIndex("by_userId_and_date", (q) =>
+        q.eq("userId", userId).gte("date", dateFrom).lte("date", dateTo),
+      )
+      .take(500);
+
+    // Aggregate expense amounts by categoryId
+    const categoryTotals = new Map<string, number>(); // categoryId → total amount
+    let total = 0;
+
+    for (const tx of txs) {
+      if (tx.type !== "expense") continue;
+      const key = tx.categoryId ?? "__uncategorized__";
+      categoryTotals.set(key, (categoryTotals.get(key) ?? 0) + tx.amount);
+      total += tx.amount;
+    }
+
+    // Resolve category names
+    const categories: Array<{ name: string; amount: number; categoryId: string | null }> = [];
+    for (const [key, amount] of categoryTotals) {
+      if (key === "__uncategorized__") {
+        categories.push({ name: "Uncategorized", amount, categoryId: null });
+      } else {
+        const cat = await ctx.db.get(key as Id<"categories">);
+        categories.push({
+          name: cat?.name ?? "Unknown",
+          amount,
+          categoryId: key,
+        });
+      }
+    }
+
+    // Sort descending by amount
+    categories.sort((a, b) => b.amount - a.amount);
+
+    return { categories, total };
+  },
+});
+
+/* -------------------------------------------------------------------------- */
+/*  Month arithmetic helpers (for getCashflow)                                */
+/* -------------------------------------------------------------------------- */
+
+const MONTH_LABELS = [
+  "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+  "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
+];
+
+/** Parse "YYYY-MM" → { year, month (0-indexed) } */
+function parseMonth(ym: string): { year: number; month: number } {
+  const [y, m] = ym.split("-").map(Number);
+  return { year: y!, month: m! - 1 };
+}
+
+/** Subtract N months from { year, month } and return "YYYY-MM" */
+function subtractMonths(
+  year: number,
+  month: number,
+  n: number,
+): { year: number; month: number } {
+  let y = year;
+  let m = month - n;
+  while (m < 0) {
+    m += 12;
+    y -= 1;
+  }
+  return { year: y, month: m };
+}
+
+/** Format { year, month (0-indexed) } → "YYYY-MM" */
+function formatYM(year: number, month: number): string {
+  return `${year}-${String(month + 1).padStart(2, "0")}`;
+}
+
+/**
+ * Get cashflow data: income vs expenses for the current month plus a
+ * configurable number of trailing months for the trend chart.
+ */
+export const getCashflow = query({
+  args: {
+    month: v.string(), // e.g. "2026-04"
+    trendMonths: v.optional(v.number()), // how many months in the trend (default 6)
+  },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) {
+      return {
+        currentMonth: { income: 0, expenses: 0, net: 0 },
+        trend: [],
+      };
+    }
+
+    const numMonths = args.trendMonths ?? 6;
+    const { year, month } = parseMonth(args.month);
+
+    // Build the list of months to include
+    const months: Array<{ year: number; month: number; label: string; key: string }> = [];
+    for (let i = numMonths - 1; i >= 0; i--) {
+      const { year: y, month: m } = subtractMonths(year, month, i);
+      months.push({
+        year: y,
+        month: m,
+        label: MONTH_LABELS[m]!,
+        key: formatYM(y, m),
+      });
+    }
+
+    // Determine overall date range for the query
+    const firstMonth = months[0]!;
+    const lastMonth = months[months.length - 1]!;
+    const dateFrom = `${formatYM(firstMonth.year, firstMonth.month)}-01`;
+    const dateTo = `${formatYM(lastMonth.year, lastMonth.month)}-31`;
+
+    // Fetch all transactions in the date range
+    const txs = await ctx.db
+      .query("transactions")
+      .withIndex("by_userId_and_date", (q) =>
+        q.eq("userId", userId).gte("date", dateFrom).lte("date", dateTo),
+      )
+      .take(2000);
+
+    // Initialize buckets
+    const buckets = new Map<string, { income: number; expenses: number }>();
+    for (const m of months) {
+      buckets.set(m.key, { income: 0, expenses: 0 });
+    }
+
+    // Aggregate
+    for (const tx of txs) {
+      if (tx.type === "adjustment") continue;
+      const txMonth = tx.date.substring(0, 7); // "YYYY-MM"
+      const bucket = buckets.get(txMonth);
+      if (!bucket) continue;
+      if (tx.type === "income") bucket.income += tx.amount;
+      else if (tx.type === "expense") bucket.expenses += tx.amount;
+    }
+
+    // Build trend array
+    const trend = months.map((m) => {
+      const bucket = buckets.get(m.key)!;
+      return {
+        month: m.label,
+        income: bucket.income,
+        expenses: bucket.expenses,
+      };
+    });
+
+    // Current month is the last entry
+    const current = buckets.get(formatYM(year, month))!;
+
+    return {
+      currentMonth: {
+        income: current.income,
+        expenses: current.expenses,
+        net: current.income - current.expenses,
+      },
+      trend,
     };
   },
 });

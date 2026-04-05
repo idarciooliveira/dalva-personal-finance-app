@@ -3,6 +3,7 @@ import { useMutation } from "@tanstack/react-query";
 import { useConvexMutation } from "@convex-dev/react-query";
 import { api } from "@mpf/backend/convex/_generated/api";
 import type { Doc } from "@mpf/backend/convex/_generated/dataModel";
+import { Palette, Check, Image } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -11,15 +12,16 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
-  getCategoryIcon,
   AVAILABLE_ICONS,
   CATEGORY_COLORS,
   CATEGORY_ICON_MAP,
 } from "@/lib/category-icons";
 import { cn } from "@/lib/utils";
+
+/** How many color swatches / icons to show before the "Others" toggle. */
+const COLORS_PREVIEW_COUNT = 4;
+const ICONS_PREVIEW_COUNT = 4;
 
 interface CategoryFormDialogProps {
   open: boolean;
@@ -38,19 +40,25 @@ export function CategoryFormDialog({
 
   const [name, setName] = useState("");
   const [icon, setIcon] = useState("wallet");
-  const [color, setColor] = useState(CATEGORY_COLORS[0]);
+  const [color, setColor] = useState(CATEGORY_COLORS[0]!);
+  const [error, setError] = useState("");
+  const [showAllColors, setShowAllColors] = useState(false);
+  const [showAllIcons, setShowAllIcons] = useState(false);
 
-  // Sync form state when dialog opens with a category to edit
+  // Sync form state when dialog opens
   useEffect(() => {
     if (category) {
       setName(category.name);
       setIcon(category.icon ?? "circle");
-      setColor(category.color ?? CATEGORY_COLORS[0]);
+      setColor(category.color ?? CATEGORY_COLORS[0]!);
     } else {
       setName("");
       setIcon(type === "income" ? "banknote" : "wallet");
-      setColor(CATEGORY_COLORS[0]);
+      setColor(CATEGORY_COLORS[0]!);
     }
+    setError("");
+    setShowAllColors(false);
+    setShowAllIcons(false);
   }, [category, type, open]);
 
   const { mutateAsync: createCategory, isPending: isCreating } = useMutation({
@@ -62,129 +70,234 @@ export function CategoryFormDialog({
 
   const isPending = isCreating || isUpdating;
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    if (!name.trim()) return;
+  async function handleSubmit(andCreateNew = false) {
+    setError("");
 
-    if (isEdit && category) {
-      await updateCategory({ id: category._id, name: name.trim(), icon, color });
-    } else {
-      await createCategory({ name: name.trim(), type, icon, color });
+    if (!name.trim()) {
+      setError("Category name is required");
+      return;
     }
 
-    onOpenChange(false);
+    if (isEdit && category) {
+      await updateCategory({
+        id: category._id,
+        name: name.trim(),
+        icon,
+        color,
+      });
+      onOpenChange(false);
+    } else {
+      await createCategory({ name: name.trim(), type, icon, color });
+
+      if (andCreateNew) {
+        setName("");
+        setIcon(type === "income" ? "banknote" : "wallet");
+        setColor(CATEGORY_COLORS[0]!);
+        setError("");
+        setShowAllColors(false);
+        setShowAllIcons(false);
+      } else {
+        onOpenChange(false);
+      }
+    }
   }
+
+  // Ensure the currently-selected color/icon is always visible in the preview row
+  const visibleColors = getVisibleItems(
+    CATEGORY_COLORS,
+    color,
+    COLORS_PREVIEW_COUNT,
+    showAllColors,
+  );
+  const visibleIcons = getVisibleItems(
+    AVAILABLE_ICONS,
+    icon,
+    ICONS_PREVIEW_COUNT,
+    showAllIcons,
+  );
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md">
-        <DialogHeader>
-          <DialogTitle>
+      <DialogContent className="max-w-md p-0 gap-0 overflow-hidden flex flex-col h-[420px]">
+        {/* Header */}
+        <DialogHeader className="px-6 pt-6 pb-0 shrink-0">
+          <DialogTitle className="text-xl font-semibold">
             {isEdit ? "Edit category" : `New ${type} category`}
           </DialogTitle>
         </DialogHeader>
-        <form onSubmit={(e) => void handleSubmit(e)} className="space-y-5">
-          {/* Name */}
-          <div className="space-y-2">
-            <Label htmlFor="category-name">Name</Label>
-            <Input
-              id="category-name"
+
+        <div className="flex-1 min-h-0 overflow-y-auto px-6 pt-5 pb-2">
+          {/* ── Name field (underline input) ── */}
+          <div className="border-b border-border pb-2 mb-6">
+            <input
+              type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder={type === "income" ? "e.g. Dividends" : "e.g. Groceries"}
+              placeholder="Name"
               autoFocus
+              className="w-full bg-transparent text-base text-foreground outline-none placeholder:text-muted-foreground/60"
+              aria-label="Category name"
             />
           </div>
 
-          {/* Color picker */}
-          <div className="space-y-2">
-            <Label>Color</Label>
-            <div className="flex flex-wrap gap-2">
-              {CATEGORY_COLORS.map((c) => (
-                <button
-                  key={c}
-                  type="button"
-                  onClick={() => setColor(c)}
-                  className={cn(
-                    "size-7 rounded-full border-2 transition-transform hover:scale-110",
-                    color === c
-                      ? "border-foreground scale-110"
-                      : "border-transparent",
-                  )}
-                  style={{ backgroundColor: c }}
-                />
-              ))}
-            </div>
-          </div>
-
-          {/* Icon picker */}
-          <div className="space-y-2">
-            <Label>Icon</Label>
-            <div className="flex flex-wrap gap-1.5 max-h-[160px] overflow-y-auto rounded-lg border border-border p-2">
-              {AVAILABLE_ICONS.map((iconName) => {
-                const IconComp = CATEGORY_ICON_MAP[iconName];
-                if (!IconComp) return null;
-                return (
+          {/* ── Color & Icon side by side ── */}
+          <div className="flex gap-6">
+            {/* Color column */}
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2 mb-3">
+                <Palette className="size-5 text-muted-foreground shrink-0" />
+                <span className="text-sm text-muted-foreground">
+                  Category color
+                </span>
+              </div>
+              <div className="flex flex-wrap gap-2.5">
+                {visibleColors.map((c) => (
                   <button
-                    key={iconName}
+                    key={c}
                     type="button"
-                    onClick={() => setIcon(iconName)}
+                    onClick={() => setColor(c)}
                     className={cn(
-                      "flex size-9 items-center justify-center rounded-lg transition-colors",
-                      icon === iconName
-                        ? "bg-primary text-primary-foreground"
-                        : "hover:bg-muted text-muted-foreground hover:text-foreground",
+                      "relative size-10 rounded-full transition-transform hover:scale-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary",
+                      color === c && "scale-110",
                     )}
-                    title={iconName}
+                    style={{ backgroundColor: c }}
+                    aria-label={`Color ${c}`}
                   >
-                    <IconComp className="size-4" />
+                    {color === c && (
+                      <Check className="absolute inset-0 m-auto size-4.5 text-white drop-shadow-md" />
+                    )}
                   </button>
-                );
-              })}
+                ))}
+              </div>
+              {!showAllColors && CATEGORY_COLORS.length > COLORS_PREVIEW_COUNT && (
+                <button
+                  type="button"
+                  onClick={() => setShowAllColors(true)}
+                  className="mt-2.5 rounded-full bg-muted/60 px-4 py-1.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground hover:bg-muted transition-colors"
+                >
+                  Others
+                </button>
+              )}
+              {showAllColors && (
+                <button
+                  type="button"
+                  onClick={() => setShowAllColors(false)}
+                  className="mt-2.5 rounded-full bg-muted/60 px-4 py-1.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground hover:bg-muted transition-colors"
+                >
+                  Less
+                </button>
+              )}
+            </div>
+
+            {/* Icon column */}
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2 mb-3">
+                <Image className="size-5 text-muted-foreground shrink-0" />
+                <span className="text-sm text-muted-foreground">Icon</span>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {visibleIcons.map((iconName) => {
+                  const IconComp = CATEGORY_ICON_MAP[iconName];
+                  if (!IconComp) return null;
+                  return (
+                    <button
+                      key={iconName}
+                      type="button"
+                      onClick={() => setIcon(iconName)}
+                      className={cn(
+                        "flex size-10 items-center justify-center rounded-full transition-colors",
+                        icon === iconName
+                          ? "bg-primary text-primary-foreground"
+                          : "bg-muted/60 text-muted-foreground hover:bg-muted hover:text-foreground",
+                      )}
+                      title={iconName}
+                      aria-label={`Icon: ${iconName}`}
+                    >
+                      <IconComp className="size-5" />
+                    </button>
+                  );
+                })}
+              </div>
+              {!showAllIcons && AVAILABLE_ICONS.length > ICONS_PREVIEW_COUNT && (
+                <button
+                  type="button"
+                  onClick={() => setShowAllIcons(true)}
+                  className="mt-2.5 rounded-full bg-muted/60 px-4 py-1.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground hover:bg-muted transition-colors"
+                >
+                  Others
+                </button>
+              )}
+              {showAllIcons && (
+                <button
+                  type="button"
+                  onClick={() => setShowAllIcons(false)}
+                  className="mt-2.5 rounded-full bg-muted/60 px-4 py-1.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground hover:bg-muted transition-colors"
+                >
+                  Less
+                </button>
+              )}
             </div>
           </div>
 
-          {/* Preview */}
-          <div className="flex items-center gap-3 rounded-lg border border-border p-3">
-            <div
-              className="flex size-9 items-center justify-center rounded-lg"
-              style={{ backgroundColor: color + "20" }}
-            >
-              {(() => {
-                const PreviewIcon = getCategoryIcon(icon);
-                return <PreviewIcon className="size-4" style={{ color }} />;
-              })()}
-            </div>
-            <span className="text-sm font-medium">
-              {name || "Category name"}
-            </span>
-          </div>
+          {/* ── Error ── */}
+          {error && (
+            <p className="mt-4 text-sm text-destructive">{error}</p>
+          )}
+        </div>
 
-          {/* Submit */}
-          <div className="flex justify-end gap-2">
+        {/* ── Footer ── */}
+        <div className="flex items-center justify-end gap-3 px-6 py-5 shrink-0">
+          {!isEdit && (
             <Button
               type="button"
-              variant="outline"
-              size="sm"
-              onClick={() => onOpenChange(false)}
-            >
-              Cancel
-            </Button>
-            <Button
-              type="submit"
-              variant="accent"
-              size="sm"
+              variant="ghost"
+              size="default"
+              className="rounded-full text-muted-foreground"
               disabled={isPending || !name.trim()}
+              onClick={() => void handleSubmit(true)}
             >
-              {isPending
-                ? "Saving..."
-                : isEdit
-                  ? "Save changes"
-                  : "Create category"}
+              {isPending ? "Saving..." : "Save & new"}
             </Button>
-          </div>
-        </form>
+          )}
+          <Button
+            type="button"
+            variant="secondary"
+            size="default"
+            className="rounded-full px-8"
+            disabled={isPending || !name.trim()}
+            onClick={() => void handleSubmit(false)}
+          >
+            {isPending
+              ? "Saving..."
+              : isEdit
+                ? "Save"
+                : "Save"}
+          </Button>
+        </div>
       </DialogContent>
     </Dialog>
   );
+}
+
+/**
+ * Return the items to display. When collapsed, shows the first N items but
+ * swaps in the currently-selected item if it falls outside that range so the
+ * user always sees their selection.
+ */
+function getVisibleItems<T>(
+  all: T[],
+  selected: T,
+  previewCount: number,
+  showAll: boolean,
+): T[] {
+  if (showAll) return all;
+
+  const preview = all.slice(0, previewCount);
+  const selectedIdx = all.indexOf(selected);
+
+  // Selected item is already in the preview range
+  if (selectedIdx < previewCount) return preview;
+
+  // Swap the last preview item with the selected one so it's always visible
+  return [...preview.slice(0, previewCount - 1), selected];
 }

@@ -15,8 +15,6 @@ import { DebtPaydownCard } from "@/components/dashboard/debt-paydown-card";
 
 import {
   mockNetWorth,
-  mockCashflow,
-  mockSpendingByCategory,
   mockBudgetSummary,
   mockGoalsProgress,
   mockDebtPaydown,
@@ -59,55 +57,55 @@ function DashboardPage() {
 
   return (
     <div className="dashboard-glass-bg dashboard-glass flex-1 overflow-auto">
-        <div className="mx-auto max-w-[1200px] px-4 py-6 lg:px-8">
-          {/* Greeting */}
-          <div className="mb-6">
-            <h1 className="font-heading text-2xl font-semibold text-foreground">
-              {greeting}, {firstName}
-            </h1>
-            <p className="mt-1 text-sm text-muted-foreground">
-              Here&apos;s your financial overview.
-            </p>
+      <div className="mx-auto max-w-300 px-4 py-6 lg:px-8">
+        {/* Greeting */}
+        <div className="mb-6">
+          <h1 className="font-heading text-2xl font-semibold text-foreground">
+            {greeting}, {firstName}
+          </h1>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Here&apos;s your financial overview.
+          </p>
+        </div>
+
+        {/* ============================================================ */}
+        {/*  MAIN TWO-COLUMN LAYOUT                                      */}
+        {/*  Left: Account card + Recent transactions                    */}
+        {/*  Right: Spending by category chart + details                 */}
+        {/* ============================================================ */}
+        <div className="grid gap-6 lg:grid-cols-[1fr_380px]">
+          {/* --- Left column --- */}
+          <div className="flex flex-col gap-6">
+            <AccountCardsSection
+              accounts={accounts ?? []}
+              income={totalIncome}
+              expenses={totalExpenses}
+              currency="USD"
+              holderName={profile.name?.toUpperCase() ?? "DALVA USER"}
+            />
+            <RecentTransactionsCard data={recentTransactionsData} />
           </div>
 
-          {/* ============================================================ */}
-          {/*  MAIN TWO-COLUMN LAYOUT                                      */}
-          {/*  Left: Account card + Recent transactions                    */}
-          {/*  Right: Spending by category chart + details                 */}
-          {/* ============================================================ */}
-          <div className="grid gap-6 lg:grid-cols-[1fr_380px]">
-            {/* --- Left column --- */}
-            <div className="flex flex-col gap-6">
-              <AccountCardsSection
-                accounts={accounts ?? []}
-                income={totalIncome}
-                expenses={totalExpenses}
-                currency="USD"
-                holderName={profile.name?.toUpperCase() ?? "DALVA USER"}
-              />
-              <RecentTransactionsCard data={recentTransactionsData} />
-            </div>
-
-            {/* --- Right column --- */}
-            <div className="flex flex-col gap-6">
-              <SpendingCategoryCard data={mockSpendingByCategory} />
-              <CashflowCard data={mockCashflow} />
-            </div>
-          </div>
-
-          {/* ============================================================ */}
-          {/*  BOTTOM ROW: All remaining widgets                           */}
-          {/* ============================================================ */}
-          <div className="mt-6 grid gap-4 sm:grid-cols-2">
-            <NetWorthCard data={mockNetWorth} />
-            <BudgetSummaryCard data={mockBudgetSummary} />
-          </div>
-          <div className="mt-4 grid gap-4 sm:grid-cols-2">
-            <GoalsProgressCard data={mockGoalsProgress} />
-            <DebtPaydownCard data={mockDebtPaydown} />
+          {/* --- Right column --- */}
+          <div className="flex flex-col gap-6">
+            <SpendingCategoryCard month={currentMonth} />
+            <CashflowCard month={currentMonth} />
           </div>
         </div>
+
+        {/* ============================================================ */}
+        {/*  BOTTOM ROW: All remaining widgets                           */}
+        {/* ============================================================ */}
+        <div className="mt-6 grid gap-4 sm:grid-cols-2">
+          <NetWorthCard data={mockNetWorth} />
+          <BudgetSummaryCard data={mockBudgetSummary} />
+        </div>
+        <div className="mt-4 grid gap-4 sm:grid-cols-2">
+          <GoalsProgressCard data={mockGoalsProgress} />
+          <DebtPaydownCard data={mockDebtPaydown} />
+        </div>
       </div>
+    </div>
   );
 }
 
@@ -153,10 +151,7 @@ function buildRecentTransactionsData(
       date: tx.date,
       description: tx.description || tx.payee || "Untitled",
       category: tx.type === "adjustment" ? "Adjustment" : "", // category names not included in summary — keep simple
-      amount:
-        tx.type === "expense"
-          ? -Math.abs(tx.amount)
-          : tx.amount,
+      amount: tx.type === "expense" ? -Math.abs(tx.amount) : tx.amount,
       type: tx.type,
       account: accountMap.get(tx.accountId) ?? "Unknown",
     })),
