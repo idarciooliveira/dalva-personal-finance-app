@@ -1,8 +1,8 @@
-# Ledger — Personal Finance Manager
+# DALVA — Personal Finance Manager
 
 > A privacy-first money manager that gives individuals full visibility and control over their financial life across accounts, categories, budgets, goals, and debts — all in one place.
 
-![Ledger Preview](image.png)
+![DALVA Preview](image.png)
 
 ---
 
@@ -127,7 +127,7 @@ Debts represent money the user currently owes — a loan, a credit balance, mone
 
 ## Module 8 — Dashboard & Reports
 
-The **home screen and analytics layer** that brings all modules together into a single coherent picture.
+The **home screen and analytics layer** that brings all modules tDALVAther into a single coherent picture.
 
 ### Requirements:
 

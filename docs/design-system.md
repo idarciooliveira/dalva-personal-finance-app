@@ -1,6 +1,6 @@
 # Design System
 
-> Wise-inspired design system for the Ledger personal finance app.
+> Wise-inspired design system for the DALVA personal finance app.
 > Based on [wise.design](https://wise.design/foundations) foundations, adapted for shadcn/ui + Tailwind CSS v4.
 
 ---
@@ -13,13 +13,13 @@ All design tokens are defined in `apps/web/src/styles.css` using Tailwind CSS v4
 
 ### Stack
 
-| Layer | Tool |
-|---|---|
-| CSS Framework | Tailwind CSS v4 (CSS-first, `@tailwindcss/vite` plugin) |
-| Component Library | shadcn/ui v4 (`radix-nova` style) |
-| Variant System | CVA (class-variance-authority) |
-| Class Merging | `tailwind-merge` + `clsx` via `cn()` utility |
-| Icons | Lucide React |
+| Layer             | Tool                                                    |
+| ----------------- | ------------------------------------------------------- |
+| CSS Framework     | Tailwind CSS v4 (CSS-first, `@tailwindcss/vite` plugin) |
+| Component Library | shadcn/ui v4 (`radix-nova` style)                       |
+| Variant System    | CVA (class-variance-authority)                          |
+| Class Merging     | `tailwind-merge` + `clsx` via `cn()` utility            |
+| Icons             | Lucide React                                            |
 
 ---
 
@@ -27,11 +27,11 @@ All design tokens are defined in `apps/web/src/styles.css` using Tailwind CSS v4
 
 ### Fonts
 
-| Token | Font | Weights | Usage |
-|---|---|---|---|
-| `--font-sans` | **Inter** | 400, 500 (Medium), 600 (Semi Bold) | All body text, UI elements, headings |
-| `--font-heading` | References `--font-sans` | 600 (Semi Bold) | Section headings (use `font-semibold`) |
-| `--font-display` | **Wise Sans** (placeholder) | -- | Display/hero headlines only. Currently falls back to `ui-sans-serif, system-ui, sans-serif`. Self-host Wise Sans when available. |
+| Token            | Font                        | Weights                            | Usage                                                                                                                            |
+| ---------------- | --------------------------- | ---------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| `--font-sans`    | **Inter**                   | 400, 500 (Medium), 600 (Semi Bold) | All body text, UI elements, headings                                                                                             |
+| `--font-heading` | References `--font-sans`    | 600 (Semi Bold)                    | Section headings (use `font-semibold`)                                                                                           |
+| `--font-display` | **Wise Sans** (placeholder) | --                                 | Display/hero headlines only. Currently falls back to `ui-sans-serif, system-ui, sans-serif`. Self-host Wise Sans when available. |
 
 ### Usage Guidelines
 
@@ -60,8 +60,8 @@ All design tokens are defined in `apps/web/src/styles.css` using Tailwind CSS v4
 
 ### Core Brand Colors
 
-| Name | Hex | CSS Variable | Tailwind Class |
-|---|---|---|---|
+| Name         | Hex       | CSS Variable                | Tailwind Class         |
+| ------------ | --------- | --------------------------- | ---------------------- |
 | Bright Green | `#9FE870` | `--color-wise-bright-green` | `bg-wise-bright-green` |
 | Forest Green | `#163300` | `--color-wise-forest-green` | `bg-wise-forest-green` |
 
@@ -69,58 +69,58 @@ All design tokens are defined in `apps/web/src/styles.css` using Tailwind CSS v4
 
 Colors are mapped from Wise's product color system to shadcn/ui's semantic token slots.
 
-| Token | Wise Source | Value | Usage |
-|---|---|---|---|
-| `--primary` | Interactive Primary (Forest Green) | `#163300` | Primary buttons, links, focus rings |
-| `--primary-foreground` | Interactive Contrast (Bright Green) | `#9FE870` | Text on primary surfaces |
-| `--accent` | Interactive Accent (Bright Green) | `#9FE870` | CTA buttons, highlights |
-| `--accent-foreground` | Interactive Control (Forest Green) | `#163300` | Text on accent surfaces |
-| `--secondary` | Background Neutral | `rgba(22,51,0,0.08)` | Secondary buttons, subtle backgrounds |
-| `--secondary-foreground` | Content Primary | `#0E0F0C` | Text on secondary surfaces |
-| `--muted` | Background Neutral | `rgba(22,51,0,0.08)` | Muted backgrounds, disabled states |
-| `--muted-foreground` | Content Secondary | `#454745` | Secondary text, descriptions |
-| `--destructive` | Sentiment Negative | `#A8200D` | Error states, destructive actions |
-| `--background` | Background Screen | `#FFFFFF` | Page background |
-| `--foreground` | Content Primary | `#0E0F0C` | Primary text color |
-| `--card` | Background Elevated | `#FFFFFF` | Card backgrounds |
-| `--border` | Border Neutral | `rgba(14,15,12,0.12)` | Borders, dividers |
-| `--input` | Interactive Secondary | `#868685` | Input borders |
-| `--ring` | Interactive Primary | `#163300` | Focus ring color |
+| Token                    | Wise Source                         | Value                 | Usage                                 |
+| ------------------------ | ----------------------------------- | --------------------- | ------------------------------------- |
+| `--primary`              | Interactive Primary (Forest Green)  | `#163300`             | Primary buttons, links, focus rings   |
+| `--primary-foreground`   | Interactive Contrast (Bright Green) | `#9FE870`             | Text on primary surfaces              |
+| `--accent`               | Interactive Accent (Bright Green)   | `#9FE870`             | CTA buttons, highlights               |
+| `--accent-foreground`    | Interactive Control (Forest Green)  | `#163300`             | Text on accent surfaces               |
+| `--secondary`            | Background Neutral                  | `rgba(22,51,0,0.08)`  | Secondary buttons, subtle backgrounds |
+| `--secondary-foreground` | Content Primary                     | `#0E0F0C`             | Text on secondary surfaces            |
+| `--muted`                | Background Neutral                  | `rgba(22,51,0,0.08)`  | Muted backgrounds, disabled states    |
+| `--muted-foreground`     | Content Secondary                   | `#454745`             | Secondary text, descriptions          |
+| `--destructive`          | Sentiment Negative                  | `#A8200D`             | Error states, destructive actions     |
+| `--background`           | Background Screen                   | `#FFFFFF`             | Page background                       |
+| `--foreground`           | Content Primary                     | `#0E0F0C`             | Primary text color                    |
+| `--card`                 | Background Elevated                 | `#FFFFFF`             | Card backgrounds                      |
+| `--border`               | Border Neutral                      | `rgba(14,15,12,0.12)` | Borders, dividers                     |
+| `--input`                | Interactive Secondary               | `#868685`             | Input borders                         |
+| `--ring`                 | Interactive Primary                 | `#163300`             | Focus ring color                      |
 
 ### Extended Brand Palette
 
 Available for marketing elements, charts, and illustrations. Use sparingly in product UI.
 
-| Name | Hex | Class |
-|---|---|---|
+| Name          | Hex       | Class                   |
+| ------------- | --------- | ----------------------- |
 | Bright Orange | `#FFC091` | `bg-wise-bright-orange` |
 | Bright Yellow | `#FFEB69` | `bg-wise-bright-yellow` |
-| Bright Blue | `#A0E1E1` | `bg-wise-bright-blue` |
-| Bright Pink | `#FFD7EF` | `bg-wise-bright-pink` |
-| Dark Purple | `#260A2F` | `bg-wise-dark-purple` |
-| Dark Gold | `#3A341C` | `bg-wise-dark-gold` |
+| Bright Blue   | `#A0E1E1` | `bg-wise-bright-blue`   |
+| Bright Pink   | `#FFD7EF` | `bg-wise-bright-pink`   |
+| Dark Purple   | `#260A2F` | `bg-wise-dark-purple`   |
+| Dark Gold     | `#3A341C` | `bg-wise-dark-gold`     |
 | Dark Charcoal | `#21231D` | `bg-wise-dark-charcoal` |
-| Dark Maroon | `#320707` | `bg-wise-dark-maroon` |
+| Dark Maroon   | `#320707` | `bg-wise-dark-maroon`   |
 
 ### Sentiment Colors
 
-| Name | Hex | Class |
-|---|---|---|
+| Name     | Hex       | Class              |
+| -------- | --------- | ------------------ |
 | Positive | `#2F5711` | `bg-wise-positive` |
-| Warning | `#EDC843` | `bg-wise-warning` |
+| Warning  | `#EDC843` | `bg-wise-warning`  |
 | Negative | `#A8200D` | `bg-wise-negative` |
 
 ### Chart Colors
 
 Charts use the secondary brand palette for visual variety:
 
-| Token | Color | Value |
-|---|---|---|
-| `--chart-1` | Bright Green | `#9FE870` |
-| `--chart-2` | Bright Blue | `#A0E1E1` |
+| Token       | Color         | Value     |
+| ----------- | ------------- | --------- |
+| `--chart-1` | Bright Green  | `#9FE870` |
+| `--chart-2` | Bright Blue   | `#A0E1E1` |
 | `--chart-3` | Bright Orange | `#FFC091` |
 | `--chart-4` | Bright Yellow | `#FFEB69` |
-| `--chart-5` | Bright Pink | `#FFD7EF` |
+| `--chart-5` | Bright Pink   | `#FFD7EF` |
 
 ### Color Balance
 
@@ -144,14 +144,14 @@ Wise uses bold, generous radii. Our base value is `--radius: 1.25rem` (20px).
 
 ### Scale
 
-| Token | Desktop | Tailwind Class |
-|---|---|---|
-| `--radius-sm` | 10px | `rounded-sm` |
-| `--radius-md` | 16px | `rounded-md` |
-| `--radius-lg` | 20px (base) | `rounded-lg` |
-| `--radius-xl` | 30px | `rounded-xl` |
-| `--radius-2xl` | 40px | `rounded-2xl` |
-| `--radius-3xl` | 60px | `rounded-3xl` |
+| Token          | Desktop     | Tailwind Class |
+| -------------- | ----------- | -------------- |
+| `--radius-sm`  | 10px        | `rounded-sm`   |
+| `--radius-md`  | 16px        | `rounded-md`   |
+| `--radius-lg`  | 20px (base) | `rounded-lg`   |
+| `--radius-xl`  | 30px        | `rounded-xl`   |
+| `--radius-2xl` | 40px        | `rounded-2xl`  |
+| `--radius-3xl` | 60px        | `rounded-3xl`  |
 
 ### Usage
 
@@ -169,40 +169,40 @@ We use an **8px grid** aligned with Wise's foundational spacing scale. Tailwind'
 
 ### Foundational Scale
 
-| Wise Token | Value | Tailwind |
-|---|---|---|
-| `size-4` | 4px | `1` (e.g., `gap-1`, `p-1`) |
-| `size-8` | 8px | `2` |
-| `size-12` | 12px | `3` |
-| `size-16` | 16px | `4` |
-| `size-24` | 24px | `6` |
-| `size-32` | 32px | `8` |
-| `size-40` | 40px | `10` |
-| `size-48` | 48px | `12` |
+| Wise Token | Value | Tailwind                   |
+| ---------- | ----- | -------------------------- |
+| `size-4`   | 4px   | `1` (e.g., `gap-1`, `p-1`) |
+| `size-8`   | 8px   | `2`                        |
+| `size-12`  | 12px  | `3`                        |
+| `size-16`  | 16px  | `4`                        |
+| `size-24`  | 24px  | `6`                        |
+| `size-32`  | 32px  | `8`                        |
+| `size-40`  | 40px  | `10`                       |
+| `size-48`  | 48px  | `12`                       |
 
 ### Semantic Spacing Tokens
 
 These are available as CSS custom properties for use with `var()` or via Tailwind's arbitrary value syntax.
 
-| Token | Value | Usage |
-|---|---|---|
-| `--spacing-between-text` | 8px | Between title and body text |
-| `--spacing-between-chips` | 8px | Between chip/tag elements |
-| `--spacing-between-cards` | 12px | Between horizontally scrolling cards |
-| `--spacing-component-default` | 16px | Default spacing between components |
-| `--spacing-text-to-component` | 16px | Between text and a component below it |
-| `--spacing-screen-mobile` | 24px | Mobile screen horizontal padding |
-| `--spacing-content-to-button` | 24px | Between form content and action button |
-| `--spacing-between-sections` | 32px | Between major page sections |
+| Token                         | Value | Usage                                  |
+| ----------------------------- | ----- | -------------------------------------- |
+| `--spacing-between-text`      | 8px   | Between title and body text            |
+| `--spacing-between-chips`     | 8px   | Between chip/tag elements              |
+| `--spacing-between-cards`     | 12px  | Between horizontally scrolling cards   |
+| `--spacing-component-default` | 16px  | Default spacing between components     |
+| `--spacing-text-to-component` | 16px  | Between text and a component below it  |
+| `--spacing-screen-mobile`     | 24px  | Mobile screen horizontal padding       |
+| `--spacing-content-to-button` | 24px  | Between form content and action button |
+| `--spacing-between-sections`  | 32px  | Between major page sections            |
 
 ### Padding Tokens (Wise)
 
-| Name | Value | Usage |
-|---|---|---|
-| `padding-x-small` | 8px (`p-2`) | Tight spacing within compact elements |
-| `padding-small` | 16px (`p-4`) | Cards, compact data, footers (mobile) |
-| `padding-medium` | 24px (`p-6`) | Variable height content, alerts, footers (desktop) |
-| `padding-large` | 32px (`p-8`) | Large containers, section padding |
+| Name              | Value        | Usage                                              |
+| ----------------- | ------------ | -------------------------------------------------- |
+| `padding-x-small` | 8px (`p-2`)  | Tight spacing within compact elements              |
+| `padding-small`   | 16px (`p-4`) | Cards, compact data, footers (mobile)              |
+| `padding-medium`  | 24px (`p-6`) | Variable height content, alerts, footers (desktop) |
+| `padding-large`   | 32px (`p-8`) | Large containers, section padding                  |
 
 ---
 
@@ -210,37 +210,37 @@ These are available as CSS custom properties for use with `var()` or via Tailwin
 
 ### Size Tokens
 
-| Token | Value | Tailwind |
-|---|---|---|
-| `--size-icon` | 24px | `size-6` |
-| `--size-avatar-sm` | 24px | `size-6` |
-| `--size-avatar-md` | 40px | `size-10` |
-| `--size-avatar-lg` | 48px | `size-12` |
-| `--size-avatar-xl` | 56px | `size-14` |
-| `--size-avatar-2xl` | 72px | `size-18` |
-| `--size-button-sm` | 32px | `h-8` |
-| `--size-button-md` | 48px | `h-12` |
-| `--size-button-lg` | 56px | `h-14` |
+| Token               | Value | Tailwind  |
+| ------------------- | ----- | --------- |
+| `--size-icon`       | 24px  | `size-6`  |
+| `--size-avatar-sm`  | 24px  | `size-6`  |
+| `--size-avatar-md`  | 40px  | `size-10` |
+| `--size-avatar-lg`  | 48px  | `size-12` |
+| `--size-avatar-xl`  | 56px  | `size-14` |
+| `--size-avatar-2xl` | 72px  | `size-18` |
+| `--size-button-sm`  | 32px  | `h-8`     |
+| `--size-button-md`  | 48px  | `h-12`    |
+| `--size-button-lg`  | 56px  | `h-14`    |
 
 ### Button Sizes
 
-| Size | Height | Usage |
-|---|---|---|
-| `sm` | 32px (`h-8`) | Secondary actions, inline controls, chips |
-| `default` | 48px (`h-12`) | Primary actions, form submissions |
-| `lg` | 56px (`h-14`) | Hero CTAs, prominent actions |
+| Size      | Height        | Usage                                     |
+| --------- | ------------- | ----------------------------------------- |
+| `sm`      | 32px (`h-8`)  | Secondary actions, inline controls, chips |
+| `default` | 48px (`h-12`) | Primary actions, form submissions         |
+| `lg`      | 56px (`h-14`) | Hero CTAs, prominent actions              |
 
 ### Button Variants
 
-| Variant | Appearance | Usage |
-|---|---|---|
-| `default` | Forest Green bg, Bright Green text | Primary actions |
-| `accent` | Bright Green bg, Forest Green text | CTA / highlight actions |
-| `outline` | Border only, transparent bg | Secondary actions |
-| `secondary` | Neutral bg | Tertiary actions |
-| `ghost` | No border or bg | Inline/subtle actions |
-| `destructive` | Red tinted | Delete, remove actions |
-| `link` | Underlined text | Navigation links |
+| Variant       | Appearance                         | Usage                   |
+| ------------- | ---------------------------------- | ----------------------- |
+| `default`     | Forest Green bg, Bright Green text | Primary actions         |
+| `accent`      | Bright Green bg, Forest Green text | CTA / highlight actions |
+| `outline`     | Border only, transparent bg        | Secondary actions       |
+| `secondary`   | Neutral bg                         | Tertiary actions        |
+| `ghost`       | No border or bg                    | Inline/subtle actions   |
+| `destructive` | Red tinted                         | Delete, remove actions  |
+| `link`        | Underlined text                    | Navigation links        |
 
 ---
 
@@ -248,14 +248,14 @@ These are available as CSS custom properties for use with `var()` or via Tailwin
 
 Based on Wise's responsive grid. Max content width is **1440px**.
 
-| Name | Range | Columns | Margin | Gutter |
-|---|---|---|---|---|
-| XS | 320-479px | 6 | 20px | 12px |
-| S | 480-767px | 6 | 32px | 12px |
-| M | 768-991px | 12 | 40px | 16px |
-| L | 992-1199px | 12 | 80px | 28px |
-| XL | 1200-1440px | 12 | 100px | 32px |
-| XXL | 1440px+ | -- | Centered | -- |
+| Name | Range       | Columns | Margin   | Gutter |
+| ---- | ----------- | ------- | -------- | ------ |
+| XS   | 320-479px   | 6       | 20px     | 12px   |
+| S    | 480-767px   | 6       | 32px     | 12px   |
+| M    | 768-991px   | 12      | 40px     | 16px   |
+| L    | 992-1199px  | 12      | 80px     | 28px   |
+| XL   | 1200-1440px | 12      | 100px    | 32px   |
+| XXL  | 1440px+     | --      | Centered | --     |
 
 We use Tailwind's default breakpoints (`sm`, `md`, `lg`, `xl`, `2xl`) which are close enough for product use. Use `max-w-[1440px] mx-auto` for full-width containers.
 
@@ -263,12 +263,12 @@ We use Tailwind's default breakpoints (`sm`, `md`, `lg`, `xl`, `2xl`) which are 
 
 ## File Reference
 
-| File | Purpose |
-|---|---|
-| `apps/web/src/styles.css` | All design tokens: fonts, colors, radius, spacing, sizing |
-| `apps/web/src/lib/utils.ts` | `cn()` utility for merging Tailwind classes |
-| `apps/web/src/components/ui/button.tsx` | Button component with Wise-aligned variants and sizes |
-| `apps/web/components.json` | shadcn/ui configuration (`radix-nova` style, CSS variables enabled) |
+| File                                    | Purpose                                                             |
+| --------------------------------------- | ------------------------------------------------------------------- |
+| `apps/web/src/styles.css`               | All design tokens: fonts, colors, radius, spacing, sizing           |
+| `apps/web/src/lib/utils.ts`             | `cn()` utility for merging Tailwind classes                         |
+| `apps/web/src/components/ui/button.tsx` | Button component with Wise-aligned variants and sizes               |
+| `apps/web/components.json`              | shadcn/ui configuration (`radix-nova` style, CSS variables enabled) |
 
 ---
 

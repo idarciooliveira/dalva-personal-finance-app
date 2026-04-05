@@ -388,7 +388,7 @@ Core entities likely include:
 
 - User
 - Profile
-- Workspace or Personal Ledger
+- Workspace or Personal DALVA
 - Account
 - Transaction
 - Transaction Split
@@ -411,7 +411,7 @@ Important modeling rules:
 - balance adjustments must be traceable
 - category deletion must preserve historical reporting integrity
 - debts and goals should connect to transaction history where possible
-- reports should derive from the same core ledger events
+- reports should derive from the same core DALVA events
 
 ---
 
@@ -451,7 +451,7 @@ Important modeling rules:
 
 ## 14. Release Strategy
 
-### Phase 1: Personal Ledger
+### Phase 1: Personal DALVA
 
 - auth
 - accounts
@@ -510,29 +510,29 @@ The smallest complete version should include:
 
 ## Appendix: Feature Matrix
 
-| Feature | MVP | Phase 2 | Later |
-|---------|-----|---------|-------|
-| Auth | ✓ | | |
-| Onboarding | ✓ | | |
-| Accounts | ✓ | | |
-| Categories | ✓ | | |
-| Transactions | ✓ | | |
-| Transfers | ✓ | | |
-| Dashboard | ✓ | | |
-| Budgets | ✓ | | |
-| Debts | ✓ | | |
-| Savings Goals | ✓ | | |
-| Recurring | ✓ | | |
-| Sync | ✓ | | |
-| Reports | | ✓ | |
-| Import/Export | | ✓ | |
-| Notifications | | ✓ | |
-| Reconciliation | | ✓ | |
-| Budget Rollover | | ✓ | |
-| Saved Views | | ✓ | |
-| Collaboration | | | ✓ |
-| Browser Extension | | | ✓ |
-| Desktop App | | | ✓ |
-| Bank Integration | | | ✓ |
-| OCR Receipts | | | ✓ |
-| AI Categorization | | | ✓ |
+| Feature           | MVP | Phase 2 | Later |
+| ----------------- | --- | ------- | ----- |
+| Auth              | ✓   |         |       |
+| Onboarding        | ✓   |         |       |
+| Accounts          | ✓   |         |       |
+| Categories        | ✓   |         |       |
+| Transactions      | ✓   |         |       |
+| Transfers         | ✓   |         |       |
+| Dashboard         | ✓   |         |       |
+| Budgets           | ✓   |         |       |
+| Debts             | ✓   |         |       |
+| Savings Goals     | ✓   |         |       |
+| Recurring         | ✓   |         |       |
+| Sync              | ✓   |         |       |
+| Reports           |     | ✓       |       |
+| Import/Export     |     | ✓       |       |
+| Notifications     |     | ✓       |       |
+| Reconciliation    |     | ✓       |       |
+| Budget Rollover   |     | ✓       |       |
+| Saved Views       |     | ✓       |       |
+| Collaboration     |     |         | ✓     |
+| Browser Extension |     |         | ✓     |
+| Desktop App       |     |         | ✓     |
+| Bank Integration  |     |         | ✓     |
+| OCR Receipts      |     |         | ✓     |
+| AI Categorization |     |         | ✓     |
