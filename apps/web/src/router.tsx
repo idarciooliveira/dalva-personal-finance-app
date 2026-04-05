@@ -6,9 +6,17 @@ import { ConvexProvider } from "convex/react";
 import { routeTree } from "./routeTree.gen";
 
 export function getRouter() {
-  const CONVEX_URL = (import.meta as any).env.VITE_CONVEX_URL!;
+  const CONVEX_URL = (import.meta as any).env.VITE_CONVEX_URL as
+    | string
+    | undefined;
+
   if (!CONVEX_URL) {
-    console.error("Missing envar VITE_CONVEX_URL");
+    throw new Error(
+      "Missing VITE_CONVEX_URL environment variable. " +
+        "Run 'bunx convex dev' in packages/backend to create a deployment, " +
+        "then copy the URL to apps/web/.env.local:\n\n" +
+        "  VITE_CONVEX_URL=https://<your-deployment>.convex.cloud\n",
+    );
   }
 
   const convexQueryClient = new ConvexQueryClient(CONVEX_URL);
