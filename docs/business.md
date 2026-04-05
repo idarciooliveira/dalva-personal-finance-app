@@ -131,16 +131,16 @@ The **home screen and analytics layer** that brings all modules together into a 
 
 ### Requirements:
 
-- ✅ **Net Worth Snapshot:** Total assets (sum of all account balances) minus total debts (sum of remaining debt balances)
-- ✅ **Monthly Cashflow:** Total income vs. total expenses for the current month
-- ✅ **Budget Summary:** How many budgets are on track, approaching, or over
-- ✅ **Goals Progress:** Top active goals and their completion percentage
-- ✅ **Debt Paydown:** Total remaining debt and recent payments
-- ✅ **Recent Transactions:** Last 5–10 entries for quick review
-- ✅ **Reports:**
+- **Net Worth Snapshot:** Total assets (sum of all account balances) minus total debts (sum of remaining debt balances)
+- **Monthly Cashflow:** Total income vs. total expenses for the current month
+- **Budget Summary:** How many budgets are on track, approaching, or over
+- **Goals Progress:** Top active goals and their completion percentage
+- **Debt Paydown:** Total remaining debt and recent payments
+- **Recent Transactions:** Last 5–10 entries for quick review
+- **Reports:**
   - Monthly breakdown by category (bar or pie chart)
   - Income vs. expense trend over 3/6/12 months
-- ✅ **Data Source:** All user-generated — no external data pulls, no bank sync
+- **Data Source:** All user-generated — no external data pulls, no bank sync
 
 ---
 
