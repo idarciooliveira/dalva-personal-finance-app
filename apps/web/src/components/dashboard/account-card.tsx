@@ -171,7 +171,7 @@ export function AccountCardsSection({
         {/* Income & Expenses summary — 25% */}
         <div className="flex w-1/4 flex-col gap-4">
           {/* Total Income */}
-          <div className="flex flex-1 flex-col justify-center rounded-2xl border border-border bg-card p-4">
+          <div className="glass-surface flex flex-1 flex-col justify-center rounded-2xl p-4">
             <div className="flex items-center gap-2 text-muted-foreground">
               <TrendingUp className="size-4 text-emerald-500" />
               <span className="text-xs font-medium">Total Income</span>
@@ -182,7 +182,7 @@ export function AccountCardsSection({
           </div>
 
           {/* Total Expenses */}
-          <div className="flex flex-1 flex-col justify-center rounded-2xl border border-border bg-card p-4">
+          <div className="glass-surface flex flex-1 flex-col justify-center rounded-2xl p-4">
             <div className="flex items-center gap-2 text-muted-foreground">
               <TrendingDown className="size-4 text-red-500" />
               <span className="text-xs font-medium">Total Expenses</span>

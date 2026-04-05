@@ -110,7 +110,7 @@ function DashboardPage() {
         />
         <SidebarInset>
           {/* Top bar */}
-          <header className="sticky top-0 z-30 flex h-14 items-center gap-3 border-b border-border bg-background/80 px-4 backdrop-blur-md lg:px-8">
+          <header className="sticky top-0 z-30 flex h-14 items-center gap-3 border-b border-white/20 bg-background/70 px-4 backdrop-blur-xl dark:border-white/[0.08] lg:px-8">
             <SidebarTrigger />
 
             <div className="flex-1" />
@@ -123,7 +123,7 @@ function DashboardPage() {
           </header>
 
           {/* Dashboard content */}
-          <div className="flex-1 overflow-auto">
+          <div className="dashboard-glass-bg dashboard-glass flex-1 overflow-auto">
             <div className="mx-auto max-w-[1200px] px-4 py-6 lg:px-8">
               {/* Greeting */}
               <div className="mb-6">
