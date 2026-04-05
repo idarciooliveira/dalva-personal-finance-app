@@ -5,13 +5,12 @@ import { useQuery } from "@tanstack/react-query";
 import { convexQuery } from "@convex-dev/react-query";
 import { api } from "@mpf/backend/convex/_generated/api";
 import { useEffect } from "react";
-import { Plus } from "lucide-react";
 
 import { TooltipProvider } from "#/components/ui/tooltip";
 import { SidebarProvider, SidebarInset, SidebarTrigger } from "#/components/ui/sidebar";
-import { Button } from "@/components/ui/button";
 import { DashboardSkeleton } from "#/components/skeleton/dashboard-skeleton";
 import { AppSidebar } from "#/components/dashboard/app-sidebar";
+import { FloatingActionMenu } from "#/components/dashboard/floating-action-menu";
 import { AccountCardsSection, mockAccounts } from "#/components/dashboard/account-card";
 import { NetWorthCard } from "#/components/dashboard/net-worth-card";
 import { CashflowCard } from "#/components/dashboard/cashflow-card";
@@ -112,14 +111,6 @@ function DashboardPage() {
           {/* Top bar */}
           <header className="sticky top-0 z-30 flex h-14 items-center gap-3 border-b border-white/20 bg-background/70 px-4 backdrop-blur-xl dark:border-white/[0.08] lg:px-8">
             <SidebarTrigger />
-
-            <div className="flex-1" />
-
-            {/* Quick add transaction */}
-            <Button variant="accent" size="sm" className="gap-1.5">
-              <Plus className="size-4" />
-              <span className="hidden sm:inline">Add Transaction</span>
-            </Button>
           </header>
 
           {/* Dashboard content */}
@@ -178,6 +169,9 @@ function DashboardPage() {
               </div>
             </div>
           </div>
+
+          {/* Floating quick-action pill */}
+          <FloatingActionMenu />
         </SidebarInset>
       </SidebarProvider>
     </TooltipProvider>

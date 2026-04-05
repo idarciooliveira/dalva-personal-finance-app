@@ -162,16 +162,16 @@ export function AccountCardsSection({
         </div>
       </div>
 
-      <div className="flex gap-4">
-        {/* Account card — 75% */}
-        <div className="w-3/4">
+      <div className="flex flex-col gap-4 sm:flex-row">
+        {/* Account card — full width on mobile, 75% on sm+ */}
+        <div className="w-full sm:w-3/4">
           <AccountCard account={accounts[activeIndex]} />
         </div>
 
-        {/* Income & Expenses summary — 25% */}
-        <div className="flex w-1/4 flex-col gap-4">
+        {/* Income & Expenses summary — row on mobile, column on sm+ */}
+        <div className="flex w-full flex-row gap-4 sm:w-1/4 sm:flex-col">
           {/* Total Income */}
-          <div className="glass-surface flex flex-1 flex-col justify-center rounded-2xl p-4">
+          <div className="glass-surface flex flex-1 flex-col items-center justify-center rounded-2xl p-4 sm:items-start">
             <div className="flex items-center gap-2 text-muted-foreground">
               <TrendingUp className="size-4 text-emerald-500" />
               <span className="text-xs font-medium">Total Income</span>
@@ -182,7 +182,7 @@ export function AccountCardsSection({
           </div>
 
           {/* Total Expenses */}
-          <div className="glass-surface flex flex-1 flex-col justify-center rounded-2xl p-4">
+          <div className="glass-surface flex flex-1 flex-col items-center justify-center rounded-2xl p-4 sm:items-start">
             <div className="flex items-center gap-2 text-muted-foreground">
               <TrendingDown className="size-4 text-red-500" />
               <span className="text-xs font-medium">Total Expenses</span>
