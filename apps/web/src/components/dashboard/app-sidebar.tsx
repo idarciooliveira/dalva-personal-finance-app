@@ -70,17 +70,14 @@ export function AppSidebar({
       {/* Logo + user */}
       <SidebarHeader className="flex h-14 flex-row items-center gap-3 border-b border-border px-5">
         <Link to="/" className="flex items-center gap-3">
-          <img src="/logo.svg" alt="Dalva logo" className="size-8" />
-          <div>
-            <span className="font-heading text-lg font-semibold text-sidebar-foreground">
-              DALVA
-            </span>
-            {userName && (
-              <p className="text-xs text-sidebar-foreground/60 truncate max-w-35">
-                {userName}
-              </p>
-            )}
-          </div>
+          <span className="font-heading text-lg font-semibold text-sidebar-foreground">
+            DALVA
+          </span>
+          {userName && (
+            <p className="text-xs text-sidebar-foreground/60 truncate max-w-35">
+              {userName}
+            </p>
+          )}
         </Link>
       </SidebarHeader>
 

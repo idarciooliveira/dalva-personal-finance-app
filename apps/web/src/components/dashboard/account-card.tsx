@@ -82,7 +82,7 @@ export function AccountCard({ account }: AccountCardProps) {
 
       {/* Middle: Balance inside card */}
       <div className="flex items-center gap-2">
-        <p className="text-2xl font-semibold tabular-nums tracking-tight">
+        <p className="text-5xl font-semibold tabular-nums tracking-tight">
           {showBalance
             ? formatCurrency(Math.abs(account.balance), account.currency)
             : "****"}
@@ -152,9 +152,7 @@ export function AccountCardsSection({
               key={i}
               onClick={() => setActiveIndex(i)}
               className={`size-2 rounded-full transition-colors ${
-                i === activeIndex
-                  ? "bg-primary"
-                  : "bg-muted-foreground/30"
+                i === activeIndex ? "bg-primary" : "bg-muted-foreground/30"
               }`}
               aria-label={`View account ${i + 1}`}
             />
@@ -176,7 +174,7 @@ export function AccountCardsSection({
               <TrendingUp className="size-4 text-emerald-500" />
               <span className="text-xs font-medium">Total Income</span>
             </div>
-            <p className="mt-2 text-lg font-semibold tabular-nums text-foreground">
+            <p className="mt-2 text-lg  font-semibold tabular-nums text-foreground">
               {formatCurrency(income, currency)}
             </p>
           </div>
