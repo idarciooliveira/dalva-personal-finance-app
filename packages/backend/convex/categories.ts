@@ -81,7 +81,7 @@ export const listCategories = query({
     if (args.includeArchived) {
       return categories;
     }
-    return categories.filter((c) => !c.archived);
+    return categories.filter((c) => c.archived !== true);
   },
 });
 
@@ -223,7 +223,7 @@ export const createCategory = mutation({
       .take(200);
 
     const maxSort = existing.reduce(
-      (max, c) => Math.max(max, c.sortOrder),
+      (max, c) => Math.max(max, c.sortOrder ?? 0),
       -1,
     );
 

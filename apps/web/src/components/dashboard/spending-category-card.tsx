@@ -4,12 +4,12 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-} from "#/components/ui/card";
-import { ChartContainer, type ChartConfig } from "#/components/ui/chart";
+} from "@/components/ui/card";
+import { ChartContainer, type ChartConfig } from "@/components/ui/chart";
 import {
   type SpendingByCategoryData,
   formatCurrency,
-} from "#/lib/mock-dashboard-data";
+} from "@/lib/mock-dashboard-data";
 
 interface SpendingCategoryCardProps {
   data: SpendingByCategoryData;

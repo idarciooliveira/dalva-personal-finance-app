@@ -1,5 +1,4 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useCallback, useEffect, useState } from "react";
 import { Authenticated, Unauthenticated, AuthLoading } from "convex/react";
 import { useAuthActions } from "@convex-dev/auth/react";
 import {
@@ -18,6 +17,7 @@ import {
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { useDarkMode } from "@/hooks/use-dark-mode";
 
 export const Route = createFileRoute("/")({ component: LandingPage });
 
@@ -38,33 +38,11 @@ function LandingPage() {
 }
 
 /* -------------------------------------------------------------------------- */
-/*  Dark mode hook                                                            */
-/* -------------------------------------------------------------------------- */
-
-function useTheme() {
-  const [dark, setDark] = useState(false);
-
-  // Sync state with the DOM on mount (SSR-safe)
-  useEffect(() => {
-    setDark(document.documentElement.classList.contains("dark"));
-  }, []);
-
-  const toggle = useCallback(() => {
-    const next = !document.documentElement.classList.contains("dark");
-    document.documentElement.classList.toggle("dark", next);
-    localStorage.setItem("theme", next ? "dark" : "light");
-    setDark(next);
-  }, []);
-
-  return { dark, toggle };
-}
-
-/* -------------------------------------------------------------------------- */
 /*  Nav                                                                       */
 /* -------------------------------------------------------------------------- */
 
 function Nav() {
-  const { dark, toggle } = useTheme();
+  const { isDark: dark, toggle } = useDarkMode();
   const { signOut } = useAuthActions();
 
   return (
@@ -341,7 +319,7 @@ const principles = [
 function HowItWorks() {
   return (
     <section className="py-20 md:py-28">
-      <div className="mx-auto max-w-[1440px] px-6 lg:px-20">
+      <div className="mx-auto max-w-360 px-6 lg:px-20">
         <div className="mx-auto max-w-2xl text-center">
           <h2 className="font-heading text-3xl font-semibold tracking-tight md:text-4xl">
             Built on principles you can trust
@@ -396,7 +374,7 @@ function HowItWorks() {
 function Footer() {
   return (
     <footer className="border-t border-border">
-      <div className="mx-auto flex max-w-[1440px] flex-col items-center justify-between gap-4 px-6 py-8 md:flex-row lg:px-20">
+      <div className="mx-auto flex max-w-360 flex-col items-center justify-between gap-4 px-6 py-8 md:flex-row lg:px-20">
         <span className="font-heading text-sm font-semibold text-foreground">
           DALVA
         </span>

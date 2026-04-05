@@ -8,16 +8,17 @@ import {
   type AccountDraft,
   type AccountType,
 } from "@/lib/accounts";
-import { Button } from "#/components/ui/button";
-import { Input } from "#/components/ui/input";
-import { Label } from "#/components/ui/label";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "#/components/ui/select";
+} from "@/components/ui/select";
+import { StepHeader } from "./step-header";
 
 export function AccountsStep({
   accounts,
@@ -55,19 +56,11 @@ export function AccountsStep({
 
   return (
     <div className="space-y-6">
-      <div>
-        <div className="mb-4 flex justify-center">
-          <div className="inline-flex size-14 items-center justify-center rounded-2xl bg-wise-bright-green/15 text-wise-forest-green dark:text-wise-bright-green">
-            <Landmark className="size-7" />
-          </div>
-        </div>
-        <h1 className="text-center font-heading text-2xl font-semibold text-foreground">
-          Add your accounts
-        </h1>
-        <p className="mt-2 text-center text-sm text-muted-foreground">
-          Create at least one financial account to start tracking.
-        </p>
-      </div>
+      <StepHeader
+        icon={Landmark}
+        title="Add your accounts"
+        subtitle="Create at least one financial account to start tracking."
+      />
 
       <div className="space-y-4">
         {accounts.map((account, index) => (

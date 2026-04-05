@@ -9,9 +9,10 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Separator } from "@/components/ui/separator";
-import { GoogleIcon } from "@/components/icons/google-icon";
 import { AuthErrorAlert } from "@/components/auth-error-alert";
+import { AuthPageLayout } from "@/components/auth/auth-page-layout";
+import { GoogleOAuthButton } from "@/components/auth/google-oauth-button";
+import { OrDivider } from "@/components/auth/or-divider";
 import { parseConvexAuthError } from "@/lib/auth-errors";
 
 export const Route = createFileRoute("/login")({ component: LoginPage });
@@ -61,129 +62,101 @@ function LoginPage() {
         password: data.password,
         flow: "signIn",
       });
-      // Don't navigate here — the useEffect above handles it
-      // once the Convex client confirms the auth handshake.
     } catch (error) {
       setAuthError(parseConvexAuthError(error, "signIn"));
     }
   }
 
   return (
-    <div className="flex min-h-svh items-center justify-center bg-background px-6 py-12">
-      <div className="w-full max-w-105">
-        {/* Logo */}
-        <Link to="/" className="mb-10 block text-center">
-          <span className="font-heading text-2xl font-semibold text-foreground">
-            DALVA
-          </span>
-        </Link>
-
-        {/* Card */}
-        <div className="rounded-2xl border border-border bg-card p-8 shadow-sm">
-          {/* Header */}
-          <h1 className="font-heading text-2xl font-semibold text-foreground">
-            Welcome back
-          </h1>
-          <p className="mt-2 text-sm text-muted-foreground">
-            New to DALVA?{" "}
-            <Link
-              to="/register"
-              className="font-medium text-primary underline-offset-4 hover:underline dark:text-primary"
-            >
-              Sign up
-            </Link>
-          </p>
-
-          {/* Form */}
-          <form
-            onSubmit={handleSubmit(onSubmit)}
-            className="mt-8 space-y-5"
-            noValidate
+    <AuthPageLayout
+      title="Welcome back"
+      subtitle={
+        <>
+          New to DALVA?{" "}
+          <Link
+            to="/register"
+            className="font-medium text-primary underline-offset-4 hover:underline dark:text-primary"
           >
-            {/* Auth error */}
-            <AuthErrorAlert
-              message={authError}
-              onDismiss={() => setAuthError(null)}
-            />
-            {/* Email */}
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="you@example.com"
-                autoComplete="email"
-                aria-invalid={!!errors.email}
-                aria-describedby={errors.email ? "email-error" : undefined}
-                className="h-12 rounded-xl px-4"
-                {...register("email")}
-              />
-              {errors.email && (
-                <p id="email-error" className="text-sm text-destructive">
-                  {errors.email.message}
-                </p>
-              )}
-            </div>
-
-            {/* Password */}
-            <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
-              <Input
-                id="password"
-                type="password"
-                placeholder="Enter your password"
-                autoComplete="current-password"
-                aria-invalid={!!errors.password}
-                aria-describedby={
-                  errors.password ? "password-error" : undefined
-                }
-                className="h-12 rounded-xl px-4"
-                {...register("password")}
-              />
-              {errors.password && (
-                <p id="password-error" className="text-sm text-destructive">
-                  {errors.password.message}
-                </p>
-              )}
-            </div>
-
-            {/* Submit */}
-            <Button
-              type="submit"
-              variant="accent"
-              className="w-full"
-              disabled={isSubmitting}
-            >
-              {isSubmitting ? "Logging in..." : "Log in"}
-            </Button>
-          </form>
-
-          {/* Forgot password */}
-          <div className="mt-4 text-center">
-            <Link
-              to="/forgot-password"
-              className="text-sm text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
-            >
-              Forgot password?
-            </Link>
-          </div>
-
-          {/* Divider */}
-          <div className="relative my-6 flex items-center gap-4">
-            <Separator className="flex-1" />
-            <span className="text-xs font-medium text-muted-foreground">
-              or
-            </span>
-            <Separator className="flex-1" />
-          </div>
-
-          {/* Google OAuth */}
-          <Button variant="outline" className="w-full gap-3" type="button">
-            <GoogleIcon />
-            Continue with Google
-          </Button>
+            Sign up
+          </Link>
+        </>
+      }
+    >
+      {/* Form */}
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="mt-8 space-y-5"
+        noValidate
+      >
+        {/* Auth error */}
+        <AuthErrorAlert
+          message={authError}
+          onDismiss={() => setAuthError(null)}
+        />
+        {/* Email */}
+        <div className="space-y-2">
+          <Label htmlFor="email">Email</Label>
+          <Input
+            id="email"
+            type="email"
+            placeholder="you@example.com"
+            autoComplete="email"
+            aria-invalid={!!errors.email}
+            aria-describedby={errors.email ? "email-error" : undefined}
+            className="h-12 rounded-xl px-4"
+            {...register("email")}
+          />
+          {errors.email && (
+            <p id="email-error" className="text-sm text-destructive">
+              {errors.email.message}
+            </p>
+          )}
         </div>
+
+        {/* Password */}
+        <div className="space-y-2">
+          <Label htmlFor="password">Password</Label>
+          <Input
+            id="password"
+            type="password"
+            placeholder="Enter your password"
+            autoComplete="current-password"
+            aria-invalid={!!errors.password}
+            aria-describedby={errors.password ? "password-error" : undefined}
+            className="h-12 rounded-xl px-4"
+            {...register("password")}
+          />
+          {errors.password && (
+            <p id="password-error" className="text-sm text-destructive">
+              {errors.password.message}
+            </p>
+          )}
+        </div>
+
+        {/* Submit */}
+        <Button
+          type="submit"
+          variant="accent"
+          className="w-full"
+          disabled={isSubmitting}
+        >
+          {isSubmitting ? "Logging in..." : "Log in"}
+        </Button>
+      </form>
+
+      {/* Forgot password */}
+      <div className="mt-4 text-center">
+        <Link
+          to="/forgot-password"
+          className="text-sm text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
+        >
+          Forgot password?
+        </Link>
       </div>
-    </div>
+
+      {/* Divider + Google OAuth */}
+      <OrDivider />
+      <GoogleOAuthButton />
+    </AuthPageLayout>
   );
 }

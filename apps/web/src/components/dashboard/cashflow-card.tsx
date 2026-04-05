@@ -5,18 +5,18 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-} from "#/components/ui/card";
+} from "@/components/ui/card";
 import {
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
   type ChartConfig,
-} from "#/components/ui/chart";
+} from "@/components/ui/chart";
 import {
   type CashflowData,
   formatCurrency,
   formatCurrencyCompact,
-} from "#/lib/mock-dashboard-data";
+} from "@/lib/mock-dashboard-data";
 
 const chartConfig = {
   income: {

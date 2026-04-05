@@ -42,11 +42,11 @@ export default defineSchema({
     userId: v.string(),
     name: v.string(),
     type: v.union(v.literal("income"), v.literal("expense")),
-    icon: v.string(), // Lucide icon name (e.g. "utensils", "car")
-    color: v.string(), // Hex color (e.g. "#9FE870")
+    icon: v.optional(v.string()), // Lucide icon name (e.g. "utensils", "car")
+    color: v.optional(v.string()), // Hex color (e.g. "#9FE870")
     isDefault: v.boolean(), // true = seeded by the system
-    archived: v.boolean(), // soft-delete: hidden from pickers but preserved on historical records
-    sortOrder: v.number(), // user-defined ordering within type group
+    archived: v.optional(v.boolean()), // soft-delete: hidden from pickers but preserved on historical records
+    sortOrder: v.optional(v.number()), // user-defined ordering within type group
   })
     .index("by_userId", ["userId"])
     .index("by_userId_and_type", ["userId", "type"]),

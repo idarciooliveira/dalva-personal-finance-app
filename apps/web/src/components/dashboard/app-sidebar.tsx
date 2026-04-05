@@ -25,7 +25,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarSeparator,
-} from "#/components/ui/sidebar";
+} from "@/components/ui/sidebar";
 
 /* -------------------------------------------------------------------------- */
 /*  Navigation items                                                          */

@@ -1,7 +1,8 @@
 import { Wallet, ArrowRight, ArrowLeft } from "lucide-react";
-import { Button } from "#/components/ui/button";
-import { Checkbox } from "#/components/ui/checkbox";
-import { getCategoryIcon } from "#/lib/category-icons";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { getCategoryIcon } from "@/lib/category-icons";
+import { StepHeader } from "./step-header";
 
 interface DefaultCategory {
   name: string;
@@ -50,19 +51,11 @@ export function CategoriesStep({
 
   return (
     <div className="space-y-6">
-      <div>
-        <div className="mb-4 flex justify-center">
-          <div className="inline-flex size-14 items-center justify-center rounded-2xl bg-wise-bright-green/15 text-wise-forest-green dark:text-wise-bright-green">
-            <Wallet className="size-7" />
-          </div>
-        </div>
-        <h1 className="text-center font-heading text-2xl font-semibold text-foreground">
-          Choose your categories
-        </h1>
-        <p className="mt-2 text-center text-sm text-muted-foreground">
-          We'll start you with these defaults. You can customize later.
-        </p>
-      </div>
+      <StepHeader
+        icon={Wallet}
+        title="Choose your categories"
+        subtitle="We'll start you with these defaults. You can customize later."
+      />
 
       {/* Select all / deselect all */}
       <div className="flex justify-end">
@@ -152,7 +145,7 @@ function CategoryCheckbox({
   const Icon = getCategoryIcon(icon);
 
   return (
-    <label className="flex cursor-pointer items-center gap-2.5 rounded-lg border border-border px-3 py-2.5 transition-colors hover:bg-muted/50 has-[[data-state=checked]]:border-primary/30 has-[[data-state=checked]]:bg-primary/5">
+    <label className="flex cursor-pointer items-center gap-2.5 rounded-lg border border-border px-3 py-2.5 transition-colors hover:bg-muted/50 has-data-[state=checked]:border-primary/30 has-data-[state=checked]:bg-primary/5">
       <Checkbox checked={checked} onCheckedChange={onToggle} />
       <div
         className="flex size-6 items-center justify-center rounded-md"

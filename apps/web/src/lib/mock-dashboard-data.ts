@@ -107,6 +107,19 @@ export interface DebtPaydownData {
   currency: string;
 }
 
+export interface AccountCardData {
+  name: string;
+  type: string;
+  balance: number; // cents
+  currency: string;
+  cardNumber: string; // last 4 digits
+  holderName: string;
+  theme: {
+    from: string;
+    to: string;
+  };
+}
+
 // ---------------------------------------------------------------------------
 // Mock data
 // ---------------------------------------------------------------------------
@@ -320,50 +333,40 @@ export const mockDebtPaydown: DebtPaydownData = {
   currency: "USD",
 };
 
+export const mockAccounts: AccountCardData[] = [
+  {
+    name: "Main Account",
+    type: "bank",
+    balance: 2_485_000,
+    currency: "USD",
+    cardNumber: "4821",
+    holderName: "DALVA USER",
+    theme: { from: "#163300", to: "#2f5711" },
+  },
+  {
+    name: "Savings",
+    type: "savings",
+    balance: 650_000,
+    currency: "USD",
+    cardNumber: "7392",
+    holderName: "DALVA USER",
+    theme: { from: "#003B8E", to: "#0066CC" },
+  },
+  {
+    name: "Credit Card",
+    type: "credit_card",
+    balance: -200_000,
+    currency: "USD",
+    cardNumber: "1158",
+    holderName: "DALVA USER",
+    theme: { from: "#8B6914", to: "#D4A843" },
+  },
+];
+
 // ---------------------------------------------------------------------------
 // Formatting helpers
 // ---------------------------------------------------------------------------
 
-/**
- * Format cents to a currency string.
- * E.g. 248500 → "$2,485.00"
- */
-export function formatCurrency(
-  cents: number,
-  currency: string = "USD",
-): string {
-  const value = cents / 100;
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency,
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  }).format(value);
-}
-
-/**
- * Format cents without the currency symbol for chart axis labels.
- * E.g. 500000 → "5,000"
- */
-export function formatCurrencyCompact(
-  cents: number,
-  currency: string = "USD",
-): string {
-  const value = cents / 100;
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency,
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
-    notation: "compact",
-  }).format(value);
-}
-
-/**
- * Format a date string (ISO) to a short readable format.
- * E.g. "2026-04-05" → "Apr 5"
- */
-export function formatDate(dateStr: string): string {
-  const date = new Date(dateStr + "T00:00:00");
-  return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
-}
+// Re-exported from lib/format.ts for backward compatibility.
+// Prefer importing directly from "@/lib/format" in new code.
+export { formatCurrency, formatCurrencyCompact, formatDate } from "./format";

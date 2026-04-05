@@ -4,11 +4,12 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-} from "#/components/ui/card";
+} from "@/components/ui/card";
+import { ProgressBar } from "@/components/ui/progress-bar";
 import {
   type BudgetSummaryData,
   formatCurrency,
-} from "#/lib/mock-dashboard-data";
+} from "@/lib/mock-dashboard-data";
 
 interface BudgetSummaryCardProps {
   data: BudgetSummaryData;
@@ -86,12 +87,7 @@ export function BudgetSummaryCard({ data }: BudgetSummaryCardProps) {
                     {formatCurrency(budget.limit, data.currency)}
                   </span>
                 </div>
-                <div className="h-2 w-full overflow-hidden rounded-full bg-secondary">
-                  <div
-                    className={`h-full rounded-full transition-all ${config.barColor}`}
-                    style={{ width: `${percent}%` }}
-                  />
-                </div>
+                <ProgressBar percent={percent} barColor={config.barColor} />
               </div>
             );
           })}

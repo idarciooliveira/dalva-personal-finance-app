@@ -4,11 +4,12 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-} from "#/components/ui/card";
+} from "@/components/ui/card";
+import { ProgressBar } from "@/components/ui/progress-bar";
 import {
   type DebtPaydownData,
   formatCurrency,
-} from "#/lib/mock-dashboard-data";
+} from "@/lib/mock-dashboard-data";
 
 interface DebtPaydownCardProps {
   data: DebtPaydownData;
@@ -40,12 +41,7 @@ export function DebtPaydownCard({ data }: DebtPaydownCardProps) {
           <p className="mt-0.5 text-xs text-muted-foreground">
             remaining of {formatCurrency(data.totalOriginal, data.currency)}
           </p>
-          <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-secondary">
-            <div
-              className="h-full rounded-full bg-wise-positive transition-all"
-              style={{ width: `${overallPercent}%` }}
-            />
-          </div>
+          <ProgressBar percent={overallPercent} barColor="bg-wise-positive" className="mt-2" />
         </div>
 
         {/* Individual debts */}

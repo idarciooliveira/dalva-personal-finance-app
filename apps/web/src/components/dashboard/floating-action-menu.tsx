@@ -1,5 +1,5 @@
 import { TrendingUp, TrendingDown, ArrowLeftRight } from "lucide-react";
-import { cn } from "#/lib/utils";
+import { cn } from "@/lib/utils";
 
 /* -------------------------------------------------------------------------- */
 /*  Floating action menu -- liquid glass pill                                  */

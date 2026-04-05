@@ -1,53 +1,7 @@
 import { Wifi, Eye, EyeOff, TrendingUp, TrendingDown } from "lucide-react";
 import { useState } from "react";
-import { formatCurrency } from "#/lib/mock-dashboard-data";
-
-/* -------------------------------------------------------------------------- */
-/*  Mock account data                                                         */
-/* -------------------------------------------------------------------------- */
-
-export interface AccountCardData {
-  name: string;
-  type: string;
-  balance: number; // cents
-  currency: string;
-  cardNumber: string; // last 4 digits
-  holderName: string;
-  theme: {
-    from: string;
-    to: string;
-  };
-}
-
-export const mockAccounts: AccountCardData[] = [
-  {
-    name: "Main Account",
-    type: "bank",
-    balance: 2_485_000,
-    currency: "USD",
-    cardNumber: "4821",
-    holderName: "DALVA USER",
-    theme: { from: "#163300", to: "#2f5711" },
-  },
-  {
-    name: "Savings",
-    type: "savings",
-    balance: 650_000,
-    currency: "USD",
-    cardNumber: "7392",
-    holderName: "DALVA USER",
-    theme: { from: "#003B8E", to: "#0066CC" },
-  },
-  {
-    name: "Credit Card",
-    type: "credit_card",
-    balance: -200_000,
-    currency: "USD",
-    cardNumber: "1158",
-    holderName: "DALVA USER",
-    theme: { from: "#8B6914", to: "#D4A843" },
-  },
-];
+import { formatCurrency } from "@/lib/format";
+import { type AccountCardData } from "@/lib/mock-dashboard-data";
 
 /* -------------------------------------------------------------------------- */
 /*  Account card component (bank card visual)                                 */

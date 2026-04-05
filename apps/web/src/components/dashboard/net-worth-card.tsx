@@ -4,8 +4,8 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-} from "#/components/ui/card";
-import { type NetWorthData, formatCurrency } from "#/lib/mock-dashboard-data";
+} from "@/components/ui/card";
+import { type NetWorthData, formatCurrency } from "@/lib/mock-dashboard-data";
 
 interface NetWorthCardProps {
   data: NetWorthData;

@@ -1,10 +1,10 @@
 import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
-import { useConvexAuth } from "convex/react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useConvexMutation, convexQuery } from "@convex-dev/react-query";
 import { api } from "@mpf/backend/convex/_generated/api";
 import { useEffect, useState } from "react";
 
+import { useAuthGuard } from "@/hooks/use-auth-guard";
 import { createAccountDraft, type AccountDraft } from "@/lib/accounts";
 import { StepIndicator } from "@/components/onboarding/step-indicator";
 import { CurrencyStep } from "@/components/onboarding/currency-step";
@@ -23,35 +23,9 @@ const TOTAL_STEPS = 3;
 /* -------------------------------------------------------------------------- */
 
 function OnboardingPage() {
-  const { isLoading, isAuthenticated } = useConvexAuth();
-  const router = useRouter();
-  const { data: profile, isLoading: profileLoading } = useQuery(
-    convexQuery(api.userProfiles.getProfile, {}),
-  );
+  const auth = useAuthGuard({ redirectIfOnboarded: true });
 
-  // Redirect to login if not authenticated
-  useEffect(() => {
-    if (!isLoading && !isAuthenticated) {
-      router.navigate({ to: "/login" });
-    }
-  }, [isLoading, isAuthenticated, router]);
-
-  // Redirect to dashboard if onboarding is already completed
-  useEffect(() => {
-    if (profile?.onboardingCompleted) {
-      router.navigate({ to: "/dashboard" });
-    }
-  }, [profile, router]);
-
-  if (isLoading || profileLoading) {
-    return <OnboardingSkeleton />;
-  }
-
-  if (!isAuthenticated) {
-    return <OnboardingSkeleton />;
-  }
-
-  if (profile?.onboardingCompleted) {
+  if (auth.status !== "ready") {
     return <OnboardingSkeleton />;
   }
 

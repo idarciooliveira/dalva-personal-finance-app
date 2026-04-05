@@ -9,9 +9,10 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Separator } from "@/components/ui/separator";
-import { GoogleIcon } from "@/components/icons/google-icon";
 import { AuthErrorAlert } from "@/components/auth-error-alert";
+import { AuthPageLayout } from "@/components/auth/auth-page-layout";
+import { GoogleOAuthButton } from "@/components/auth/google-oauth-button";
+import { OrDivider } from "@/components/auth/or-divider";
 import { parseConvexAuthError } from "@/lib/auth-errors";
 
 export const Route = createFileRoute("/register")({
@@ -41,8 +42,6 @@ function RegisterPage() {
   const [authError, setAuthError] = useState<string | null>(null);
 
   // Navigate to onboarding reactively once the auth handshake completes.
-  // New users need to complete onboarding before reaching the dashboard.
-  // Already-authenticated users visiting /register are also redirected.
   useEffect(() => {
     if (isAuthenticated) {
       router.navigate({ to: "/onboarding" });
@@ -66,158 +65,130 @@ function RegisterPage() {
         password: data.password,
         flow: "signUp",
       });
-      // Don't navigate here — the useEffect above handles it
-      // once the Convex client confirms the auth handshake.
     } catch (error) {
       setAuthError(parseConvexAuthError(error, "signUp"));
     }
   }
 
   return (
-    <div className="flex min-h-svh items-center justify-center bg-background px-6 py-12">
-      <div className="w-full max-w-105">
-        {/* Logo */}
-        <Link to="/" className="mb-10 block text-center">
-          <span className="font-heading text-2xl font-semibold text-foreground">
-            DALVA
-          </span>
-        </Link>
-
-        {/* Card */}
-        <div className="rounded-2xl border border-border bg-card p-8 shadow-sm">
-          {/* Header */}
-          <h1 className="font-heading text-2xl font-semibold text-foreground">
-            Create your account
-          </h1>
-          <p className="mt-2 text-sm text-muted-foreground">
-            Already have an account?{" "}
-            <Link
-              to="/login"
-              className="font-medium text-primary underline-offset-4 hover:underline dark:text-primary"
-            >
-              Log in
-            </Link>
-          </p>
-
-          {/* Form */}
-          <form
-            onSubmit={handleSubmit(onSubmit)}
-            className="mt-8 space-y-5"
-            noValidate
+    <AuthPageLayout
+      title="Create your account"
+      subtitle={
+        <>
+          Already have an account?{" "}
+          <Link
+            to="/login"
+            className="font-medium text-primary underline-offset-4 hover:underline dark:text-primary"
           >
-            {/* Auth error */}
-            <AuthErrorAlert
-              message={authError}
-              onDismiss={() => setAuthError(null)}
-            />
-            {/* Name */}
-            <div className="space-y-2">
-              <Label htmlFor="name">Name</Label>
-              <Input
-                id="name"
-                type="text"
-                placeholder="Your full name"
-                autoComplete="name"
-                aria-invalid={!!errors.name}
-                aria-describedby={errors.name ? "name-error" : undefined}
-                className="h-12 rounded-xl px-4"
-                {...register("name")}
-              />
-              {errors.name && (
-                <p id="name-error" className="text-sm text-destructive">
-                  {errors.name.message}
-                </p>
-              )}
-            </div>
-
-            {/* Email */}
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="you@example.com"
-                autoComplete="email"
-                aria-invalid={!!errors.email}
-                aria-describedby={errors.email ? "email-error" : undefined}
-                className="h-12 rounded-xl px-4"
-                {...register("email")}
-              />
-              {errors.email && (
-                <p id="email-error" className="text-sm text-destructive">
-                  {errors.email.message}
-                </p>
-              )}
-            </div>
-
-            {/* Password */}
-            <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
-              <Input
-                id="password"
-                type="password"
-                placeholder="At least 8 characters"
-                autoComplete="new-password"
-                aria-invalid={!!errors.password}
-                aria-describedby={
-                  errors.password ? "password-error" : undefined
-                }
-                className="h-12 rounded-xl px-4"
-                {...register("password")}
-              />
-              {errors.password && (
-                <p id="password-error" className="text-sm text-destructive">
-                  {errors.password.message}
-                </p>
-              )}
-            </div>
-
-            {/* Submit */}
-            <Button
-              type="submit"
-              variant="accent"
-              className="w-full"
-              disabled={isSubmitting}
-            >
-              {isSubmitting ? "Creating account..." : "Create account"}
-            </Button>
-          </form>
-
-          {/* Divider */}
-          <div className="relative my-6 flex items-center gap-4">
-            <Separator className="flex-1" />
-            <span className="text-xs font-medium text-muted-foreground">
-              or
-            </span>
-            <Separator className="flex-1" />
-          </div>
-
-          {/* Google OAuth */}
-          <Button variant="outline" className="w-full gap-3" type="button">
-            <GoogleIcon />
-            Continue with Google
-          </Button>
-
-          {/* Legal */}
-          <p className="mt-6 text-center text-xs leading-relaxed text-muted-foreground">
-            By creating an account, you agree to our{" "}
-            <a
-              href="#"
-              className="underline underline-offset-4 hover:text-foreground"
-            >
-              Terms of Service
-            </a>{" "}
-            and{" "}
-            <a
-              href="#"
-              className="underline underline-offset-4 hover:text-foreground"
-            >
-              Privacy Policy
-            </a>
-            .
-          </p>
+            Log in
+          </Link>
+        </>
+      }
+      footer={
+        <p className="mt-6 text-center text-xs leading-relaxed text-muted-foreground">
+          By creating an account, you agree to our{" "}
+          <a
+            href="#"
+            className="underline underline-offset-4 hover:text-foreground"
+          >
+            Terms of Service
+          </a>{" "}
+          and{" "}
+          <a
+            href="#"
+            className="underline underline-offset-4 hover:text-foreground"
+          >
+            Privacy Policy
+          </a>
+          .
+        </p>
+      }
+    >
+      {/* Form */}
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="mt-8 space-y-5"
+        noValidate
+      >
+        {/* Auth error */}
+        <AuthErrorAlert
+          message={authError}
+          onDismiss={() => setAuthError(null)}
+        />
+        {/* Name */}
+        <div className="space-y-2">
+          <Label htmlFor="name">Name</Label>
+          <Input
+            id="name"
+            type="text"
+            placeholder="Your full name"
+            autoComplete="name"
+            aria-invalid={!!errors.name}
+            aria-describedby={errors.name ? "name-error" : undefined}
+            className="h-12 rounded-xl px-4"
+            {...register("name")}
+          />
+          {errors.name && (
+            <p id="name-error" className="text-sm text-destructive">
+              {errors.name.message}
+            </p>
+          )}
         </div>
-      </div>
-    </div>
+
+        {/* Email */}
+        <div className="space-y-2">
+          <Label htmlFor="email">Email</Label>
+          <Input
+            id="email"
+            type="email"
+            placeholder="you@example.com"
+            autoComplete="email"
+            aria-invalid={!!errors.email}
+            aria-describedby={errors.email ? "email-error" : undefined}
+            className="h-12 rounded-xl px-4"
+            {...register("email")}
+          />
+          {errors.email && (
+            <p id="email-error" className="text-sm text-destructive">
+              {errors.email.message}
+            </p>
+          )}
+        </div>
+
+        {/* Password */}
+        <div className="space-y-2">
+          <Label htmlFor="password">Password</Label>
+          <Input
+            id="password"
+            type="password"
+            placeholder="At least 8 characters"
+            autoComplete="new-password"
+            aria-invalid={!!errors.password}
+            aria-describedby={errors.password ? "password-error" : undefined}
+            className="h-12 rounded-xl px-4"
+            {...register("password")}
+          />
+          {errors.password && (
+            <p id="password-error" className="text-sm text-destructive">
+              {errors.password.message}
+            </p>
+          )}
+        </div>
+
+        {/* Submit */}
+        <Button
+          type="submit"
+          variant="accent"
+          className="w-full"
+          disabled={isSubmitting}
+        >
+          {isSubmitting ? "Creating account..." : "Create account"}
+        </Button>
+      </form>
+
+      {/* Divider + Google OAuth */}
+      <OrDivider />
+      <GoogleOAuthButton />
+    </AuthPageLayout>
   );
 }

@@ -4,11 +4,12 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-} from "#/components/ui/card";
+} from "@/components/ui/card";
+import { ProgressBar } from "@/components/ui/progress-bar";
 import {
   type GoalsProgressData,
   formatCurrency,
-} from "#/lib/mock-dashboard-data";
+} from "@/lib/mock-dashboard-data";
 
 interface GoalsProgressCardProps {
   data: GoalsProgressData;
@@ -57,12 +58,7 @@ export function GoalsProgressCard({ data }: GoalsProgressCardProps) {
                   {goal.percentComplete}%
                 </span>
               </div>
-              <div className="h-2 w-full overflow-hidden rounded-full bg-secondary">
-                <div
-                  className={`h-full rounded-full transition-all ${progressColor}`}
-                  style={{ width: `${goal.percentComplete}%` }}
-                />
-              </div>
+              <ProgressBar percent={goal.percentComplete} barColor={progressColor} />
               <div className="flex justify-between text-xs text-muted-foreground">
                 <span>
                   {formatCurrency(goal.currentAmount, data.currency)} saved

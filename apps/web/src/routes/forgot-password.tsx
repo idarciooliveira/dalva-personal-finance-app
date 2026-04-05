@@ -7,6 +7,7 @@ import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { AuthPageLayout } from "@/components/auth/auth-page-layout";
 
 export const Route = createFileRoute("/forgot-password")({
   component: ForgotPasswordPage,
@@ -41,75 +42,57 @@ function ForgotPasswordPage() {
   }
 
   return (
-    <div className="flex min-h-svh items-center justify-center bg-background px-6 py-12">
-      <div className="w-full max-w-105">
-        {/* Logo */}
-        <Link to="/" className="mb-10 block text-center">
-          <span className="font-heading text-2xl font-semibold text-foreground">
-            DALVA
-          </span>
-        </Link>
-
-        {/* Card */}
-        <div className="rounded-2xl border border-border bg-card p-8 shadow-sm">
-          {/* Header */}
-          <h1 className="font-heading text-2xl font-semibold text-foreground">
-            Reset your password
-          </h1>
-          <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-            Enter the email associated with your account and we'll send you a
-            reset link.
-          </p>
-
-          {/* Form */}
-          <form
-            onSubmit={handleSubmit(onSubmit)}
-            className="mt-8 space-y-5"
-            noValidate
-          >
-            {/* Email */}
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="you@example.com"
-                autoComplete="email"
-                aria-invalid={!!errors.email}
-                aria-describedby={errors.email ? "email-error" : undefined}
-                className="h-12 rounded-xl px-4"
-                {...register("email")}
-              />
-              {errors.email && (
-                <p id="email-error" className="text-sm text-destructive">
-                  {errors.email.message}
-                </p>
-              )}
-            </div>
-
-            {/* Submit */}
-            <Button
-              type="submit"
-              variant="accent"
-              className="w-full"
-              disabled={isSubmitting}
-            >
-              {isSubmitting ? "Sending..." : "Send reset link"}
-            </Button>
-          </form>
-
-          {/* Back to login */}
-          <div className="mt-6 text-center">
-            <Link
-              to="/login"
-              className="inline-flex items-center gap-2 text-sm text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
-            >
-              <ArrowLeft className="size-3.5" />
-              Back to login
-            </Link>
-          </div>
+    <AuthPageLayout
+      title="Reset your password"
+      subtitle="Enter the email associated with your account and we'll send you a reset link."
+    >
+      {/* Form */}
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="mt-8 space-y-5"
+        noValidate
+      >
+        {/* Email */}
+        <div className="space-y-2">
+          <Label htmlFor="email">Email</Label>
+          <Input
+            id="email"
+            type="email"
+            placeholder="you@example.com"
+            autoComplete="email"
+            aria-invalid={!!errors.email}
+            aria-describedby={errors.email ? "email-error" : undefined}
+            className="h-12 rounded-xl px-4"
+            {...register("email")}
+          />
+          {errors.email && (
+            <p id="email-error" className="text-sm text-destructive">
+              {errors.email.message}
+            </p>
+          )}
         </div>
+
+        {/* Submit */}
+        <Button
+          type="submit"
+          variant="accent"
+          className="w-full"
+          disabled={isSubmitting}
+        >
+          {isSubmitting ? "Sending..." : "Send reset link"}
+        </Button>
+      </form>
+
+      {/* Back to login */}
+      <div className="mt-6 text-center">
+        <Link
+          to="/login"
+          className="inline-flex items-center gap-2 text-sm text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
+        >
+          <ArrowLeft className="size-3.5" />
+          Back to login
+        </Link>
       </div>
-    </div>
+    </AuthPageLayout>
   );
 }
