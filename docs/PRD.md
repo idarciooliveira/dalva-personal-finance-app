@@ -360,6 +360,16 @@ The product must:
 - present dashboards in plain, useful language
 - preserve trust through clear balances and transaction history
 
+### Design System
+
+The UI follows a **Wise-inspired design system** built on shadcn/ui + Tailwind CSS v4. See [Design System](design-system.md) for the full specification, including:
+
+- **Typography:** Inter (body/UI) with Wise Sans placeholder (display headlines)
+- **Colors:** Forest Green + Bright Green brand palette mapped to semantic tokens
+- **Spacing:** 8px grid aligned with Wise's foundational spacing scale
+- **Radius:** Bold, generous border radii (10-60px scale)
+- **Components:** shadcn/ui `radix-nova` style with Wise-aligned sizing
+
 ### Key UX Flows
 
 - sign up and create first account

@@ -1,4 +1,11 @@
-@import url("https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Manrope:wght@400;500;600;700;800&display=swap");
+/* ==========================================================================
+   Wise-Inspired Design System
+   Based on: https://wise.design/foundations
+   Font: Inter (body/UI) + Wise Sans placeholder (display)
+   Colors: Wise brand palette mapped to shadcn semantic tokens
+   ========================================================================== */
+
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap");
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
@@ -6,12 +13,58 @@
 @custom-variant dark (&:is(.dark *));
 @plugin "@tailwindcss/typography";
 
+/* --------------------------------------------------------------------------
+   Theme tokens (static)
+   -------------------------------------------------------------------------- */
 @theme {
-  --font-sans: "Manrope", ui-sans-serif, system-ui, sans-serif;
+  /* Typography */
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Wise Sans", ui-sans-serif, system-ui, sans-serif;
+
+  /* Wise extended brand palette -- use as: bg-wise-bright-green, text-wise-forest-green, etc. */
+  --color-wise-bright-green: #9fe870;
+  --color-wise-forest-green: #163300;
+  --color-wise-bright-orange: #ffc091;
+  --color-wise-bright-yellow: #ffeb69;
+  --color-wise-bright-blue: #a0e1e1;
+  --color-wise-bright-pink: #ffd7ef;
+  --color-wise-dark-purple: #260a2f;
+  --color-wise-dark-gold: #3a341c;
+  --color-wise-dark-charcoal: #21231d;
+  --color-wise-dark-maroon: #320707;
+  --color-wise-positive: #2f5711;
+  --color-wise-warning: #edc843;
+  --color-wise-negative: #a8200d;
+
+  /* Semantic spacing tokens (Wise foundation: 8px grid) */
+  --spacing-between-text: 0.5rem;        /* 8px  -- size-8  */
+  --spacing-between-chips: 0.5rem;       /* 8px  -- size-8  */
+  --spacing-between-cards: 0.75rem;      /* 12px -- size-12 */
+  --spacing-component-default: 1rem;     /* 16px -- size-16 */
+  --spacing-text-to-component: 1rem;     /* 16px -- size-16 */
+  --spacing-screen-mobile: 1.5rem;       /* 24px -- size-24 */
+  --spacing-content-to-button: 1.5rem;   /* 24px -- size-24 */
+  --spacing-between-sections: 2rem;      /* 32px -- size-32 */
+
+  /* Component size tokens (Wise foundation) */
+  --size-icon: 1.5rem;      /* 24px */
+  --size-avatar-sm: 1.5rem; /* 24px */
+  --size-avatar-md: 2.5rem; /* 40px */
+  --size-avatar-lg: 3rem;   /* 48px */
+  --size-avatar-xl: 3.5rem; /* 56px */
+  --size-avatar-2xl: 4.5rem;/* 72px */
+  --size-button-sm: 2rem;   /* 32px */
+  --size-button-md: 3rem;   /* 48px */
+  --size-button-lg: 3.5rem; /* 56px */
 }
 
+/* --------------------------------------------------------------------------
+   Theme tokens (inline -- reference CSS custom properties)
+   -------------------------------------------------------------------------- */
 @theme inline {
   --font-heading: var(--font-sans);
+
+  /* Sidebar colors */
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -20,11 +73,15 @@
   --color-sidebar-primary: var(--sidebar-primary);
   --color-sidebar-foreground: var(--sidebar-foreground);
   --color-sidebar: var(--sidebar);
+
+  /* Chart colors */
   --color-chart-5: var(--chart-5);
   --color-chart-4: var(--chart-4);
   --color-chart-3: var(--chart-3);
   --color-chart-2: var(--chart-2);
   --color-chart-1: var(--chart-1);
+
+  /* Core semantic colors */
   --color-ring: var(--ring);
   --color-input: var(--input);
   --color-border: var(--border);
@@ -43,90 +100,83 @@
   --color-card: var(--card);
   --color-foreground: var(--foreground);
   --color-background: var(--background);
-  --radius-sm: calc(var(--radius) * 0.6);
-  --radius-md: calc(var(--radius) * 0.8);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) * 1.4);
-  --radius-2xl: calc(var(--radius) * 1.8);
-  --radius-3xl: calc(var(--radius) * 2.2);
-  --radius-4xl: calc(var(--radius) * 2.6);
+
+  /* Radius scale (Wise: 10/16/20/30/40/60 desktop) */
+  --radius-sm: calc(var(--radius) * 0.5);   /* 10px */
+  --radius-md: calc(var(--radius) * 0.8);   /* 16px */
+  --radius-lg: var(--radius);               /* 20px */
+  --radius-xl: calc(var(--radius) * 1.5);   /* 30px */
+  --radius-2xl: calc(var(--radius) * 2);    /* 40px */
+  --radius-3xl: calc(var(--radius) * 3);    /* 60px */
 }
 
+/* --------------------------------------------------------------------------
+   Light theme (default) -- Wise product colors
+   Ref: https://wise.design/foundations/colour#product-colours
+   -------------------------------------------------------------------------- */
 :root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --radius: 0.625rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  /* Surfaces */
+  --background: #ffffff;                    /* Background Screen */
+  --foreground: #0e0f0c;                    /* Content Primary */
+  --card: #ffffff;                          /* Background Elevated */
+  --card-foreground: #0e0f0c;              /* Content Primary */
+  --popover: #ffffff;                       /* Background Elevated */
+  --popover-foreground: #0e0f0c;           /* Content Primary */
+
+  /* Primary: Forest Green (interactive primary) */
+  --primary: #163300;
+  --primary-foreground: #9fe870;            /* Bright Green on Forest Green */
+
+  /* Secondary: Neutral background with green tint */
+  --secondary: #16330014;                   /* Background Neutral (8% Forest Green) */
+  --secondary-foreground: #0e0f0c;         /* Content Primary */
+
+  /* Muted */
+  --muted: #16330014;                       /* Background Neutral */
+  --muted-foreground: #454745;             /* Content Secondary */
+
+  /* Accent: Bright Green */
+  --accent: #9fe870;                        /* Interactive Accent */
+  --accent-foreground: #163300;            /* Interactive Control (Forest Green) */
+
+  /* Destructive: Sentiment Negative */
+  --destructive: #a8200d;
+
+  /* Borders & inputs */
+  --border: #0e0f0c1f;                     /* Border Neutral (12% opacity) */
+  --input: #868685;                         /* Interactive Secondary */
+  --ring: #163300;                          /* Interactive Primary (Forest Green) */
+
+  /* Chart colors -- mapped to Wise brand palette */
+  --chart-1: #9fe870;                       /* Bright Green */
+  --chart-2: #a0e1e1;                       /* Bright Blue */
+  --chart-3: #ffc091;                       /* Bright Orange */
+  --chart-4: #ffeb69;                       /* Bright Yellow */
+  --chart-5: #ffd7ef;                       /* Bright Pink */
+
+  /* Radius base: 20px (Wise radius-medium desktop) */
+  --radius: 1.25rem;
+
+  /* Sidebar */
+  --sidebar: #ffffff;
+  --sidebar-foreground: #0e0f0c;
+  --sidebar-primary: #163300;               /* Forest Green */
+  --sidebar-primary-foreground: #9fe870;    /* Bright Green */
+  --sidebar-accent: #16330014;              /* Background Neutral */
+  --sidebar-accent-foreground: #0e0f0c;
+  --sidebar-border: #0e0f0c1f;
+  --sidebar-ring: #163300;
 }
 
-.dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
-}
-
+/* --------------------------------------------------------------------------
+   Base layer
+   -------------------------------------------------------------------------- */
 @layer base {
   * {
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground antialiased;
   }
   html {
     @apply font-sans;
