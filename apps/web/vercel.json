@@ -1,0 +1,7 @@
+{
+  "buildCommand": "cd ../.. && bun run build:web",
+  "outputDirectory": "dist/client",
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/_shell.html" }
+  ]
+}
