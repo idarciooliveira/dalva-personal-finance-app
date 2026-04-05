@@ -81,7 +81,7 @@ function CategoriesContent() {
   return (
     <>
       {/* Header */}
-      <div className="mb-6 flex items-center justify-between">
+      <div className="mb-6">
         <div>
           <h2 className="font-heading text-2xl font-semibold text-foreground">
             Categories
@@ -90,7 +90,7 @@ function CategoriesContent() {
             Organize your transactions with custom categories and subcategories.
           </p>
         </div>
-        <label className="flex items-center gap-2 text-sm text-muted-foreground">
+        <label className="mt-3 inline-flex items-center gap-2 text-sm text-muted-foreground whitespace-nowrap cursor-pointer">
           <input
             type="checkbox"
             checked={showArchived}

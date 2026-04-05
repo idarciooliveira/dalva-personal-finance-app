@@ -59,34 +59,35 @@ function AccountsContent() {
   return (
     <>
       {/* Header */}
-      <div className="mb-6 flex items-center justify-between">
-        <div>
-          <h2 className="font-heading text-2xl font-semibold text-foreground">
-            Accounts
-          </h2>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Manage your financial accounts, balances, and settings.
-          </p>
-        </div>
-        <div className="flex items-center gap-4">
-          <label className="flex items-center gap-2 text-sm text-muted-foreground">
-            <input
-              type="checkbox"
-              checked={showArchived}
-              onChange={(e) => setShowArchived(e.target.checked)}
-              className="size-4 rounded border-border accent-primary"
-            />
-            Show archived
-          </label>
+      <div className="mb-6">
+        <div className="flex items-start justify-between gap-4">
+          <div className="min-w-0">
+            <h2 className="font-heading text-2xl font-semibold text-foreground">
+              Accounts
+            </h2>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Manage your financial accounts, balances, and settings.
+            </p>
+          </div>
           <Button
             variant="accent"
             size="sm"
+            className="shrink-0"
             onClick={() => setCreateDialogOpen(true)}
           >
             <Plus className="mr-1.5 size-4" />
             Add account
           </Button>
         </div>
+        <label className="mt-3 inline-flex items-center gap-2 text-sm text-muted-foreground whitespace-nowrap cursor-pointer">
+          <input
+            type="checkbox"
+            checked={showArchived}
+            onChange={(e) => setShowArchived(e.target.checked)}
+            className="size-4 rounded border-border accent-primary"
+          />
+          Show archived
+        </label>
       </div>
 
       {/* List */}
