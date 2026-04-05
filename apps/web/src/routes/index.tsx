@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useCallback, useEffect, useState } from "react";
 import {
   Wallet,
@@ -78,9 +78,16 @@ function Nav() {
           >
             {dark ? <Sun className="size-4" /> : <Moon className="size-4" />}
           </Button>
-          <Button variant="accent" size="sm">
-            Get Started
-          </Button>
+          <Link to="/login">
+            <Button variant="ghost" size="sm">
+              Log in
+            </Button>
+          </Link>
+          <Link to="/register">
+            <Button variant="accent" size="sm">
+              Get Started
+            </Button>
+          </Link>
         </div>
       </div>
     </header>
@@ -109,12 +116,16 @@ function Hero() {
             bank integrations needed. You are the source of truth.
           </p>
           <div className="mt-8 flex flex-wrap gap-4">
-            <Button variant="accent" size="lg">
-              Get Started Free
-            </Button>
-            <Button variant="outline" size="lg">
-              Learn More
-            </Button>
+            <Link to="/register">
+              <Button variant="accent" size="lg">
+                Get Started Free
+              </Button>
+            </Link>
+            <a href="#features">
+              <Button variant="outline" size="lg">
+                Learn More
+              </Button>
+            </a>
           </div>
         </div>
 
@@ -223,7 +234,7 @@ const features = [
 
 function Features() {
   return (
-    <section className="border-t border-border bg-secondary/40 py-20 md:py-28">
+    <section id="features" className="border-t border-border bg-secondary/40 py-20 md:py-28">
       <div className="mx-auto max-w-[1440px] px-6 lg:px-20">
         <div className="mx-auto max-w-2xl text-center">
           <h2 className="font-heading text-3xl font-semibold tracking-tight md:text-4xl">
@@ -324,9 +335,11 @@ function HowItWorks() {
             Start tracking your money today. It's free, private, and yours.
           </p>
           <div className="mt-8">
-            <Button variant="accent" size="lg">
-              Get Started Free
-            </Button>
+            <Link to="/register">
+              <Button variant="accent" size="lg">
+                Get Started Free
+              </Button>
+            </Link>
           </div>
         </div>
       </div>
