@@ -9,6 +9,9 @@
     "build": "bun run --filter './apps/*' build",
     "build:web": "bun run --filter '@mpf/web' build",
     "typecheck": "bun run --filter '*' typecheck",
-    "lint": "bun run --filter '*' lint"
+    "lint": "bun run --filter '*' lint",
+    "test": "bun run --filter '@mpf/backend' test",
+    "test:once": "bun run --filter '@mpf/backend' test:once",
+    "test:e2e": "bun run --filter '@mpf/web' test:e2e"
   }
 }

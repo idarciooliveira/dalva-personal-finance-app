@@ -25,6 +25,9 @@ bun run dev:web        # Frontend only (port 3000)
 bun run dev:backend    # Convex dev server only
 bun run build          # Build all apps
 bun run typecheck      # Typecheck all packages
+bun run test           # Run backend tests (watch mode)
+bun run test:once      # Run backend tests (single run)
+bun run test:e2e       # Run Playwright E2E tests (Chromium, Firefox, WebKit)
 ```
 
 ## apps/web -- Frontend
@@ -58,6 +61,8 @@ bun run typecheck      # Typecheck all packages
 | `src/components/ui/`    | shadcn components: `button`, `input`, `label`, `card`, `separator`                      |
 | `src/components/icons/` | Custom icons: `google-icon.tsx`                                                         |
 | `components.json`       | shadcn/ui config -- controls `bunx shadcn@latest add <component>`                       |
+| `playwright.config.ts`  | Playwright E2E test configuration (browsers, webServer, reporter)                       |
+| `e2e/`                  | Playwright E2E test files (`*.spec.ts`)                                                 |
 | `.env.local`            | `VITE_CONVEX_URL` -- Convex deployment URL                                              |
 
 ### Adding shadcn Components
@@ -91,6 +96,86 @@ The frontend connects to Convex via `@convex-dev/react-query`. The `ConvexQueryC
 - Convex URL: `VITE_CONVEX_URL` env var (from `.env.local`)
 - Backend types: imported from `@mpf/backend` workspace package
 
+### E2E Testing (Playwright)
+
+**Stack:** Playwright Test + Chromium/Firefox/WebKit.
+
+Tests live in `apps/web/e2e/` as `*.spec.ts` files. The `playwright.config.ts` auto-starts the Vite dev server on port 3000 before running tests.
+
+#### Commands
+
+```bash
+bun run test:e2e              # Run all E2E tests (all browsers)
+bun run test:e2e:ui           # Open Playwright UI mode (interactive, watch)
+bun run test:e2e:headed       # Run tests with visible browser window
+bun run test:e2e:report       # View HTML test report from last run
+```
+
+From inside `apps/web/`, you can also run:
+
+```bash
+bunx playwright test --project=chromium           # Single browser
+bunx playwright test e2e/landing.spec.ts           # Single file
+bunx playwright test -g "dark mode"                # Filter by test name
+bunx playwright codegen http://localhost:3000      # Generate tests interactively
+```
+
+#### Test Structure
+
+```
+apps/web/e2e/
+├── landing.spec.ts    # Landing page: branding, hero, features, principles, footer, nav, dark mode, navigation
+├── auth.spec.ts       # Auth pages: login/register form rendering, validation, navigation, OAuth button
+└── (add more)         # e.g., dashboard.spec.ts, accounts.spec.ts, onboarding.spec.ts
+```
+
+#### Writing E2E Tests
+
+```ts
+import { test, expect } from "@playwright/test";
+
+test.describe("My Feature", () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto("/my-route");
+  });
+
+  test("renders the page correctly", async ({ page }) => {
+    await expect(
+      page.getByRole("heading", { name: "My Heading" })
+    ).toBeVisible();
+  });
+
+  test("form validation works", async ({ page }) => {
+    await page.getByRole("button", { name: /submit/i }).click();
+    await expect(page.getByText(/required field/i)).toBeVisible();
+  });
+
+  test("navigates to another page", async ({ page }) => {
+    await page.getByRole("link", { name: /next page/i }).click();
+    await expect(page).toHaveURL(/\/next-page/);
+  });
+});
+```
+
+#### E2E Test Patterns
+
+- **Use `page.getByRole()`, `page.getByLabel()`, `page.getByText()`** -- prefer accessible locators over CSS selectors
+- **Beware TanStack Router devtools** -- in dev mode, devtools injects elements with `aria-label` attributes that may conflict with `getByLabel()` patterns (e.g. route names containing "password"). Use `page.locator("#id")` or exact label strings when needed
+- **Use `baseURL`** -- tests use relative paths (`page.goto("/login")`) thanks to `baseURL: "http://localhost:3000"` in config
+- **Wait for async state** -- auth state, API responses, and validation errors may need explicit timeouts: `toBeVisible({ timeout: 10_000 })`
+- **Each test is isolated** -- Playwright creates a fresh browser context per test, so no state leaks between tests
+
+#### CI
+
+Playwright tests run on GitHub Actions (`.github/workflows/playwright.yml`) on every push/PR to `main`. The workflow:
+
+1. Installs dependencies with Bun
+2. Installs Chromium browser
+3. Runs tests against Chromium only (for speed)
+4. Uploads the HTML report as an artifact (30-day retention)
+
+The `VITE_CONVEX_URL` secret is configured in the repo settings.
+
 ## packages/backend -- Convex Backend
 
 **IMPORTANT:** When working on Convex code, always read `convex/_generated/ai/guidelines.md` first.
@@ -107,6 +192,9 @@ The frontend connects to Convex via `@convex-dev/react-query`. The `ConvexQueryC
 | `convex/http.ts`                     | HTTP router with auth routes                                |
 | `convex/_generated/`                 | Auto-generated types and API refs -- DO NOT edit            |
 | `convex/_generated/ai/guidelines.md` | Convex API guidelines -- READ BEFORE writing Convex code    |
+| `convex/test.setup.ts`               | Shared test utilities: `setupTest()`, `asUser()`, `modules` |
+| `convex/*.test.ts`                   | Test files (accounts, categories, userProfiles)             |
+| `vitest.config.ts`                   | Vitest config (edge-runtime environment)                    |
 
 ### Commands
 
@@ -114,6 +202,9 @@ The frontend connects to Convex via `@convex-dev/react-query`. The `ConvexQueryC
 bun run dev       # Start Convex dev server (watches for changes)
 bun run deploy    # Deploy to production
 bun run typecheck # Type check
+bun run test      # Run tests (watch mode)
+bun run test:once # Run tests (single run)
+bun run test:coverage # Run tests with coverage report
 ```
 
 ### Writing Convex Functions
@@ -124,6 +215,108 @@ bun run typecheck # Type check
 - Always include argument validators
 - Use `ctx.db` for database operations (queries/mutations only)
 - Use `ctx.auth.getUserIdentity()` for auth (never accept userId as argument)
+
+### Testing
+
+**Stack:** Vitest + `convex-test` + `@edge-runtime/vm`.
+
+Tests live inside `convex/` as `*.test.ts` files. They use a mock Convex backend running in the edge runtime.
+
+#### Test Setup (`convex/test.setup.ts`)
+
+Provides shared utilities used by all test files:
+
+- **`modules`** -- Vite glob import map required by `convexTest()`
+- **`setupTest()`** -- Creates a fresh `convexTest` instance with the project schema
+- **`asUser(t, options?)`** -- Creates an authenticated test accessor. Sets `identity.subject` to `"userId|sessionId"` format because `getAuthUserId()` from `@convex-dev/auth/server` extracts the user ID by splitting `subject` on `"|"`
+
+#### Writing Tests
+
+```ts
+import { expect, describe, it } from "vitest";
+import { api } from "./_generated/api";
+import { setupTest, asUser } from "./test.setup";
+
+describe("myModule", () => {
+  it("does something for authenticated user", async () => {
+    const t = setupTest();
+    const user = asUser(t);
+    const result = await user.query(api.myModule.myQuery);
+    expect(result).toEqual([]);
+  });
+
+  it("rejects unauthenticated access", async () => {
+    const t = setupTest();
+    await expect(
+      t.mutation(api.myModule.myMutation, { name: "test" }),
+    ).rejects.toThrow("Not authenticated");
+  });
+
+  it("isolates data between users", async () => {
+    const t = setupTest();
+    const alice = asUser(t, { name: "Alice", subject: "alice-id|s1" });
+    const bob = asUser(t, { name: "Bob", subject: "bob-id|s2" });
+    // each user should only see their own data
+  });
+});
+```
+
+#### Test Patterns
+
+- **Each test gets a fresh `setupTest()`** -- no shared state between tests
+- **Use `asUser(t)` for authenticated scenarios**, bare `t.query()`/`t.mutation()` for unauthenticated
+- **Use different `subject` values for multi-user tests** (e.g. `"alice-id|s1"`, `"bob-id|s2"`)
+- **Use `toThrow()` (not `toThrowError()`)** -- `toThrowError` is deprecated in Vitest 4
+- **Use `toMatchObject()` for partial assertions** on documents (avoids asserting `_id`, `_creationTime`)
+
+### Development Workflow -- Test-First
+
+**IMPORTANT: Always write tests before implementing new backend features.**
+
+When adding a new Convex function (query, mutation, or action):
+
+1. **Write the test first** in `convex/<module>.test.ts` covering:
+   - Happy path (authenticated user, valid input)
+   - Auth guard (unauthenticated access throws or returns null/empty)
+   - User isolation (users cannot access each other's data)
+   - Edge cases (idempotency, missing data, ownership checks)
+2. **Run the test** -- confirm it fails (`bun run test:once`)
+3. **Implement the function** in `convex/<module>.ts`
+4. **Run the test again** -- confirm it passes
+5. **Refactor** if needed, keeping tests green
+
+## Development Workflow -- Full Feature Lifecycle
+
+**IMPORTANT: Every new feature MUST include both backend tests AND E2E tests.**
+
+When implementing a new feature (e.g., onboarding, accounts page, transactions):
+
+1. **Backend first (test-driven):**
+   - Write backend unit tests in `convex/<module>.test.ts`
+   - Implement the Convex functions until tests pass
+   - Run `bun run test:once` to confirm all backend tests pass
+
+2. **Frontend implementation:**
+   - Create route files in `apps/web/src/routes/`
+   - Build components and wire up Convex queries/mutations
+   - Verify manually in the browser
+
+3. **E2E tests (required):**
+   - Create or update E2E tests in `apps/web/e2e/<feature>.spec.ts`
+   - Cover at minimum:
+     - Page renders correctly (headings, key elements visible)
+     - User interactions work (form submissions, button clicks, navigation)
+     - Validation errors display properly
+     - Navigation between related pages works
+     - Auth-gated pages redirect unauthenticated users
+   - Run `bun run test:e2e` to confirm all E2E tests pass
+
+4. **Verify everything:**
+   - `bun run test:once` -- all backend tests green
+   - `bun run test:e2e` -- all E2E tests green
+   - `bun run typecheck` -- no type errors
+
+**A feature is NOT complete until it has passing E2E tests.**
 
 ### Deployment
 
@@ -176,6 +369,9 @@ Early stage. Auth is wired with Convex Auth (email/password). The design system 
 - Form validation via `react-hook-form` + `zod` (v4)
 - shadcn components: button, input, label, card, separator
 - Navigation between all auth pages and landing page via TanStack Router `<Link>`
+- Backend test infrastructure: Vitest + convex-test + edge-runtime with 53 tests covering accounts, categories, subcategories, and userProfiles (CRUD, auth guards, user isolation, idempotency, cascade behaviors)
+- E2E test infrastructure: Playwright Test with 21 tests covering landing page (branding, hero, features, principles, footer, nav, dark mode, navigation) and auth pages (login/register form rendering, validation, navigation, OAuth button)
+- CI: GitHub Actions workflow runs Playwright E2E tests on push/PR to `main`
 
 **Not yet wired:**
 - Forgot password (`/forgot-password`) -- needs email sending (Resend or similar)
