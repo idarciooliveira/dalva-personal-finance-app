@@ -21,9 +21,9 @@ export const Route = createFileRoute("/categories")({
 
 function CategoriesPage() {
   return (
-    <ProtectedPageLayout headerTitle="Categories">
+    <ProtectedPageLayout>
       <div className="flex-1 overflow-auto">
-        <div className="mx-auto max-w-[800px] px-4 py-6 lg:px-8">
+        <div className="mx-auto max-w-200 px-4 py-6 lg:px-8">
           <CategoriesContent />
         </div>
       </div>
@@ -39,8 +39,11 @@ function CategoriesContent() {
   const [showArchived, setShowArchived] = useState(false);
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [createType, setCreateType] = useState<"income" | "expense">("expense");
-  const [editCategory, setEditCategory] = useState<Doc<"categories"> | null>(null);
-  const [addSubcategoryFor, setAddSubcategoryFor] = useState<Doc<"categories"> | null>(null);
+  const [editCategory, setEditCategory] = useState<Doc<"categories"> | null>(
+    null,
+  );
+  const [addSubcategoryFor, setAddSubcategoryFor] =
+    useState<Doc<"categories"> | null>(null);
 
   const { data: categories, isLoading } = useQuery(
     convexQuery(api.categories.listCategories, {

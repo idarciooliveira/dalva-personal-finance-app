@@ -117,7 +117,7 @@ export function CategoryRow({
               <MoreVertical className="size-4" />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
+          <DropdownMenuContent align="end" className="min-w-48">
             <DropdownMenuItem onClick={onEdit}>
               <Pencil className="mr-2 size-4" />
               Edit
