@@ -244,6 +244,37 @@ These are available as CSS custom properties for use with `var()` or via Tailwin
 
 ---
 
+## Form Dialog Pattern
+
+All product forms should default to the same modal pattern used in `apps/web/src/components/accounts/account-form-dialog.tsx`.
+
+### Principles
+
+- Use a clean dialog shell with `p-0`, `gap-0`, `overflow-hidden`, and a `max-w-md` width unless the content clearly needs more space
+- Keep the header simple: title only, with `px-5 pt-5 pb-0`
+- Make the primary value or amount input prominent at the top when the form has one, using a large text treatment with a bottom border instead of a standard boxed input
+- Structure the rest of the form as icon-led rows separated by bottom borders
+- Prefer inline, lightweight inputs (`bg-transparent`, no boxed field chrome) inside those rows
+- Keep validation errors inside the content area just above the footer actions
+- Use a footer action bar aligned right with `px-5 py-4 mt-2` and `size="default"` buttons
+- Use `accent` for the primary action and `outline` for the secondary action
+
+### Layout Reference
+
+- Dialog shell: `max-w-md p-0 gap-0 overflow-hidden`
+- Header: `px-5 pt-5 pb-0`
+- Content: `px-5 pt-4 pb-0`
+- Field rows: `flex items-center gap-3 border-b border-border py-3`
+- Footer: `flex items-center justify-end gap-3 px-5 py-4 mt-2`
+
+### Notes
+
+- This is the default pattern for create, edit, and adjustment flows across the app
+- Use conventional boxed inputs only when the interaction would be less clear in the row-based layout
+- Keep the design consistent across accounts, transactions, budgets, goals, debts, and future onboarding forms
+
+---
+
 ## Grid System
 
 Based on Wise's responsive grid. Max content width is **1440px**.

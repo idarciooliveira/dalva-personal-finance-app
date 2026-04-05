@@ -1,24 +1,45 @@
-import { Wifi, Eye, EyeOff, TrendingUp, TrendingDown } from "lucide-react";
+import { Wifi, Eye, EyeOff, TrendingUp, TrendingDown, Wallet } from "lucide-react";
 import { useState } from "react";
 import { formatCurrency } from "@/lib/format";
-import { type AccountCardData } from "@/lib/mock-dashboard-data";
+import { ACCOUNT_THEMES } from "@/lib/accounts";
+import type { Doc } from "@mpf/backend/convex/_generated/dataModel";
+
+/* -------------------------------------------------------------------------- */
+/*  Helpers                                                                   */
+/* -------------------------------------------------------------------------- */
+
+/** Resolve a theme ID (e.g. "laranja") to gradient colors. */
+function resolveTheme(themeId?: string): { from: string; to: string } {
+  const found = ACCOUNT_THEMES.find((t) => t.id === themeId);
+  return found
+    ? { from: found.from, to: found.to }
+    : { from: "#163300", to: "#2f5711" }; // primary green fallback
+}
+
+/** Derive a 4-digit card number from the account ID for visual display. */
+function deriveCardNumber(id: string): string {
+  return id.slice(-4).toUpperCase();
+}
 
 /* -------------------------------------------------------------------------- */
 /*  Account card component (bank card visual)                                 */
 /* -------------------------------------------------------------------------- */
 
 interface AccountCardProps {
-  account: AccountCardData;
+  account: Doc<"accounts">;
+  holderName?: string;
 }
 
-export function AccountCard({ account }: AccountCardProps) {
+export function AccountCard({ account, holderName = "DALVA USER" }: AccountCardProps) {
   const [showBalance, setShowBalance] = useState(true);
+  const theme = resolveTheme(account.theme);
+  const cardNumber = deriveCardNumber(account._id);
 
   return (
     <div
       className="relative flex w-full flex-col justify-between overflow-hidden rounded-2xl p-5 text-white shadow-lg"
       style={{
-        background: `linear-gradient(135deg, ${account.theme.from}, ${account.theme.to})`,
+        background: `linear-gradient(135deg, ${theme.from}, ${theme.to})`,
         aspectRatio: "1.6 / 1",
       }}
     >
@@ -62,11 +83,11 @@ export function AccountCard({ account }: AccountCardProps) {
       {/* Bottom: Card number + holder + logo */}
       <div className="flex flex-col gap-1.5">
         <p className="font-mono text-sm tracking-widest opacity-70">
-          **** **** **** {account.cardNumber}
+          **** **** **** {cardNumber}
         </p>
         <div className="flex items-end justify-between">
           <p className="text-xs font-medium tracking-wider uppercase">
-            {account.holderName}
+            {holderName}
           </p>
           <span className="text-sm font-semibold opacity-60">DALVA</span>
         </div>
@@ -80,10 +101,11 @@ export function AccountCard({ account }: AccountCardProps) {
 /* -------------------------------------------------------------------------- */
 
 interface AccountCardsSectionProps {
-  accounts: AccountCardData[];
+  accounts: Doc<"accounts">[];
   income: number; // cents
   expenses: number; // cents
   currency?: string;
+  holderName?: string;
 }
 
 export function AccountCardsSection({
@@ -91,8 +113,29 @@ export function AccountCardsSection({
   income,
   expenses,
   currency = "USD",
+  holderName,
 }: AccountCardsSectionProps) {
   const [activeIndex, setActiveIndex] = useState(0);
+
+  // Empty state when no accounts exist yet
+  if (accounts.length === 0) {
+    return (
+      <div className="flex flex-col gap-4">
+        <h2 className="text-sm font-medium text-muted-foreground">
+          My Accounts
+        </h2>
+        <div className="flex items-center justify-center rounded-2xl border border-dashed border-border py-12">
+          <div className="flex flex-col items-center gap-2 text-muted-foreground">
+            <Wallet className="size-8 opacity-50" />
+            <p className="text-sm">No accounts yet</p>
+            <p className="text-xs opacity-70">
+              Add an account to see it here.
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col gap-4">
@@ -117,7 +160,7 @@ export function AccountCardsSection({
       <div className="flex flex-col gap-4 sm:flex-row">
         {/* Account card — full width on mobile, 75% on sm+ */}
         <div className="w-full sm:w-3/4">
-          <AccountCard account={accounts[activeIndex]} />
+          <AccountCard account={accounts[activeIndex]} holderName={holderName} />
         </div>
 
         {/* Income & Expenses summary — row on mobile, column on sm+ */}

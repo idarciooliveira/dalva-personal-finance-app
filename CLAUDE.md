@@ -38,6 +38,15 @@ bun run test:e2e       # Run Playwright E2E tests (Chromium, Firefox, WebKit)
 
 **Design system:** Wise-inspired. See `docs/design-system.md`. All tokens in `apps/web/src/styles.css`.
 
+### Frontend UI Rule
+
+- All app forms should default to the modal form pattern established in `apps/web/src/components/accounts/account-form-dialog.tsx`
+- Use the same dialog shell structure: `max-w-md`, `p-0`, `gap-0`, `overflow-hidden`, simple header, content padding, and right-aligned footer actions
+- When a form has a primary amount or key value, place it prominently at the top with large typography and a bottom border instead of a standard boxed input
+- Build supporting fields as icon-led rows with bottom dividers and lightweight inline controls
+- Keep errors in the content area above the footer and use `size="default"` buttons in the footer
+- Only diverge from this pattern when the form content clearly requires a different interaction model
+
 ### Path Aliases
 
 - `#/` → `./src/*` (runtime via `package.json` `imports` + TypeScript `paths`)
@@ -193,7 +202,7 @@ The `VITE_CONVEX_URL` secret is configured in the repo settings.
 | `convex/_generated/`                 | Auto-generated types and API refs -- DO NOT edit            |
 | `convex/_generated/ai/guidelines.md` | Convex API guidelines -- READ BEFORE writing Convex code    |
 | `convex/test.setup.ts`               | Shared test utilities: `setupTest()`, `asUser()`, `modules` |
-| `convex/*.test.ts`                   | Test files (accounts, categories, userProfiles)             |
+| `convex/*.test.ts`                   | Test files (accounts, categories, userProfiles, transactions) |
 | `vitest.config.ts`                   | Vitest config (edge-runtime environment)                    |
 
 ### Commands
@@ -351,30 +360,34 @@ Wise-inspired. Full spec in `docs/design-system.md`.
 
 **Buttons:** sm=32px, default=48px, lg=56px. Variants: default, accent, outline, secondary, ghost, destructive, link.
 
+**Forms:** Use the account dialog modal pattern as the default for all product forms: edge-to-edge dialog shell, prominent top value input when relevant, icon-led bordered rows, inline controls, and right-aligned footer actions.
+
 **Dark mode:** Implemented. Toggle in Nav persists to `localStorage`. Anti-flash inline script in `__root.tsx`. Falls back to `prefers-color-scheme`. Dark palette: charcoal surfaces, Bright Green accent.
 
 ## Project Status
 
-Early stage. Auth is wired with Convex Auth (email/password). The design system tokens are configured with light and dark themes.
+Phase 1 (Accounts + Transactions) is complete. Auth is wired with Convex Auth (email/password). The design system tokens are configured with light and dark themes.
 
 **Implemented:**
 - Landing page with Nav (dark mode toggle, auth-aware buttons), Hero, Features (6 modules), Principles, CTA band, Footer
 - Sign in page (`/login`) with email/password form wired to Convex Auth + Google OAuth placeholder
 - Sign up page (`/register`) with name/email/password form wired to Convex Auth + Google OAuth placeholder
 - Forgot password page (`/forgot-password`) with email form (UI-only -- requires email infra like Resend)
-- Protected dashboard page (`/dashboard`) with auth gate (redirects to login if unauthenticated)
+- Protected dashboard page (`/dashboard`) with auth gate, real account data, real transaction summary (income/expenses/recent), floating action menu wired to create transactions
 - Auth-aware navigation: shows "Dashboard" + sign out for authenticated users, "Log in" + "Get Started" for guests
 - Convex Auth backend with Password provider, authTables schema, HTTP routes
 - Dark mode with localStorage persistence and anti-flash script
 - Form validation via `react-hook-form` + `zod` (v4)
 - shadcn components: button, input, label, card, separator
 - Navigation between all auth pages and landing page via TanStack Router `<Link>`
-- Backend test infrastructure: Vitest + convex-test + edge-runtime with 53 tests covering accounts, categories, subcategories, and userProfiles (CRUD, auth guards, user isolation, idempotency, cascade behaviors)
-- E2E test infrastructure: Playwright Test with 21 tests covering landing page (branding, hero, features, principles, footer, nav, dark mode, navigation) and auth pages (login/register form rendering, validation, navigation, OAuth button)
+- **Accounts management** (`/accounts`): full CRUD (create, edit, archive, restore, delete), balance adjustments, grouped display with theme colors, show/hide archived toggle
+- **Transactions CRUD** (`/transactions`): income/expense recording with account balance effects, filterable list (date range, account, category, type), create/edit dialog with type toggle, paginated display, transaction summary on dashboard
+- Backend test infrastructure: Vitest + convex-test + edge-runtime with 104 tests covering accounts, categories, subcategories, userProfiles, and transactions (CRUD, auth guards, user isolation, balance effects, filters, summaries)
+- E2E test infrastructure: Playwright Test with 30 tests covering landing page, auth pages, accounts page, and transactions page
 - CI: GitHub Actions workflow runs Playwright E2E tests on push/PR to `main`
 
 **Not yet wired:**
 - Forgot password (`/forgot-password`) -- needs email sending (Resend or similar)
 - Google OAuth -- button exists but no provider configured yet
 
-**Next steps per the PRD:** onboarding, accounts, categories, transactions.
+**Next steps per the PRD:** onboarding, budgets, goals, debts, transfers, recurring transactions.

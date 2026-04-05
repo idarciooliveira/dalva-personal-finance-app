@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 
 /**
  * Unified dark mode hook.
@@ -8,12 +8,13 @@ import { useCallback, useEffect, useState } from "react";
  * keeps a reactive `isDark` boolean in sync.
  */
 export function useDarkMode() {
-  const [isDark, setIsDark] = useState(false);
-
-  // Sync state with the DOM on mount (SSR-safe)
-  useEffect(() => {
-    setIsDark(document.documentElement.classList.contains("dark"));
-  }, []);
+  // Initialize from DOM synchronously to avoid a flash of wrong theme.
+  // During SSR, `document` is undefined so we fall back to `false`.
+  const [isDark, setIsDark] = useState(() =>
+    typeof document !== "undefined"
+      ? document.documentElement.classList.contains("dark")
+      : false,
+  );
 
   const toggle = useCallback(() => {
     const next = !document.documentElement.classList.contains("dark");

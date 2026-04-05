@@ -33,8 +33,8 @@ import {
 
 const mainNav = [
   { label: "Dashboard", icon: LayoutDashboard, href: "/dashboard" },
-  { label: "Accounts", icon: Wallet, href: "/dashboard" },
-  { label: "Transactions", icon: ArrowLeftRight, href: "/dashboard" },
+  { label: "Accounts", icon: Wallet, href: "/accounts" },
+  { label: "Transactions", icon: ArrowLeftRight, href: "/transactions" },
   { label: "Categories", icon: Tags, href: "/categories" },
   { label: "Budgets", icon: PieChart, href: "/dashboard" },
   { label: "Goals", icon: Target, href: "/dashboard" },
@@ -70,7 +70,7 @@ export function AppSidebar({
       {/* Logo + user */}
       <SidebarHeader className="flex h-14 flex-row items-center gap-3 border-b border-border px-5">
         <Link to="/" className="flex items-center gap-3">
-          <span className="font-heading text-lg font-semibold text-sidebar-foreground">
+          <span className="font-heading  text-lg font-semibold text-sidebar-foreground">
             DALVA
           </span>
           {userName && (

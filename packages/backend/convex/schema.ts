@@ -33,6 +33,9 @@ export default defineSchema({
     balance: v.number(), // stored in minor units (cents)
     currency: v.string(), // ISO 4217 code
     theme: v.optional(v.string()), // visual theme id (e.g. "laranja", "azul")
+    icon: v.optional(v.string()), // Lucide icon name override
+    description: v.optional(v.string()), // user note about the account
+    archived: v.optional(v.boolean()), // soft-delete: hidden from lists by default
   }).index("by_userId", ["userId"]),
 
   /* ------------------------------------------------------------------ */
@@ -63,4 +66,29 @@ export default defineSchema({
   })
     .index("by_categoryId", ["categoryId"])
     .index("by_userId", ["userId"]),
+
+  /* ------------------------------------------------------------------ */
+  /*  Transactions                                                      */
+  /* ------------------------------------------------------------------ */
+  transactions: defineTable({
+    userId: v.string(),
+    type: v.union(
+      v.literal("income"),
+      v.literal("expense"),
+      v.literal("adjustment"),
+    ),
+    amount: v.number(), // in minor units (cents); adjustments may be positive or negative
+    accountId: v.id("accounts"),
+    categoryId: v.optional(v.id("categories")),
+    subcategoryId: v.optional(v.id("subcategories")),
+    date: v.string(), // ISO date, e.g. "2026-04-05"
+    description: v.optional(v.string()),
+    note: v.optional(v.string()),
+    payee: v.optional(v.string()),
+    tags: v.optional(v.array(v.string())),
+  })
+    .index("by_userId", ["userId"])
+    .index("by_userId_and_date", ["userId", "date"])
+    .index("by_accountId", ["accountId"])
+    .index("by_categoryId", ["categoryId"]),
 });

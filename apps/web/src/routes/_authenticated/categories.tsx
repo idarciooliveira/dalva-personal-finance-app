@@ -5,13 +5,12 @@ import { api } from "@mpf/backend/convex/_generated/api";
 import type { Doc } from "@mpf/backend/convex/_generated/dataModel";
 import { useState } from "react";
 
-import { ProtectedPageLayout } from "@/components/layouts/protected-page-layout";
 import { CategoryGroup } from "@/components/categories/category-group";
 import { CategoryFormDialog } from "@/components/categories/category-form-dialog";
 import { SubcategoryFormDialog } from "@/components/categories/subcategory-form-dialog";
 import { CategoriesListSkeleton } from "@/components/categories/categories-list-skeleton";
 
-export const Route = createFileRoute("/categories")({
+export const Route = createFileRoute("/_authenticated/categories")({
   component: CategoriesPage,
 });
 
@@ -21,13 +20,11 @@ export const Route = createFileRoute("/categories")({
 
 function CategoriesPage() {
   return (
-    <ProtectedPageLayout>
-      <div className="flex-1 overflow-auto">
-        <div className="mx-auto max-w-200 px-4 py-6 lg:px-8">
-          <CategoriesContent />
-        </div>
+    <div className="flex-1 overflow-auto">
+      <div className="mx-auto max-w-200 px-4 py-6 lg:px-8">
+        <CategoriesContent />
       </div>
-    </ProtectedPageLayout>
+    </div>
   );
 }
 

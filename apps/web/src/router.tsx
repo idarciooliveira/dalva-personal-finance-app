@@ -26,6 +26,10 @@ export function getRouter() {
       queries: {
         queryKeyHashFn: convexQueryClient.hashFn(),
         queryFn: convexQueryClient.queryFn(),
+        // Convex keeps data fresh via WebSocket subscriptions, so we can
+        // safely treat cached data as fresh for 30s to avoid unnecessary
+        // refetches when components remount (e.g. route navigation).
+        staleTime: 30_000,
       },
     },
   });

@@ -2,7 +2,9 @@ import {
   ArrowUpRight,
   ArrowDownRight,
   ArrowLeftRight,
+  Scale,
 } from "lucide-react";
+import { Link } from "@tanstack/react-router";
 import {
   Card,
   CardContent,
@@ -24,12 +26,14 @@ interface RecentTransactionsCardProps {
 const typeIcons = {
   income: ArrowUpRight,
   expense: ArrowDownRight,
+  adjustment: Scale,
   transfer: ArrowLeftRight,
 } as const;
 
 const typeColors = {
   income: "text-emerald-500 bg-emerald-500/10",
   expense: "text-destructive bg-destructive/10",
+  adjustment: "text-primary bg-primary/10",
   transfer: "text-muted-foreground bg-muted",
 } as const;
 
@@ -41,8 +45,8 @@ export function RecentTransactionsCard({ data }: RecentTransactionsCardProps) {
           Recent Transactions
         </CardTitle>
         <CardAction>
-          <Button variant="link" size="sm" className="text-xs">
-            View all
+          <Button variant="link" size="sm" className="text-xs" asChild>
+            <Link to="/transactions">View all</Link>
           </Button>
         </CardAction>
       </CardHeader>

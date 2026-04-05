@@ -50,7 +50,7 @@ export interface RecentTransaction {
   description: string;
   category: string;
   amount: number; // cents (negative = expense, positive = income)
-  type: "income" | "expense" | "transfer";
+  type: "income" | "expense" | "adjustment" | "transfer";
   account: string;
 }
 

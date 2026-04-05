@@ -13,31 +13,33 @@ interface ActionItem {
   onClick: () => void;
 }
 
-const actions: ActionItem[] = [
-  {
-    key: "income",
-    label: "Income",
-    icon: <TrendingUp className="size-[18px] shrink-0" />,
-    // TODO: wire to income creation flow
-    onClick: () => console.log("[FAB] Register income"),
-  },
-  {
-    key: "expense",
-    label: "Expense",
-    icon: <TrendingDown className="size-[18px] shrink-0" />,
-    // TODO: wire to expense creation flow
-    onClick: () => console.log("[FAB] Register expense"),
-  },
-  {
-    key: "transfer",
-    label: "Transfer",
-    icon: <ArrowLeftRight className="size-[18px] shrink-0" />,
-    // TODO: wire to transfer creation flow
-    onClick: () => console.log("[FAB] Register transfer"),
-  },
-];
+interface FloatingActionMenuProps {
+  onAction?: (type: "income" | "expense") => void;
+}
 
-export function FloatingActionMenu() {
+export function FloatingActionMenu({ onAction }: FloatingActionMenuProps) {
+  const actions: ActionItem[] = [
+    {
+      key: "income",
+      label: "Income",
+      icon: <TrendingUp className="size-[18px] shrink-0" />,
+      onClick: () => onAction?.("income"),
+    },
+    {
+      key: "expense",
+      label: "Expense",
+      icon: <TrendingDown className="size-[18px] shrink-0" />,
+      onClick: () => onAction?.("expense"),
+    },
+    {
+      key: "transfer",
+      label: "Transfer",
+      icon: <ArrowLeftRight className="size-[18px] shrink-0" />,
+      // Transfers are out of scope for now
+      onClick: () => {},
+    },
+  ];
+
   return (
     /* Positioning layer -- no pointer events on the wrapper */
     <div className="pointer-events-none fixed inset-x-0 bottom-0 z-40 flex justify-center pb-6">

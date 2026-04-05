@@ -466,8 +466,9 @@ describe("categories", () => {
       const subs = await user.query(api.categories.listSubcategories, {
         categoryId: catId,
       });
-      expect(subs[0].sortOrder).toBe(0);
-      expect(subs[1].sortOrder).toBe(1);
+      expect(subs).toHaveLength(2);
+      expect(subs[0]!.sortOrder).toBe(0);
+      expect(subs[1]!.sortOrder).toBe(1);
     });
 
     it("throws for non-owned parent category", async () => {
