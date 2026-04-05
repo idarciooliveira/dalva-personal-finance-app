@@ -5,6 +5,7 @@ import { useEffect } from "react";
 import { LogOut, LayoutDashboard } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { DashboardSkeleton } from "#/components/skeleton/dashboard-skeleton";
 
 export const Route = createFileRoute("/dashboard")({
   component: DashboardPage,
@@ -17,6 +18,7 @@ export const Route = createFileRoute("/dashboard")({
 function DashboardPage() {
   const { isLoading, isAuthenticated } = useConvexAuth();
   const router = useRouter();
+  const { signOut } = useAuthActions();
 
   // Redirect to login once we know the user is unauthenticated.
   // Using useEffect avoids the "setState during render" React warning.
@@ -35,17 +37,6 @@ function DashboardPage() {
     return <DashboardSkeleton />;
   }
 
-  return <DashboardContent />;
-}
-
-/* -------------------------------------------------------------------------- */
-/*  Authenticated dashboard content                                           */
-/* -------------------------------------------------------------------------- */
-
-function DashboardContent() {
-  const { signOut } = useAuthActions();
-  const router = useRouter();
-
   async function handleSignOut() {
     await signOut();
     router.navigate({ to: "/" });
@@ -55,7 +46,7 @@ function DashboardContent() {
     <div className="min-h-svh bg-background">
       {/* Top bar */}
       <header className="border-b border-border bg-background/80 backdrop-blur-md">
-        <div className="mx-auto flex h-16 max-w-[1440px] items-center justify-between px-6 lg:px-20">
+        <div className="mx-auto flex h-16 max-w-360 items-center justify-between px-6 lg:px-20">
           <Link to="/">
             <span className="font-heading text-xl font-semibold text-foreground">
               DALVA
@@ -74,7 +65,7 @@ function DashboardContent() {
       </header>
 
       {/* Placeholder content */}
-      <main className="mx-auto max-w-[1440px] px-6 py-16 lg:px-20">
+      <main className="mx-auto max-w-360 px-6 py-16 lg:px-20">
         <div className="flex flex-col items-center justify-center gap-6 text-center">
           <div className="inline-flex size-16 items-center justify-center rounded-2xl bg-wise-bright-green/15 text-wise-forest-green dark:text-wise-bright-green">
             <LayoutDashboard className="size-8" />
@@ -96,21 +87,6 @@ function DashboardContent() {
           </div>
         </div>
       </main>
-    </div>
-  );
-}
-
-/* -------------------------------------------------------------------------- */
-/*  Loading skeleton                                                          */
-/* -------------------------------------------------------------------------- */
-
-function DashboardSkeleton() {
-  return (
-    <div className="flex min-h-svh items-center justify-center bg-background">
-      <div className="text-center">
-        <div className="mx-auto h-8 w-32 animate-pulse rounded-lg bg-muted" />
-        <div className="mx-auto mt-4 h-4 w-48 animate-pulse rounded-lg bg-muted" />
-      </div>
     </div>
   );
 }
