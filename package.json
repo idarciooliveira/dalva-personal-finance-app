@@ -1,0 +1,14 @@
+{
+  "name": "my-personal-finance",
+  "private": true,
+  "workspaces": ["apps/*", "packages/*"],
+  "scripts": {
+    "dev": "bun run --filter './apps/*' dev",
+    "dev:web": "bun run --filter '@mpf/web' dev",
+    "dev:backend": "bun run --filter '@mpf/backend' dev",
+    "build": "bun run --filter './apps/*' build",
+    "build:web": "bun run --filter '@mpf/web' build",
+    "typecheck": "bun run --filter '*' typecheck",
+    "lint": "bun run --filter '*' lint"
+  }
+}
