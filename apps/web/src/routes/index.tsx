@@ -1,5 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useCallback, useEffect, useState } from "react";
+import { Authenticated, Unauthenticated, AuthLoading } from "convex/react";
+import { useAuthActions } from "@convex-dev/auth/react";
 import {
   Wallet,
   ArrowLeftRight,
@@ -12,6 +14,7 @@ import {
   Smartphone,
   Moon,
   Sun,
+  LogOut,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -62,6 +65,7 @@ function useTheme() {
 
 function Nav() {
   const { dark, toggle } = useTheme();
+  const { signOut } = useAuthActions();
 
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-background/80 backdrop-blur-md">
@@ -78,16 +82,40 @@ function Nav() {
           >
             {dark ? <Sun className="size-4" /> : <Moon className="size-4" />}
           </Button>
-          <Link to="/login">
-            <Button variant="ghost" size="sm">
-              Log in
+
+          <AuthLoading>
+            {/* Skeleton placeholders while auth state loads */}
+            <div className="h-8 w-16 animate-pulse rounded-lg bg-muted" />
+          </AuthLoading>
+
+          <Unauthenticated>
+            <Link to="/login">
+              <Button variant="ghost" size="sm">
+                Log in
+              </Button>
+            </Link>
+            <Link to="/register">
+              <Button variant="accent" size="sm">
+                Get Started
+              </Button>
+            </Link>
+          </Unauthenticated>
+
+          <Authenticated>
+            <Link to="/dashboard">
+              <Button variant="accent" size="sm">
+                Dashboard
+              </Button>
+            </Link>
+            <Button
+              variant="ghost"
+              size="icon-sm"
+              onClick={() => void signOut()}
+              aria-label="Sign out"
+            >
+              <LogOut className="size-4" />
             </Button>
-          </Link>
-          <Link to="/register">
-            <Button variant="accent" size="sm">
-              Get Started
-            </Button>
-          </Link>
+          </Authenticated>
         </div>
       </div>
     </header>

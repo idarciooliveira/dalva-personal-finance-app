@@ -1,13 +1,18 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
+import { useConvexAuth } from "convex/react";
+import { useAuthActions } from "@convex-dev/auth/react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { GoogleIcon } from "@/components/icons/google-icon";
+import { AuthErrorAlert } from "@/components/auth-error-alert";
+import { parseConvexAuthError } from "@/lib/auth-errors";
 
 export const Route = createFileRoute("/login")({ component: LoginPage });
 
@@ -27,6 +32,19 @@ type LoginValues = z.infer<typeof loginSchema>;
 /* -------------------------------------------------------------------------- */
 
 function LoginPage() {
+  const { signIn } = useAuthActions();
+  const { isAuthenticated } = useConvexAuth();
+  const router = useRouter();
+  const [authError, setAuthError] = useState<string | null>(null);
+
+  // Navigate to dashboard reactively once the auth handshake completes.
+  // This also handles the case where an already-authenticated user visits /login.
+  useEffect(() => {
+    if (isAuthenticated) {
+      router.navigate({ to: "/dashboard" });
+    }
+  }, [isAuthenticated, router]);
+
   const {
     register,
     handleSubmit,
@@ -35,9 +53,19 @@ function LoginPage() {
     resolver: zodResolver(loginSchema),
   });
 
-  function onSubmit(data: LoginValues) {
-    // TODO: wire to Convex auth
-    console.log("Login:", data);
+  async function onSubmit(data: LoginValues) {
+    setAuthError(null);
+    try {
+      await signIn("password", {
+        email: data.email,
+        password: data.password,
+        flow: "signIn",
+      });
+      // Don't navigate here — the useEffect above handles it
+      // once the Convex client confirms the auth handshake.
+    } catch (error) {
+      setAuthError(parseConvexAuthError(error, "signIn"));
+    }
   }
 
   return (
@@ -72,6 +100,11 @@ function LoginPage() {
             className="mt-8 space-y-5"
             noValidate
           >
+            {/* Auth error */}
+            <AuthErrorAlert
+              message={authError}
+              onDismiss={() => setAuthError(null)}
+            />
             {/* Email */}
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
