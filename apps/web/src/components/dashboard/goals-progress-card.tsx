@@ -1,10 +1,5 @@
 import { Target } from "lucide-react";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ProgressBar } from "@/components/ui/progress-bar";
 import {
   type GoalsProgressData,
@@ -58,7 +53,11 @@ export function GoalsProgressCard({ data }: GoalsProgressCardProps) {
                   {goal.percentComplete}%
                 </span>
               </div>
-              <ProgressBar percent={goal.percentComplete} barColor={progressColor} />
+              <ProgressBar
+                percent={goal.percentComplete}
+                barColor={progressColor}
+                className="h-4"
+              />
               <div className="flex justify-between text-xs text-muted-foreground">
                 <span>
                   {formatCurrency(goal.currentAmount, data.currency)} saved

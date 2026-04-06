@@ -47,36 +47,36 @@ function Nav() {
 
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-background/80 backdrop-blur-md">
-      <div className="mx-auto flex h-16 max-w-360 items-center justify-between px-6 lg:px-20">
-        <div className="flex items-center gap-2">
-          <img src="/logo.svg" alt="DALVA logo" className="size-10 " />
-          <span className="font-heading text-xl font-semibold text-foreground">
+      <div className="mx-auto flex h-20 max-w-360 items-center justify-between px-6 lg:px-20">
+        <div className="flex items-center gap-3">
+          <img src="/logo.svg" alt="DALVA logo" className="size-12" />
+          <span className="font-heading text-2xl font-semibold text-foreground">
             DALVA
           </span>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-4">
           <Button
             variant="ghost"
-            size="icon-sm"
+            size="icon"
             onClick={toggle}
             aria-label={dark ? "Switch to light mode" : "Switch to dark mode"}
           >
-            {dark ? <Sun className="size-4" /> : <Moon className="size-4" />}
+            {dark ? <Sun className="size-5" /> : <Moon className="size-5" />}
           </Button>
 
           <AuthLoading>
             {/* Skeleton placeholders while auth state loads */}
-            <div className="h-8 w-16 animate-pulse rounded-lg bg-muted" />
+            <div className="h-12 w-28 animate-pulse rounded-xl bg-muted" />
           </AuthLoading>
 
           <Unauthenticated>
             <Link to="/login">
-              <Button variant="ghost" size="sm">
+              <Button variant="ghost" size="default">
                 Log in
               </Button>
             </Link>
             <Link to="/register">
-              <Button variant="accent" size="sm">
+              <Button variant="accent" size="default">
                 Get Started
               </Button>
             </Link>
@@ -84,17 +84,17 @@ function Nav() {
 
           <Authenticated>
             <Link to="/dashboard">
-              <Button variant="accent" size="sm">
+              <Button variant="accent" size="default">
                 Dashboard
               </Button>
             </Link>
             <Button
               variant="ghost"
-              size="icon-sm"
+              size="icon"
               onClick={() => void signOut()}
               aria-label="Sign out"
             >
-              <LogOut className="size-4" />
+              <LogOut className="size-5" />
             </Button>
           </Authenticated>
         </div>
@@ -110,7 +110,7 @@ function Nav() {
 function Hero() {
   return (
     <section className="relative overflow-hidden">
-      <div className="mx-auto grid max-w-[1440px] gap-12 px-6 py-20 md:py-28 lg:grid-cols-2 lg:items-center lg:gap-16 lg:px-20 lg:py-36">
+      <div className="mx-auto grid max-w-[1440px] gap-14 px-6 py-20 md:py-28 lg:grid-cols-2 lg:items-center lg:gap-20 lg:px-20 lg:py-36">
         {/* Copy */}
         <div className="max-w-xl">
           <p className="mb-4 text-sm font-semibold uppercase tracking-wider text-muted-foreground">
@@ -145,44 +145,44 @@ function Hero() {
           <div className="absolute -right-8 -top-8 h-72 w-72 rounded-full bg-wise-bright-green/20 blur-3xl" />
           <div className="absolute bottom-0 left-8 h-48 w-48 rounded-full bg-wise-bright-blue/20 blur-3xl" />
 
-          <div className="relative mx-auto grid max-w-md gap-4">
+          <div className="relative mx-auto grid max-w-lg gap-5">
             {/* Net worth card */}
-            <div className="rounded-2xl border border-border bg-card p-6 shadow-sm">
-              <p className="text-sm font-medium text-muted-foreground">
+            <div className="rounded-3xl border border-border bg-card p-7 shadow-sm">
+              <p className="text-base font-medium text-muted-foreground">
                 Net Worth
               </p>
-              <p className="mt-1 text-3xl font-semibold text-foreground">
+              <p className="mt-2 text-4xl font-semibold text-foreground">
                 $24,850
               </p>
-              <div className="mt-3 flex items-center gap-2 text-sm font-medium text-wise-positive dark:text-wise-bright-green">
-                <TrendingDown className="size-4 rotate-180" />
+              <div className="mt-4 flex items-center gap-2 text-base font-medium text-wise-positive dark:text-wise-bright-green">
+                <TrendingDown className="size-5 rotate-180" />
                 +12.3% this month
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 gap-5">
               {/* Budget card */}
-              <div className="rounded-2xl border border-border bg-card p-5 shadow-sm">
-                <p className="text-sm font-medium text-muted-foreground">
+              <div className="rounded-3xl border border-border bg-card p-6 shadow-sm">
+                <p className="text-base font-medium text-muted-foreground">
                   Budget
                 </p>
-                <p className="mt-1 text-xl font-semibold text-foreground">
+                <p className="mt-2 text-2xl font-semibold text-foreground">
                   68%
                 </p>
-                <div className="mt-3 h-2 overflow-hidden rounded-full bg-secondary">
+                <div className="mt-4 h-2.5 overflow-hidden rounded-full bg-secondary">
                   <div className="h-full w-[68%] rounded-full bg-wise-bright-green" />
                 </div>
               </div>
 
               {/* Goal card */}
-              <div className="rounded-2xl border border-border bg-card p-5 shadow-sm">
-                <p className="text-sm font-medium text-muted-foreground">
+              <div className="rounded-3xl border border-border bg-card p-6 shadow-sm">
+                <p className="text-base font-medium text-muted-foreground">
                   Vacation Goal
                 </p>
-                <p className="mt-1 text-xl font-semibold text-foreground">
+                <p className="mt-2 text-2xl font-semibold text-foreground">
                   $1,200
                 </p>
-                <p className="mt-1 text-xs text-muted-foreground">
+                <p className="mt-2 text-sm text-muted-foreground">
                   of $2,000 target
                 </p>
               </div>
@@ -266,21 +266,21 @@ function Features() {
           </p>
         </div>
 
-        <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-16 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
           {features.map((f) => (
             <div
               key={f.title}
-              className="rounded-2xl border border-border bg-card p-6 transition-shadow hover:shadow-md"
+              className="rounded-3xl border border-border bg-card p-7 transition-shadow hover:shadow-md"
             >
               <div
-                className={`inline-flex size-12 items-center justify-center rounded-xl ${f.color}`}
+                className={`inline-flex size-14 items-center justify-center rounded-2xl ${f.color}`}
               >
-                <f.icon className="size-6" />
+                <f.icon className="size-7" />
               </div>
-              <h3 className="mt-4 text-lg font-semibold text-foreground">
+              <h3 className="mt-5 text-xl font-semibold text-foreground">
                 {f.title}
               </h3>
-              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+              <p className="mt-3 text-base leading-relaxed text-muted-foreground">
                 {f.description}
               </p>
             </div>
@@ -330,16 +330,16 @@ function HowItWorks() {
           </p>
         </div>
 
-        <div className="mt-14 grid gap-8 md:grid-cols-3">
+        <div className="mt-16 grid gap-10 md:grid-cols-3">
           {principles.map((p) => (
             <div key={p.title} className="text-center">
-              <div className="mx-auto inline-flex size-14 items-center justify-center rounded-2xl bg-wise-forest-green text-wise-bright-green">
-                <p.icon className="size-6" />
+              <div className="mx-auto inline-flex size-16 items-center justify-center rounded-3xl bg-wise-forest-green text-wise-bright-green">
+                <p.icon className="size-7" />
               </div>
-              <h3 className="mt-4 text-lg font-semibold text-foreground">
+              <h3 className="mt-5 text-xl font-semibold text-foreground">
                 {p.title}
               </h3>
-              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+              <p className="mt-3 text-base leading-relaxed text-muted-foreground">
                 {p.description}
               </p>
             </div>

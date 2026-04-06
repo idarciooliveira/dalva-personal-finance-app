@@ -80,7 +80,11 @@ export function RecentTransactionsCard({ data }: RecentTransactionsCardProps) {
                 <div className="text-right shrink-0">
                   <p
                     className={`text-sm font-medium tabular-nums ${
-                      isPositive ? "text-emerald-500" : "text-red-500"
+                      txn.type === "transfer"
+                        ? "text-muted-foreground"
+                        : isPositive
+                          ? "text-emerald-500"
+                          : "text-red-500"
                     }`}
                   >
                     {isPositive ? "+" : "-"}

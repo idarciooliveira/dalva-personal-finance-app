@@ -76,6 +76,7 @@ export default defineSchema({
       v.literal("income"),
       v.literal("expense"),
       v.literal("adjustment"),
+      v.literal("transfer"),
     ),
     amount: v.number(), // in minor units (cents); adjustments may be positive or negative
     accountId: v.id("accounts"),
@@ -86,9 +87,46 @@ export default defineSchema({
     note: v.optional(v.string()),
     payee: v.optional(v.string()),
     tags: v.optional(v.array(v.string())),
+
+    // Transfer-specific fields (only present on type="transfer")
+    destinationAccountId: v.optional(v.id("accounts")), // the receiving account (set on the outgoing side)
+    linkedTransactionId: v.optional(v.id("transactions")), // the paired transaction on the other side
+    transferGroupId: v.optional(v.string()), // shared ID linking both sides of a transfer
   })
     .index("by_userId", ["userId"])
     .index("by_userId_and_date", ["userId", "date"])
     .index("by_accountId", ["accountId"])
-    .index("by_categoryId", ["categoryId"]),
+    .index("by_categoryId", ["categoryId"])
+    .index("by_transferGroupId", ["transferGroupId"]),
+
+  /* ------------------------------------------------------------------ */
+  /*  Savings goals                                                      */
+  /* ------------------------------------------------------------------ */
+  savingsGoals: defineTable({
+    userId: v.string(),
+    name: v.string(),
+    targetAmount: v.number(), // minor units (cents)
+    currentAmount: v.number(), // tracked amount (cents)
+    targetDate: v.optional(v.string()), // ISO date, e.g. "2026-12-31"
+    linkedAccountId: v.optional(v.id("accounts")), // real account to link
+    isVirtual: v.boolean(), // true = virtual tracking, false = linked to account
+    icon: v.optional(v.string()), // Lucide icon name, default "target"
+    color: v.optional(v.string()), // Hex color, default "#a3e635"
+    archived: v.optional(v.boolean()),
+    createdAt: v.string(), // ISO date of creation
+  }).index("by_userId", ["userId"]),
+
+  /* ------------------------------------------------------------------ */
+  /*  Goal contributions                                                 */
+  /* ------------------------------------------------------------------ */
+  goalContributions: defineTable({
+    userId: v.string(),
+    goalId: v.id("savingsGoals"),
+    amount: v.number(), // minor units (cents), positive = deposit, negative = withdrawal
+    date: v.string(), // ISO date
+    note: v.optional(v.string()),
+    transactionId: v.optional(v.id("transactions")), // linked transfer transaction (for account-linked goals)
+  })
+    .index("by_userId", ["userId"])
+    .index("by_goalId", ["goalId"]),
 });

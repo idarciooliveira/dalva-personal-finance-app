@@ -16,6 +16,7 @@ import { DashboardSkeleton } from "@/components/skeleton/dashboard-skeleton";
 import { AppSidebar } from "@/components/dashboard/app-sidebar";
 import { FloatingActionMenu } from "@/components/dashboard/floating-action-menu";
 import { TransactionFormDialog } from "@/components/transactions/transaction-form-dialog";
+import { TransferFormDialog } from "@/components/transactions/transfer-form-dialog";
 
 export const Route = createFileRoute("/_authenticated")({
   component: AuthenticatedLayout,
@@ -39,6 +40,7 @@ function AuthenticatedLayout() {
   const [fabDialogType, setFabDialogType] = useState<"income" | "expense">(
     "expense",
   );
+  const [transferDialogOpen, setTransferDialogOpen] = useState(false);
 
   if (auth.status !== "ready") {
     return <DashboardSkeleton />;
@@ -49,9 +51,13 @@ function AuthenticatedLayout() {
     router.navigate({ to: "/" });
   }
 
-  function handleFabAction(type: "income" | "expense") {
-    setFabDialogType(type);
-    setFabDialogOpen(true);
+  function handleFabAction(type: "income" | "expense" | "transfer") {
+    if (type === "transfer") {
+      setTransferDialogOpen(true);
+    } else {
+      setFabDialogType(type);
+      setFabDialogOpen(true);
+    }
   }
 
   return (
@@ -83,6 +89,13 @@ function AuthenticatedLayout() {
           onOpenChange={setFabDialogOpen}
           transaction={null}
           defaultType={fabDialogType}
+        />
+
+        {/* FAB Transfer Dialog */}
+        <TransferFormDialog
+          open={transferDialogOpen}
+          onOpenChange={setTransferDialogOpen}
+          transfer={null}
         />
       </TooltipProvider>
     </AuthProfileContext.Provider>

@@ -54,24 +54,24 @@ export function AccountRow({ account, onEdit, onAdjustBalance }: AccountRowProps
   return (
     <div
       className={cn(
-        "flex items-center gap-4 rounded-lg border border-border/60 bg-card px-4 py-3 transition-colors",
+        "flex min-h-22 items-center gap-5 rounded-2xl border border-border/60 bg-card px-5 py-4 transition-colors",
         account.archived && "opacity-60",
       )}
     >
       {/* Icon with theme color */}
       <div
-        className="flex size-10 items-center justify-center rounded-lg"
+        className="flex size-12 items-center justify-center rounded-xl"
         style={{
           background: `linear-gradient(135deg, ${theme.from}, ${theme.to})`,
         }}
       >
-        {Icon && <Icon className="size-5 text-white" />}
+        {Icon && <Icon className="size-5.5 text-white" />}
       </div>
 
       {/* Name + type */}
-      <div className="flex-1 min-w-0">
+      <div className="min-w-0 flex-1">
         <div className="flex items-center gap-2">
-          <span className="text-sm font-medium text-foreground truncate">
+          <span className="truncate text-base font-medium text-foreground">
             {account.name}
           </span>
           {account.archived && (
@@ -80,7 +80,7 @@ export function AccountRow({ account, onEdit, onAdjustBalance }: AccountRowProps
             </Badge>
           )}
         </div>
-        <span className="text-xs text-muted-foreground">
+        <span className="mt-1 block text-sm text-muted-foreground">
           {accountType?.label ?? account.type} · {account.currency}
         </span>
       </div>
@@ -89,14 +89,14 @@ export function AccountRow({ account, onEdit, onAdjustBalance }: AccountRowProps
       <div className="text-right">
         <span
           className={cn(
-            "text-sm font-semibold tabular-nums",
+            "text-xl font-semibold tabular-nums",
             isNegative ? "text-destructive" : "text-foreground",
           )}
         >
           {formatCurrency(Math.abs(account.balance), account.currency)}
         </span>
         {isNegative && (
-          <span className="ml-1 text-xs text-destructive">owing</span>
+          <span className="ml-1 text-sm text-destructive">owing</span>
         )}
       </div>
 

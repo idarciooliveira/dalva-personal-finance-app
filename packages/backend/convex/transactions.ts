@@ -11,6 +11,7 @@ const txTypeValidator = v.union(
   v.literal("income"),
   v.literal("expense"),
   v.literal("adjustment"),
+  v.literal("transfer"),
 );
 
 /* -------------------------------------------------------------------------- */
@@ -19,11 +20,12 @@ const txTypeValidator = v.union(
 
 /** Compute the signed balance delta for a transaction. */
 function balanceDelta(
-  type: "income" | "expense" | "adjustment",
+  type: "income" | "expense" | "adjustment" | "transfer",
   amount: number,
 ): number {
   if (type === "income") return amount;
   if (type === "expense") return -amount;
+  // adjustment keeps the raw signed amount; transfer is handled externally
   return amount;
 }
 
@@ -330,7 +332,8 @@ export const getTransactionSummary = query({
     for (const tx of txs) {
       if (tx.type === "income") totalIncome += tx.amount;
       else if (tx.type === "expense") totalExpenses += tx.amount;
-      else totalAdjustments += tx.amount;
+      else if (tx.type === "adjustment") totalAdjustments += tx.amount;
+      // transfers are excluded from income/expense/adjustment totals
     }
 
     return {

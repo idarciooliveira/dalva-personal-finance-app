@@ -59,7 +59,7 @@ export function AccountCard({ account, holderName = "DALVA USER" }: AccountCardP
       <div className="flex items-center gap-2">
         <p className="text-5xl font-semibold tabular-nums tracking-tight">
           {showBalance
-            ? formatCurrency(Math.abs(account.balance), account.currency)
+            ? formatCurrency(account.balance, account.currency)
             : "****"}
         </p>
         {account.balance < 0 && showBalance && (

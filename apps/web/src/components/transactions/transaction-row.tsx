@@ -6,6 +6,7 @@ import type { Doc } from "@mpf/backend/convex/_generated/dataModel";
 import {
   ArrowUpRight,
   ArrowDownRight,
+  ArrowLeftRight,
   Scale,
   MoreVertical,
   Pencil,
@@ -26,6 +27,8 @@ import { formatCurrency, formatDate } from "@/lib/format";
 interface TransactionRowProps {
   transaction: Doc<"transactions">;
   onEdit: () => void;
+  /** Optional override for the delete action (used for transfers). */
+  onDelete?: () => void;
 }
 
 const typeConfig = {
@@ -50,9 +53,16 @@ const typeConfig = {
     amountColor: "text-primary",
     prefix: "",
   },
+  transfer: {
+    icon: ArrowLeftRight,
+    iconColor: "text-blue-500",
+    iconBg: "bg-blue-500/10",
+    amountColor: "text-blue-500",
+    prefix: "",
+  },
 } as const;
 
-export function TransactionRow({ transaction, onEdit }: TransactionRowProps) {
+export function TransactionRow({ transaction, onEdit, onDelete }: TransactionRowProps) {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
   const config = typeConfig[transaction.type];
@@ -63,11 +73,22 @@ export function TransactionRow({ transaction, onEdit }: TransactionRowProps) {
     convexQuery(api.accounts.getAccount, { id: transaction.accountId }),
   );
 
+  // Fetch destination account for transfers
+  const { data: destAccount } = useQuery(
+    convexQuery(
+      api.accounts.getAccount,
+      transaction.type === "transfer" && transaction.destinationAccountId
+        ? { id: transaction.destinationAccountId }
+        : "skip",
+    ),
+  );
+
   const { data: categories } = useQuery(
     convexQuery(api.categories.listCategories, {}),
   );
   const category = categories?.find((c) => c._id === transaction.categoryId);
   const isAdjustment = transaction.type === "adjustment";
+  const isTransfer = transaction.type === "transfer";
   const signedAmount =
     transaction.type === "expense"
       ? -Math.abs(transaction.amount)
@@ -77,26 +98,61 @@ export function TransactionRow({ transaction, onEdit }: TransactionRowProps) {
     mutationFn: useConvexMutation(api.transactions.deleteTransaction),
   });
 
+  const { mutate: deleteTransfer } = useMutation({
+    mutationFn: useConvexMutation(api.transfers.deleteTransfer),
+  });
+
+  // For transfers with destinationAccountId, this is the outgoing side (debit)
+  const isOutgoingTransfer = isTransfer && !!transaction.destinationAccountId;
+
+  // Build the subtitle text
+  let subtitle: string;
+  if (isTransfer) {
+    if (isOutgoingTransfer && destAccount) {
+      subtitle = `${account?.name ?? ""}  →  ${destAccount.name}`;
+    } else if (!isOutgoingTransfer && account) {
+      subtitle = `Transfer to ${account.name}`;
+    } else {
+      subtitle = "Transfer";
+    }
+  } else if (isAdjustment) {
+    subtitle = "Adjustment";
+  } else {
+    subtitle = category?.name ?? "Uncategorized";
+  }
+  if (!isTransfer && account) {
+    subtitle += ` · ${account.name}`;
+  }
+
+  function handleDelete() {
+    if (onDelete) {
+      onDelete();
+    } else if (isTransfer) {
+      deleteTransfer({ id: transaction._id });
+    } else {
+      deleteTransaction({ id: transaction._id });
+    }
+  }
+
   return (
-    <div className="flex items-center gap-3 rounded-lg border border-border/60 bg-card px-4 py-3 transition-colors">
+    <div className="flex min-h-22 items-center gap-5 rounded-2xl border border-border/60 bg-card px-5 py-4 transition-colors">
       {/* Type icon */}
       <div
         className={cn(
-          "flex size-8 items-center justify-center rounded-lg",
+          "flex size-12 items-center justify-center rounded-xl",
           config.iconBg,
         )}
       >
-        <Icon className={cn("size-4", config.iconColor)} />
+        <Icon className={cn("size-5", config.iconColor)} />
       </div>
 
       {/* Description + meta */}
-      <div className="flex-1 min-w-0">
-        <p className="truncate text-sm font-medium text-foreground">
+      <div className="min-w-0 flex-1">
+        <p className="truncate text-base font-medium text-foreground">
           {transaction.description || transaction.payee || "Untitled"}
         </p>
-        <p className="text-xs text-muted-foreground">
-          {isAdjustment ? "Adjustment" : (category?.name ?? "Uncategorized")}
-          {account ? ` \u00b7 ${account.name}` : ""}
+        <p className="mt-1 text-sm text-muted-foreground">
+          {subtitle}
         </p>
       </div>
 
@@ -104,21 +160,29 @@ export function TransactionRow({ transaction, onEdit }: TransactionRowProps) {
       <div className="text-right shrink-0">
         <p
           className={cn(
-            "text-sm font-semibold tabular-nums",
+            "text-xl font-semibold tabular-nums",
             isAdjustment
               ? signedAmount >= 0
                 ? "text-emerald-500"
                 : "text-destructive"
-              : config.amountColor,
+              : isTransfer
+                ? "text-blue-500"
+                : config.amountColor,
           )}
         >
-          {signedAmount > 0 ? "+" : signedAmount < 0 ? "-" : ""}
+          {isTransfer
+            ? (isOutgoingTransfer ? "-" : "+")
+            : signedAmount > 0
+              ? "+"
+              : signedAmount < 0
+                ? "-"
+                : ""}
           {formatCurrency(
             Math.abs(signedAmount),
             account?.currency ?? "USD",
           )}
         </p>
-        <p className="text-xs text-muted-foreground">
+        <p className="mt-1 text-sm text-muted-foreground">
           {formatDate(transaction.date)}
         </p>
       </div>
@@ -146,7 +210,7 @@ export function TransactionRow({ transaction, onEdit }: TransactionRowProps) {
             onClick={() => setDeleteDialogOpen(true)}
           >
             <Trash2 className="mr-2 size-4" />
-            Delete
+            Delete{isTransfer ? " transfer" : ""}
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
@@ -154,9 +218,13 @@ export function TransactionRow({ transaction, onEdit }: TransactionRowProps) {
       <ConfirmDeleteDialog
         open={deleteDialogOpen}
         onOpenChange={setDeleteDialogOpen}
-        title="Delete transaction"
-        description="Delete this transaction? This cannot be undone."
-        onConfirm={() => deleteTransaction({ id: transaction._id })}
+        title={isTransfer ? "Delete transfer" : "Delete transaction"}
+        description={
+          isTransfer
+            ? "Delete this transfer? Both sides will be removed and account balances restored. This cannot be undone."
+            : "Delete this transaction? This cannot be undone."
+        }
+        onConfirm={handleDelete}
       />
     </div>
   );

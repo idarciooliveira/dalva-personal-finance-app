@@ -118,7 +118,7 @@ export function CategoryFormDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md p-0 gap-0 overflow-hidden flex flex-col h-[420px]">
+      <DialogContent className="max-w-md p-0 gap-0 overflow-hidden flex flex-col h-105">
         {/* Header */}
         <DialogHeader className="px-6 pt-6 pb-0 shrink-0">
           <DialogTitle className="text-xl font-semibold">
@@ -169,15 +169,16 @@ export function CategoryFormDialog({
                   </button>
                 ))}
               </div>
-              {!showAllColors && CATEGORY_COLORS.length > COLORS_PREVIEW_COUNT && (
-                <button
-                  type="button"
-                  onClick={() => setShowAllColors(true)}
-                  className="mt-2.5 rounded-full bg-muted/60 px-4 py-1.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground hover:bg-muted transition-colors"
-                >
-                  Others
-                </button>
-              )}
+              {!showAllColors &&
+                CATEGORY_COLORS.length > COLORS_PREVIEW_COUNT && (
+                  <button
+                    type="button"
+                    onClick={() => setShowAllColors(true)}
+                    className="mt-2.5 rounded-full bg-muted/60 px-4 py-1.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground hover:bg-muted transition-colors"
+                  >
+                    Others
+                  </button>
+                )}
               {showAllColors && (
                 <button
                   type="button"
@@ -218,15 +219,16 @@ export function CategoryFormDialog({
                   );
                 })}
               </div>
-              {!showAllIcons && AVAILABLE_ICONS.length > ICONS_PREVIEW_COUNT && (
-                <button
-                  type="button"
-                  onClick={() => setShowAllIcons(true)}
-                  className="mt-2.5 rounded-full bg-muted/60 px-4 py-1.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground hover:bg-muted transition-colors"
-                >
-                  Others
-                </button>
-              )}
+              {!showAllIcons &&
+                AVAILABLE_ICONS.length > ICONS_PREVIEW_COUNT && (
+                  <button
+                    type="button"
+                    onClick={() => setShowAllIcons(true)}
+                    className="mt-2.5 rounded-full bg-muted/60 px-4 py-1.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground hover:bg-muted transition-colors"
+                  >
+                    Others
+                  </button>
+                )}
               {showAllIcons && (
                 <button
                   type="button"
@@ -240,9 +242,7 @@ export function CategoryFormDialog({
           </div>
 
           {/* ── Error ── */}
-          {error && (
-            <p className="mt-4 text-sm text-destructive">{error}</p>
-          )}
+          {error && <p className="mt-4 text-sm text-destructive">{error}</p>}
         </div>
 
         {/* ── Footer ── */}
@@ -267,11 +267,7 @@ export function CategoryFormDialog({
             disabled={isPending || !name.trim()}
             onClick={() => void handleSubmit(false)}
           >
-            {isPending
-              ? "Saving..."
-              : isEdit
-                ? "Save"
-                : "Save"}
+            {isPending ? "Saving..." : isEdit ? "Save" : "Save"}
           </Button>
         </div>
       </DialogContent>

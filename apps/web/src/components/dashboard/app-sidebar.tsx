@@ -37,7 +37,7 @@ const mainNav = [
   { label: "Transactions", icon: ArrowLeftRight, href: "/transactions" },
   { label: "Categories", icon: Tags, href: "/categories" },
   { label: "Budgets", icon: PieChart, href: "/dashboard" },
-  { label: "Goals", icon: Target, href: "/dashboard" },
+  { label: "Goals", icon: Target, href: "/goals" },
   { label: "Debts", icon: CreditCard, href: "/dashboard" },
 ] as const;
 

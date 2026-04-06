@@ -16,9 +16,9 @@ import { DebtPaydownCard } from "@/components/dashboard/debt-paydown-card";
 import {
   mockNetWorth,
   mockBudgetSummary,
-  mockGoalsProgress,
   mockDebtPaydown,
 } from "@/lib/mock-dashboard-data";
+import type { GoalsProgressData } from "@/lib/mock-dashboard-data";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   component: DashboardPage,
@@ -54,6 +54,26 @@ function DashboardPage() {
     summary?.recentTransactions ?? [],
     accounts ?? [],
   );
+
+  // Fetch real savings goals
+  const { data: goalsRaw } = useQuery(
+    convexQuery(api.savingsGoals.listGoals, {}),
+  );
+
+  const goalsProgressData: GoalsProgressData = {
+    goals: (goalsRaw ?? []).map((g) => ({
+      id: g._id,
+      name: g.name,
+      targetAmount: g.targetAmount,
+      currentAmount: g.currentAmount,
+      percentComplete: Math.min(
+        100,
+        Math.round((g.currentAmount / g.targetAmount) * 100),
+      ),
+      targetDate: g.targetDate,
+    })),
+    currency: "USD",
+  };
 
   return (
     <div className="dashboard-glass-bg dashboard-glass flex-1 overflow-auto">
@@ -101,7 +121,7 @@ function DashboardPage() {
           <BudgetSummaryCard data={mockBudgetSummary} />
         </div>
         <div className="mt-4 grid gap-4 sm:grid-cols-2">
-          <GoalsProgressCard data={mockGoalsProgress} />
+          <GoalsProgressCard data={goalsProgressData} />
           <DebtPaydownCard data={mockDebtPaydown} />
         </div>
       </div>
@@ -133,7 +153,7 @@ function getCurrentMonth(): string {
 function buildRecentTransactionsData(
   transactions: Array<{
     _id: string;
-    type: "income" | "expense" | "adjustment";
+    type: "income" | "expense" | "adjustment" | "transfer";
     amount: number;
     date: string;
     description?: string;

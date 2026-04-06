@@ -62,17 +62,17 @@ export function CategoryRow({
   return (
     <div
       className={cn(
-        "rounded-lg border border-border/60 bg-card transition-colors",
+        "rounded-2xl border border-border/60 bg-card transition-colors",
         category.archived && "opacity-60",
       )}
     >
       {/* Main row */}
-      <div className="flex items-center gap-3 px-4 py-3">
+      <div className="flex min-h-22 items-center gap-5 px-5 py-4">
         {/* Expand toggle */}
         <button
           type="button"
           onClick={() => setExpanded(!expanded)}
-          className="flex size-5 items-center justify-center text-muted-foreground hover:text-foreground"
+          className="flex size-6 items-center justify-center text-muted-foreground hover:text-foreground"
         >
           {expanded ? (
             <ChevronDown className="size-4" />
@@ -83,15 +83,15 @@ export function CategoryRow({
 
         {/* Icon */}
         <div
-          className="flex size-9 items-center justify-center rounded-lg"
+          className="flex size-12 items-center justify-center rounded-xl"
           style={{ backgroundColor: (category.color ?? "#6B7280") + "20" }}
         >
-          <Icon className="size-4" style={{ color: category.color ?? "#6B7280" }} />
+          <Icon className="size-5" style={{ color: category.color ?? "#6B7280" }} />
         </div>
 
         {/* Name */}
-        <div className="flex-1 min-w-0">
-          <span className="text-sm font-medium text-foreground">
+        <div className="min-w-0 flex-1">
+          <span className="text-base font-medium text-foreground">
             {category.name}
           </span>
           {category.archived && (
@@ -100,7 +100,7 @@ export function CategoryRow({
             </Badge>
           )}
           {hasSubcategories && (
-            <span className="ml-2 text-xs text-muted-foreground">
+            <span className="ml-2 text-sm text-muted-foreground">
               {sortedSubs.length} subcategor{sortedSubs.length === 1 ? "y" : "ies"}
             </span>
           )}
@@ -166,9 +166,9 @@ export function CategoryRow({
 
       {/* Subcategories (expanded) */}
       {expanded && (
-        <div className="border-t border-border/40 px-4 pb-3 pt-2">
+        <div className="border-t border-border/40 px-5 pb-4 pt-3">
           {sortedSubs.length === 0 ? (
-            <p className="py-2 pl-8 text-xs text-muted-foreground">
+            <p className="py-2 pl-10 text-sm text-muted-foreground">
               No subcategories.{" "}
               <button
                 type="button"
@@ -179,7 +179,7 @@ export function CategoryRow({
               </button>
             </p>
           ) : (
-            <div className="space-y-0.5">
+            <div className="space-y-1">
               {sortedSubs.map((sub) => (
                 <SubcategoryRow key={sub._id} subcategory={sub} parentColor={category.color ?? "#6B7280"} />
               ))}
@@ -187,10 +187,10 @@ export function CategoryRow({
           )}
           <button
             type="button"
-            className="mt-2 flex items-center gap-1.5 pl-8 text-xs font-medium text-primary hover:underline underline-offset-4"
+            className="mt-3 flex items-center gap-1.5 pl-10 text-sm font-medium text-primary hover:underline underline-offset-4"
             onClick={onAddSubcategory}
           >
-            <Plus className="size-3" />
+            <Plus className="size-3.5" />
             Add subcategory
           </button>
         </div>

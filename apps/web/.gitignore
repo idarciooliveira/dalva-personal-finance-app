@@ -1,0 +1,7 @@
+.tanstack
+dist/
+node_modules/
+playwright-report/
+dist
+test-results
+.env.local

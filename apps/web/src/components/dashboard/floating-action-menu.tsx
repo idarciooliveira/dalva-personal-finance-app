@@ -14,7 +14,7 @@ interface ActionItem {
 }
 
 interface FloatingActionMenuProps {
-  onAction?: (type: "income" | "expense") => void;
+  onAction?: (type: "income" | "expense" | "transfer") => void;
 }
 
 export function FloatingActionMenu({ onAction }: FloatingActionMenuProps) {
@@ -35,8 +35,7 @@ export function FloatingActionMenu({ onAction }: FloatingActionMenuProps) {
       key: "transfer",
       label: "Transfer",
       icon: <ArrowLeftRight className="size-[18px] shrink-0" />,
-      // Transfers are out of scope for now
-      onClick: () => {},
+      onClick: () => onAction?.("transfer"),
     },
   ];
 

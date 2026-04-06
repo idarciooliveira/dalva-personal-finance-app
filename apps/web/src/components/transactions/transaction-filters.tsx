@@ -27,7 +27,7 @@ export interface TransactionFilters {
   dateTo: string;
   accountId: string; // "" = all
   categoryId: string; // "" = all
-  type: "" | "income" | "expense" | "adjustment"; // "" = all
+  type: "" | "income" | "expense" | "adjustment" | "transfer"; // "" = all
 }
 
 export const defaultFilters: TransactionFilters = {
@@ -65,7 +65,12 @@ export function TransactionFilterButton({
   const count = activeFilterCount(filters);
 
   return (
-    <Button variant="outline" size="sm" onClick={onClick} className="relative">
+    <Button
+      variant="outline"
+      size="default"
+      onClick={onClick}
+      className="relative"
+    >
       <SlidersHorizontal className="mr-1.5 size-4" />
       Filters
       {count > 0 && (
@@ -208,7 +213,8 @@ export function TransactionFiltersSheet({
               value={filters.type || "__all__"}
               onValueChange={(v) =>
                 update({
-                  type: v === "__all__" ? "" : (v as TransactionFilters["type"]),
+                  type:
+                    v === "__all__" ? "" : (v as TransactionFilters["type"]),
                 })
               }
             >
@@ -219,6 +225,7 @@ export function TransactionFiltersSheet({
                 <SelectItem value="__all__">All</SelectItem>
                 <SelectItem value="income">Income</SelectItem>
                 <SelectItem value="expense">Expense</SelectItem>
+                <SelectItem value="transfer">Transfer</SelectItem>
                 <SelectItem value="adjustment">Adjustment</SelectItem>
               </SelectContent>
             </Select>

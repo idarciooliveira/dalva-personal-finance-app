@@ -71,7 +71,7 @@ function AccountsContent() {
           </div>
           <Button
             variant="accent"
-            size="sm"
+            size="default"
             className="shrink-0"
             onClick={() => setCreateDialogOpen(true)}
           >
@@ -102,7 +102,7 @@ function AccountsContent() {
           </p>
           <Button
             variant="accent"
-            size="sm"
+            size="default"
             className="mt-4"
             onClick={() => setCreateDialogOpen(true)}
           >
@@ -111,7 +111,7 @@ function AccountsContent() {
           </Button>
         </div>
       ) : (
-        <div className="space-y-2">
+        <div className="space-y-3">
           {sortedAccounts.map((account) => (
             <AccountRow
               key={account._id}

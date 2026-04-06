@@ -9,6 +9,10 @@ import { Plus, ArrowLeftRight } from "lucide-react";
 import { TransactionRow } from "@/components/transactions/transaction-row";
 import { TransactionFormDialog } from "@/components/transactions/transaction-form-dialog";
 import {
+  TransferFormDialog,
+  type TransferData,
+} from "@/components/transactions/transfer-form-dialog";
+import {
   TransactionFilterButton,
   TransactionFiltersSheet,
   defaultFilters,
@@ -46,6 +50,18 @@ function TransactionsContent() {
   const [editTransaction, setEditTransaction] =
     useState<Doc<"transactions"> | null>(null);
 
+  // Transfer edit state
+  const [editTransferId, setEditTransferId] =
+    useState<Id<"transactions"> | null>(null);
+
+  // Fetch transfer data when editing a transfer
+  const { data: transferData } = useQuery(
+    convexQuery(
+      api.transfers.getTransfer,
+      editTransferId ? { id: editTransferId } : "skip",
+    ),
+  );
+
   // Build query args from filters
   const queryArgs: Record<string, unknown> = {};
   if (filters.dateFrom) queryArgs.dateFrom = filters.dateFrom;
@@ -79,11 +95,7 @@ function TransactionsContent() {
             filters={filters}
             onClick={() => setFiltersOpen(true)}
           />
-          <Button
-            variant="accent"
-            size="sm"
-            onClick={() => setCreateDialogOpen(true)}
-          >
+          <Button variant="accent" onClick={() => setCreateDialogOpen(true)}>
             <Plus className="mr-1.5 size-4" />
             Add transaction
           </Button>
@@ -113,12 +125,18 @@ function TransactionsContent() {
           </Button>
         </div>
       ) : (
-        <div className="space-y-2">
+        <div className="space-y-3">
           {transactions.map((tx) => (
             <TransactionRow
               key={tx._id}
               transaction={tx}
-              onEdit={() => setEditTransaction(tx)}
+              onEdit={() => {
+                if (tx.type === "transfer") {
+                  setEditTransferId(tx._id);
+                } else {
+                  setEditTransaction(tx);
+                }
+              }}
             />
           ))}
         </div>
@@ -139,13 +157,22 @@ function TransactionsContent() {
         transaction={null}
       />
 
-      {/* Edit Dialog */}
+      {/* Edit Dialog (non-transfer) */}
       <TransactionFormDialog
         open={editTransaction !== null}
         onOpenChange={(open) => {
           if (!open) setEditTransaction(null);
         }}
         transaction={editTransaction}
+      />
+
+      {/* Edit Transfer Dialog */}
+      <TransferFormDialog
+        open={editTransferId !== null && transferData !== undefined}
+        onOpenChange={(open) => {
+          if (!open) setEditTransferId(null);
+        }}
+        transfer={transferData ? (transferData as TransferData) : null}
       />
     </>
   );
