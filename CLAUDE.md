@@ -2,392 +2,308 @@
 
 ## What This Is
 
-A privacy-first personal finance app. Users manually track accounts, transactions, budgets, debts, and savings goals. No bank integrations -- the user is the source of truth.
+A privacy-first personal finance app. Users manually track accounts, transactions, categories, transfers, and savings goals. No bank integrations -- the user is the source of truth.
 
-Product docs: `docs/business.md` (vision), `docs/PRD.md` (full requirements), `docs/design-system.md` (UI spec).
+Product docs: `docs/business.md` (vision), `docs/PRD.md` (requirements), `docs/design-system.md` (UI spec).
 
 ## Monorepo Structure
 
-```
+```text
 my-personal-finance/
-├── apps/web/          @mpf/web     -- Frontend (TanStack Start + React 19)
-├── packages/backend/  @mpf/backend -- Backend  (Convex)
-└── docs/                           -- Product docs, PRD, design system
+|- apps/web/          @mpf/web     Frontend (TanStack Start + React 19)
+|- packages/backend/  @mpf/backend Backend (Convex)
+`- docs/                           Product docs and design system
 ```
 
-**Package manager:** Bun (workspaces defined in root `package.json`).
+**Package manager:** Bun workspaces (root `package.json`).
 
 ### Commands
 
 ```bash
-bun run dev            # Start both frontend and backend
-bun run dev:web        # Frontend only (port 3000)
-bun run dev:backend    # Convex dev server only
-bun run build          # Build all apps
-bun run typecheck      # Typecheck all packages
-bun run test           # Run backend tests (watch mode)
-bun run test:once      # Run backend tests (single run)
-bun run test:e2e       # Run Playwright E2E tests (Chromium, Firefox, WebKit)
+bun run dev          # Start the web app
+bun run dev:web      # Start the web app explicitly
+bun run dev:backend  # Start Convex dev
+bun run build        # Build apps/* (currently the web app)
+bun run build:web    # Build the web app
+bun run typecheck    # Typecheck all packages
+bun run lint         # Lint all packages
+bun run test         # Run backend tests in watch mode
+bun run test:once    # Run backend tests once
+bun run test:e2e     # Run Playwright E2E tests
 ```
 
 ## apps/web -- Frontend
 
-**Stack:** TanStack Start (SSR) + TanStack Router (file-based routing) + React 19 + React Query + Convex React client.
+**Stack:** TanStack Start (SSR) + TanStack Router (file-based routing) + React 19 + TanStack React Query + Convex React client.
 
-**UI:** shadcn/ui v4 (`radix-nova` style) + Tailwind CSS v4 (CSS-first, no tailwind.config) + CVA + Radix UI + Lucide icons.
+**UI:** shadcn/ui v4 (`radix-nova` style) + Tailwind CSS v4 (CSS-first) + Radix UI + Lucide icons + Recharts.
 
-**Design system:** Wise-inspired. See `docs/design-system.md`. All tokens in `apps/web/src/styles.css`.
+**Design system:** Wise-inspired. Tokens live in `apps/web/src/styles.css`.
+
+### Frontend Implementation Patterns
+
+- Protected app pages live under `apps/web/src/routes/_authenticated/`.
+- `apps/web/src/routes/_authenticated.tsx` is the persistent authenticated shell. It owns:
+  - auth guard
+  - onboarding gate
+  - sidebar layout
+  - top bar
+  - floating quick actions
+  - shared create transaction / create transfer dialogs
+- Onboarding lives at `/onboarding` and must complete before authenticated users can access the main app.
+- Prefer `useQuery(convexQuery(...))` for reads and `useMutation({ mutationFn: useConvexMutation(...) })` for writes.
+- The app uses React Query as the main frontend data layer and Convex as the backing source of truth.
+- Root router setup in `src/router.tsx` configures `ConvexQueryClient`, `ConvexAuthProvider`, and a 30 second `staleTime` because Convex subscriptions keep data fresh.
 
 ### Frontend UI Rule
 
-- All app forms should default to the modal form pattern established in `apps/web/src/components/accounts/account-form-dialog.tsx`
-- Use the same dialog shell structure: `max-w-md`, `p-0`, `gap-0`, `overflow-hidden`, simple header, content padding, and right-aligned footer actions
-- When a form has a primary amount or key value, place it prominently at the top with large typography and a bottom border instead of a standard boxed input
+- Product forms should default to the dialog pattern established in `apps/web/src/components/accounts/account-form-dialog.tsx`
+- Use the same dialog shell structure: `max-w-md`, `p-0`, `gap-0`, `overflow-hidden`, compact header, padded content, right-aligned footer actions
+- When a form has a primary amount or value, place it prominently at the top with large typography and a bottom border instead of a boxed input
 - Build supporting fields as icon-led rows with bottom dividers and lightweight inline controls
-- Keep errors in the content area above the footer and use `size="default"` buttons in the footer
-- Only diverge from this pattern when the form content clearly requires a different interaction model
+- Keep validation and async errors inside the content area above the footer
+- Use `size="default"` footer buttons
+- Reuse this pattern across accounts, transactions, transfers, categories, and goals unless the interaction clearly needs something else
+
+### Additional Frontend Patterns
+
+- The authenticated app uses a persistent sidebar, not top-nav page remounts, so child pages should render inside the existing shell cleanly
+- Quick entry flows for income, expense, and transfer should stay accessible from the floating action menu
+- Dashboard pages can mix real data and mock-backed cards while upcoming modules are still under construction, but docs and code comments should make that explicit
+- Keep list pages simple: page header, optional filters/toggles, empty state, list/grid body, dialogs for create/edit actions
 
 ### Path Aliases
 
-- `#/` → `./src/*` (runtime via `package.json` `imports` + TypeScript `paths`)
-- `@/` → `./src/*` (TypeScript only, also works in imports)
-- shadcn components use `#/` prefix
+- `#/` -> `./src/*` via `package.json` imports and TypeScript paths
+- `@/` -> `./src/*` via TypeScript paths
 
 ### Key Files
 
-| File                    | Purpose                                                                                 |
-| ----------------------- | --------------------------------------------------------------------------------------- |
-| `src/styles.css`        | ALL design tokens: colors, fonts, radius, spacing, sizing. This IS the Tailwind config. Includes light and dark theme variables. |
-| `src/router.tsx`        | TanStack Router setup + ConvexAuthProvider + Convex client (reads `VITE_CONVEX_URL`) |
-| `src/routes/__root.tsx` | Root layout (HTML shell, stylesheet link, dark mode anti-flash script, devtools)         |
-| `src/routes/index.tsx`  | Landing page (Nav, Hero, Features, Principles, Footer + dark mode toggle)               |
-| `src/routes/login.tsx`  | Sign in page (email/password form + Google OAuth placeholder)                           |
-| `src/routes/register.tsx` | Sign up page (name/email/password form + Google OAuth placeholder)                    |
-| `src/routes/forgot-password.tsx` | Password reset page (email form)                                               |
-| `src/routes/dashboard.tsx` | Protected dashboard placeholder (requires auth)                                     |
-| `src/routeTree.gen.ts`  | Auto-generated by TanStack Router -- DO NOT edit                                        |
-| `src/lib/utils.ts`      | `cn()` utility (clsx + tailwind-merge)                                                  |
-| `src/components/ui/`    | shadcn components: `button`, `input`, `label`, `card`, `separator`                      |
-| `src/components/icons/` | Custom icons: `google-icon.tsx`                                                         |
-| `components.json`       | shadcn/ui config -- controls `bunx shadcn@latest add <component>`                       |
-| `playwright.config.ts`  | Playwright E2E test configuration (browsers, webServer, reporter)                       |
-| `e2e/`                  | Playwright E2E test files (`*.spec.ts`)                                                 |
-| `.env.local`            | `VITE_CONVEX_URL` -- Convex deployment URL                                              |
-
-### Adding shadcn Components
-
-```bash
-bunx shadcn@latest add <component-name>
-```
-
-Components auto-inherit the Wise theme via CSS variables. They land in `src/components/ui/`.
+| File | Purpose |
+| ---- | ------- |
+| `apps/web/src/styles.css` | Global design tokens and theme variables |
+| `apps/web/src/router.tsx` | TanStack Router + React Query + Convex client wiring |
+| `apps/web/src/routes/__root.tsx` | Root document, stylesheet, anti-flash theme script, devtools |
+| `apps/web/src/routes/_authenticated.tsx` | Persistent authenticated layout and shared quick actions |
+| `apps/web/src/routes/onboarding.tsx` | 3-step onboarding flow |
+| `apps/web/src/routes/_authenticated/dashboard.tsx` | Main dashboard page |
+| `apps/web/src/routes/_authenticated/accounts.tsx` | Accounts management page |
+| `apps/web/src/routes/_authenticated/transactions.tsx` | Transactions page with filters and transfer edit flow |
+| `apps/web/src/routes/_authenticated/categories.tsx` | Categories and subcategories management |
+| `apps/web/src/routes/_authenticated/goals.tsx` | Savings goals page |
+| `apps/web/src/components/dashboard/app-sidebar.tsx` | Authenticated sidebar navigation |
+| `apps/web/src/components/accounts/account-form-dialog.tsx` | Canonical product form pattern |
+| `apps/web/src/components/transactions/transaction-form-dialog.tsx` | Income/expense dialog |
+| `apps/web/src/components/transactions/transfer-form-dialog.tsx` | Transfer dialog |
+| `apps/web/e2e/*.spec.ts` | Playwright E2E coverage |
+| `apps/web/.env.local` | `VITE_CONVEX_URL` |
 
 ### Routing
 
-File-based routing via TanStack Router. Add routes as files in `src/routes/`. The route tree is auto-generated.
+File-based routing via TanStack Router.
 
-```
-src/routes/
-├── __root.tsx          # Root layout (wraps all routes)
-├── index.tsx           # / route (landing page)
-├── login.tsx           # /login (sign in)
-├── register.tsx        # /register (sign up)
-├── forgot-password.tsx # /forgot-password (password reset)
-├── dashboard.tsx       # /dashboard (protected, requires auth)
-└── (add more)          # e.g., accounts.tsx → /accounts
+```text
+apps/web/src/routes/
+|- __root.tsx
+|- index.tsx
+|- login.tsx
+|- register.tsx
+|- forgot-password.tsx
+|- onboarding.tsx
+|- _authenticated.tsx
+`- _authenticated/
+   |- dashboard.tsx
+   |- accounts.tsx
+   |- transactions.tsx
+   |- categories.tsx
+   `- goals.tsx
 ```
 
 ### Convex Integration
 
-The frontend connects to Convex via `@convex-dev/react-query`. The `ConvexQueryClient` is wired into TanStack React Query so all Convex queries/mutations go through React Query's cache.
+The frontend connects to Convex via `@convex-dev/react-query`.
 
-- Client setup: `src/router.tsx`
-- Convex URL: `VITE_CONVEX_URL` env var (from `.env.local`)
-- Backend types: imported from `@mpf/backend` workspace package
+- `ConvexQueryClient` is integrated with React Query in `apps/web/src/router.tsx`
+- `ConvexAuthProvider` wraps the app so authenticated requests include auth state
+- `VITE_CONVEX_URL` comes from `apps/web/.env.local`
+- Backend types are imported from `@mpf/backend`
 
 ### E2E Testing (Playwright)
 
-**Stack:** Playwright Test + Chromium/Firefox/WebKit.
+**Stack:** Playwright Test.
 
-Tests live in `apps/web/e2e/` as `*.spec.ts` files. The `playwright.config.ts` auto-starts the Vite dev server on port 3000 before running tests.
+Tests currently live in `apps/web/e2e/` and cover:
+
+- `landing.spec.ts`
+- `auth.spec.ts`
+- `onboarding.spec.ts`
+- `accounts.spec.ts`
+- `transactions.spec.ts`
+- `transfers.spec.ts`
+- `goals.spec.ts`
 
 #### Commands
 
 ```bash
-bun run test:e2e              # Run all E2E tests (all browsers)
-bun run test:e2e:ui           # Open Playwright UI mode (interactive, watch)
-bun run test:e2e:headed       # Run tests with visible browser window
-bun run test:e2e:report       # View HTML test report from last run
+bun run test:e2e
 ```
 
-From inside `apps/web/`, you can also run:
+From inside `apps/web/`:
 
 ```bash
-bunx playwright test --project=chromium           # Single browser
-bunx playwright test e2e/landing.spec.ts           # Single file
-bunx playwright test -g "dark mode"                # Filter by test name
-bunx playwright codegen http://localhost:3000      # Generate tests interactively
-```
-
-#### Test Structure
-
-```
-apps/web/e2e/
-├── landing.spec.ts    # Landing page: branding, hero, features, principles, footer, nav, dark mode, navigation
-├── auth.spec.ts       # Auth pages: login/register form rendering, validation, navigation, OAuth button
-└── (add more)         # e.g., dashboard.spec.ts, accounts.spec.ts, onboarding.spec.ts
-```
-
-#### Writing E2E Tests
-
-```ts
-import { test, expect } from "@playwright/test";
-
-test.describe("My Feature", () => {
-  test.beforeEach(async ({ page }) => {
-    await page.goto("/my-route");
-  });
-
-  test("renders the page correctly", async ({ page }) => {
-    await expect(
-      page.getByRole("heading", { name: "My Heading" })
-    ).toBeVisible();
-  });
-
-  test("form validation works", async ({ page }) => {
-    await page.getByRole("button", { name: /submit/i }).click();
-    await expect(page.getByText(/required field/i)).toBeVisible();
-  });
-
-  test("navigates to another page", async ({ page }) => {
-    await page.getByRole("link", { name: /next page/i }).click();
-    await expect(page).toHaveURL(/\/next-page/);
-  });
-});
+bun run test:e2e:ui
+bun run test:e2e:headed
+bun run test:e2e:report
+bunx playwright test --project=chromium
 ```
 
 #### E2E Test Patterns
 
-- **Use `page.getByRole()`, `page.getByLabel()`, `page.getByText()`** -- prefer accessible locators over CSS selectors
-- **Beware TanStack Router devtools** -- in dev mode, devtools injects elements with `aria-label` attributes that may conflict with `getByLabel()` patterns (e.g. route names containing "password"). Use `page.locator("#id")` or exact label strings when needed
-- **Use `baseURL`** -- tests use relative paths (`page.goto("/login")`) thanks to `baseURL: "http://localhost:3000"` in config
-- **Wait for async state** -- auth state, API responses, and validation errors may need explicit timeouts: `toBeVisible({ timeout: 10_000 })`
-- **Each test is isolated** -- Playwright creates a fresh browser context per test, so no state leaks between tests
-
-#### CI
-
-Playwright tests run on GitHub Actions (`.github/workflows/playwright.yml`) on every push/PR to `main`. The workflow:
-
-1. Installs dependencies with Bun
-2. Installs Chromium browser
-3. Runs tests against Chromium only (for speed)
-4. Uploads the HTML report as an artifact (30-day retention)
-
-The `VITE_CONVEX_URL` secret is configured in the repo settings.
+- Prefer `page.getByRole()`, `page.getByLabel()`, and `page.getByText()`
+- Be aware TanStack Router devtools can add extra `aria-label` values in dev mode
+- Use `baseURL` and relative routes in tests
+- Wait explicitly for async auth and query-driven UI when needed
+- Each test is isolated in a fresh browser context
 
 ## packages/backend -- Convex Backend
 
-**IMPORTANT:** When working on Convex code, always read `convex/_generated/ai/guidelines.md` first.
+**IMPORTANT:** When working on Convex code, always read `packages/backend/convex/_generated/ai/guidelines.md` first.
 
-**Stack:** Convex (serverless backend with real-time sync).
+**Stack:** Convex with Convex Auth.
+
+### Backend Implementation Patterns
+
+- Amounts are stored in minor units (cents)
+- Most modules derive the current user via `getAuthUserId(ctx)` from `@convex-dev/auth/server`
+- Never accept `userId` from the client for authorization
+- Always include argument validators
+- Prefer indexed queries with bounded results (`take(...)`) over unbounded reads
+- Ownership checks are required before reading or mutating user-owned documents
+
+### Domain Patterns
+
+- `accounts` store balances directly and are updated by transaction and transfer mutations
+- `transactions` represent income, expense, adjustment, and transfer records
+- Transfers are modeled as two linked `transactions` documents with a shared `transferGroupId`
+- Categories are seeded during onboarding and then customized by the user
+- Savings goals live in `savingsGoals`, with contribution history in `goalContributions`
+- Onboarding completion is tracked in `userProfiles.onboardingCompleted`
 
 ### Key Files
 
-| File                                 | Purpose                                                     |
-| ------------------------------------ | ----------------------------------------------------------- |
-| `convex/schema.ts`                   | Database schema with `authTables` (users, sessions, accounts, etc.) |
-| `convex/auth.config.ts`              | Auth provider config (JWT validation via CONVEX_SITE_URL)   |
-| `convex/auth.ts`                     | Auth setup with Password provider (email/password)          |
-| `convex/http.ts`                     | HTTP router with auth routes                                |
-| `convex/_generated/`                 | Auto-generated types and API refs -- DO NOT edit            |
-| `convex/_generated/ai/guidelines.md` | Convex API guidelines -- READ BEFORE writing Convex code    |
-| `convex/test.setup.ts`               | Shared test utilities: `setupTest()`, `asUser()`, `modules` |
-| `convex/*.test.ts`                   | Test files (accounts, categories, userProfiles, transactions) |
-| `vitest.config.ts`                   | Vitest config (edge-runtime environment)                    |
-
-### Commands
-
-```bash
-bun run dev       # Start Convex dev server (watches for changes)
-bun run deploy    # Deploy to production
-bun run typecheck # Type check
-bun run test      # Run tests (watch mode)
-bun run test:once # Run tests (single run)
-bun run test:coverage # Run tests with coverage report
-```
-
-### Writing Convex Functions
-
-- Public functions: `query`, `mutation`, `action` from `./_generated/server`
-- Private functions: `internalQuery`, `internalMutation`, `internalAction`
-- File-based routing: `convex/foo.ts` → `api.foo.functionName`
-- Always include argument validators
-- Use `ctx.db` for database operations (queries/mutations only)
-- Use `ctx.auth.getUserIdentity()` for auth (never accept userId as argument)
+| File | Purpose |
+| ---- | ------- |
+| `packages/backend/convex/schema.ts` | Full data model |
+| `packages/backend/convex/auth.ts` | Convex Auth setup |
+| `packages/backend/convex/auth.config.ts` | Auth provider config |
+| `packages/backend/convex/http.ts` | Auth HTTP routes |
+| `packages/backend/convex/userProfiles.ts` | Profile and onboarding state |
+| `packages/backend/convex/accounts.ts` | Accounts CRUD and balance adjustments |
+| `packages/backend/convex/categories.ts` | Category seeding and category/subcategory CRUD |
+| `packages/backend/convex/transactions.ts` | Transaction CRUD and summaries |
+| `packages/backend/convex/transfers.ts` | Paired transfer creation, update, and deletion |
+| `packages/backend/convex/savingsGoals.ts` | Savings goal CRUD |
+| `packages/backend/convex/goalContributions.ts` | Goal contribution history |
+| `packages/backend/convex/test.setup.ts` | Shared convex-test helpers |
+| `packages/backend/convex/*.test.ts` | Backend unit tests |
 
 ### Testing
 
 **Stack:** Vitest + `convex-test` + `@edge-runtime/vm`.
 
-Tests live inside `convex/` as `*.test.ts` files. They use a mock Convex backend running in the edge runtime.
+Current backend test coverage includes:
 
-#### Test Setup (`convex/test.setup.ts`)
-
-Provides shared utilities used by all test files:
-
-- **`modules`** -- Vite glob import map required by `convexTest()`
-- **`setupTest()`** -- Creates a fresh `convexTest` instance with the project schema
-- **`asUser(t, options?)`** -- Creates an authenticated test accessor. Sets `identity.subject` to `"userId|sessionId"` format because `getAuthUserId()` from `@convex-dev/auth/server` extracts the user ID by splitting `subject` on `"|"`
-
-#### Writing Tests
-
-```ts
-import { expect, describe, it } from "vitest";
-import { api } from "./_generated/api";
-import { setupTest, asUser } from "./test.setup";
-
-describe("myModule", () => {
-  it("does something for authenticated user", async () => {
-    const t = setupTest();
-    const user = asUser(t);
-    const result = await user.query(api.myModule.myQuery);
-    expect(result).toEqual([]);
-  });
-
-  it("rejects unauthenticated access", async () => {
-    const t = setupTest();
-    await expect(
-      t.mutation(api.myModule.myMutation, { name: "test" }),
-    ).rejects.toThrow("Not authenticated");
-  });
-
-  it("isolates data between users", async () => {
-    const t = setupTest();
-    const alice = asUser(t, { name: "Alice", subject: "alice-id|s1" });
-    const bob = asUser(t, { name: "Bob", subject: "bob-id|s2" });
-    // each user should only see their own data
-  });
-});
-```
+- accounts
+- categories
+- userProfiles
+- transactions
+- transfers
+- savingsGoals
+- goalContributions
 
 #### Test Patterns
 
-- **Each test gets a fresh `setupTest()`** -- no shared state between tests
-- **Use `asUser(t)` for authenticated scenarios**, bare `t.query()`/`t.mutation()` for unauthenticated
-- **Use different `subject` values for multi-user tests** (e.g. `"alice-id|s1"`, `"bob-id|s2"`)
-- **Use `toThrow()` (not `toThrowError()`)** -- `toThrowError` is deprecated in Vitest 4
-- **Use `toMatchObject()` for partial assertions** on documents (avoids asserting `_id`, `_creationTime`)
+- Use a fresh `setupTest()` per test
+- Use `asUser(t)` for authenticated scenarios
+- Use distinct `subject` values for multi-user isolation tests
+- Prefer `toThrow()` in Vitest 4
+- Prefer partial assertions like `toMatchObject()` for Convex documents
 
 ### Development Workflow -- Test-First
 
-**IMPORTANT: Always write tests before implementing new backend features.**
+When adding or changing backend functionality:
 
-When adding a new Convex function (query, mutation, or action):
-
-1. **Write the test first** in `convex/<module>.test.ts` covering:
-   - Happy path (authenticated user, valid input)
-   - Auth guard (unauthenticated access throws or returns null/empty)
-   - User isolation (users cannot access each other's data)
-   - Edge cases (idempotency, missing data, ownership checks)
-2. **Run the test** -- confirm it fails (`bun run test:once`)
-3. **Implement the function** in `convex/<module>.ts`
-4. **Run the test again** -- confirm it passes
-5. **Refactor** if needed, keeping tests green
+1. Write or update backend tests first in `packages/backend/convex/*.test.ts`
+2. Run the targeted backend tests and confirm they fail when appropriate
+3. Implement the Convex changes
+4. Re-run `bun run test:once`
+5. Typecheck with `bun run typecheck`
 
 ## Development Workflow -- Full Feature Lifecycle
 
-**IMPORTANT: Every new feature MUST include both backend tests AND E2E tests.**
+For non-trivial product work:
 
-When implementing a new feature (e.g., onboarding, accounts page, transactions):
-
-1. **Backend first (test-driven):**
-   - Write backend unit tests in `convex/<module>.test.ts`
-   - Implement the Convex functions until tests pass
-   - Run `bun run test:once` to confirm all backend tests pass
-
-2. **Frontend implementation:**
-   - Create route files in `apps/web/src/routes/`
-   - Build components and wire up Convex queries/mutations
-   - Verify manually in the browser
-
-3. **E2E tests (required):**
-   - Create or update E2E tests in `apps/web/e2e/<feature>.spec.ts`
-   - Cover at minimum:
-     - Page renders correctly (headings, key elements visible)
-     - User interactions work (form submissions, button clicks, navigation)
-     - Validation errors display properly
-     - Navigation between related pages works
-     - Auth-gated pages redirect unauthenticated users
-   - Run `bun run test:e2e` to confirm all E2E tests pass
-
-4. **Verify everything:**
-   - `bun run test:once` -- all backend tests green
-   - `bun run test:e2e` -- all E2E tests green
-   - `bun run typecheck` -- no type errors
-
-**A feature is NOT complete until it has passing E2E tests.**
-
-### Deployment
-
-- Dev: `https://wary-vole-274.convex.cloud`
-- Team: `idarcio-oliveira`, Project: `my-personal-finance`
+1. Backend first
+   - add/update Convex tests
+   - implement the Convex API
+2. Frontend next
+   - add/update routes and components
+   - follow the existing dialog and list-page patterns
+3. E2E last
+   - add/update Playwright coverage in `apps/web/e2e/`
+4. Verify
+   - `bun run test:once`
+   - `bun run test:e2e`
+   - `bun run typecheck`
 
 ## Design System Quick Reference
 
 Wise-inspired. Full spec in `docs/design-system.md`.
 
-**Font:** Inter (body/UI), Wise Sans placeholder (display).
+**Font:** Inter.
 
 **Core colors:**
 
-| Token                  | Value                    | Usage                       |
-| ---------------------- | ------------------------ | --------------------------- |
-| `--primary`            | `#163300` (Forest Green) | Buttons, links, focus       |
-| `--primary-foreground` | `#9FE870` (Bright Green) | Text on primary             |
-| `--accent`             | `#9FE870` (Bright Green) | CTAs, highlights            |
-| `--accent-foreground`  | `#163300` (Forest Green) | Text on accent              |
-| `--destructive`        | `#A8200D`                | Errors, destructive actions |
-| `--background`         | `#FFFFFF`                | Page background             |
-| `--foreground`         | `#0E0F0C`                | Primary text                |
-| `--muted-foreground`   | `#454745`                | Secondary text              |
-| `--border`             | `rgba(14,15,12,0.12)`    | Borders                     |
+| Token | Value | Usage |
+| ----- | ----- | ----- |
+| `--primary` | `#163300` | Buttons, links, focus |
+| `--primary-foreground` | `#9FE870` | Text on primary |
+| `--accent` | `#9FE870` | CTAs and highlights |
+| `--accent-foreground` | `#163300` | Text on accent |
+| `--destructive` | `#A8200D` | Errors and destructive actions |
+| `--background` | `#FFFFFF` | Page background |
+| `--foreground` | `#0E0F0C` | Primary text |
+| `--muted-foreground` | `#454745` | Secondary text |
+| `--border` | `rgba(14,15,12,0.12)` | Borders |
 
-**Extended palette:** `bg-wise-bright-green`, `bg-wise-bright-orange`, `bg-wise-bright-yellow`, `bg-wise-bright-blue`, `bg-wise-bright-pink`, etc.
+**Forms:** Default to the modal form pattern used across accounts, transactions, transfers, categories, and goals.
 
-**Radius:** Base 20px. Scale: sm=10, md=16, lg=20, xl=30, 2xl=40, 3xl=60.
-
-**Spacing:** 8px grid. Use Tailwind defaults (gap-2=8px, gap-4=16px, gap-6=24px, gap-8=32px).
-
-**Buttons:** sm=32px, default=48px, lg=56px. Variants: default, accent, outline, secondary, ghost, destructive, link.
-
-**Forms:** Use the account dialog modal pattern as the default for all product forms: edge-to-edge dialog shell, prominent top value input when relevant, icon-led bordered rows, inline controls, and right-aligned footer actions.
-
-**Dark mode:** Implemented. Toggle in Nav persists to `localStorage`. Anti-flash inline script in `__root.tsx`. Falls back to `prefers-color-scheme`. Dark palette: charcoal surfaces, Bright Green accent.
+**Dark mode:** Implemented. Theme preference is stored in `localStorage` and applied early via the anti-flash script in `__root.tsx`.
 
 ## Project Status
 
-Phase 1 (Accounts + Transactions) is complete. Auth is wired with Convex Auth (email/password). The design system tokens are configured with light and dark themes.
+The app is beyond the original auth-only and Phase 1 placeholder state.
 
 **Implemented:**
-- Landing page with Nav (dark mode toggle, auth-aware buttons), Hero, Features (6 modules), Principles, CTA band, Footer
-- Sign in page (`/login`) with email/password form wired to Convex Auth + Google OAuth placeholder
-- Sign up page (`/register`) with name/email/password form wired to Convex Auth + Google OAuth placeholder
-- Forgot password page (`/forgot-password`) with email form (UI-only -- requires email infra like Resend)
-- Protected dashboard page (`/dashboard`) with auth gate, real account data, real transaction summary (income/expenses/recent), floating action menu wired to create transactions
-- Auth-aware navigation: shows "Dashboard" + sign out for authenticated users, "Log in" + "Get Started" for guests
-- Convex Auth backend with Password provider, authTables schema, HTTP routes
-- Dark mode with localStorage persistence and anti-flash script
-- Form validation via `react-hook-form` + `zod` (v4)
-- shadcn components: button, input, label, card, separator
-- Navigation between all auth pages and landing page via TanStack Router `<Link>`
-- **Accounts management** (`/accounts`): full CRUD (create, edit, archive, restore, delete), balance adjustments, grouped display with theme colors, show/hide archived toggle
-- **Transactions CRUD** (`/transactions`): income/expense recording with account balance effects, filterable list (date range, account, category, type), create/edit dialog with type toggle, paginated display, transaction summary on dashboard
-- Backend test infrastructure: Vitest + convex-test + edge-runtime with 104 tests covering accounts, categories, subcategories, userProfiles, and transactions (CRUD, auth guards, user isolation, balance effects, filters, summaries)
-- E2E test infrastructure: Playwright Test with 30 tests covering landing page, auth pages, accounts page, and transactions page
-- CI: GitHub Actions workflow runs Playwright E2E tests on push/PR to `main`
 
-**Not yet wired:**
-- Forgot password (`/forgot-password`) -- needs email sending (Resend or similar)
-- Google OAuth -- button exists but no provider configured yet
+- Landing page with responsive nav and dark mode
+- Email/password auth with Convex Auth
+- Onboarding flow for currency, starter accounts, and starter categories
+- Persistent authenticated shell with sidebar, sign out, theme toggle, and floating quick actions
+- Dashboard with real accounts, transaction summaries, cashflow, category spending, recent transactions, and goals progress
+- Accounts management with CRUD, archive/restore, and balance adjustments
+- Transactions management for income and expenses with filters
+- Transfer support backed by paired transfer transactions
+- Categories and subcategories management
+- Savings goals CRUD plus contribution history
+- Backend tests across the main financial modules
+- Playwright coverage for landing, auth, onboarding, accounts, transactions, transfers, and goals
 
-**Next steps per the PRD:** onboarding, budgets, goals, debts, transfers, recurring transactions.
+**Partial or not yet wired:**
+
+- Forgot password still needs email infrastructure
+- Google OAuth button is present but provider wiring is not done
+- Budgets, debts, and settings do not yet have dedicated pages or backend modules
+- Some dashboard cards still use mock data for upcoming modules
+
+**Next steps per the PRD:** budgets, debts, recurring transactions, richer settings, and continued dashboard replacement of mock widgets with real data.

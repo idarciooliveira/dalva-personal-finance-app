@@ -1,4 +1,4 @@
-import { Wifi, Eye, EyeOff, TrendingUp, TrendingDown, Wallet } from "lucide-react";
+import { Wifi, Eye, EyeOff, TrendingUp, TrendingDown } from "lucide-react";
 import { useState } from "react";
 import { formatCurrency } from "@/lib/format";
 import { ACCOUNT_THEMES } from "@/lib/accounts";
@@ -124,13 +124,35 @@ export function AccountCardsSection({
         <h2 className="text-sm font-medium text-muted-foreground">
           My Accounts
         </h2>
-        <div className="flex items-center justify-center rounded-2xl border border-dashed border-border py-12">
-          <div className="flex flex-col items-center gap-2 text-muted-foreground">
-            <Wallet className="size-8 opacity-50" />
-            <p className="text-sm">No accounts yet</p>
-            <p className="text-xs opacity-70">
-              Add an account to see it here.
-            </p>
+        <div className="flex flex-col gap-4 sm:flex-row">
+          <div className="w-full sm:w-3/4">
+            <div
+              className="glass-surface flex w-full flex-col justify-between rounded-2xl border border-dashed border-border p-5"
+              style={{ aspectRatio: "1.6 / 1" }}
+            >
+              <div className="h-8 w-20 rounded-md bg-muted/70" />
+              <div className="space-y-2">
+                <div className="h-10 w-40 rounded-md bg-muted/70" />
+                <div className="h-4 w-28 rounded-md bg-muted/50" />
+              </div>
+              <div className="space-y-2">
+                <div className="h-4 w-32 rounded-md bg-muted/50" />
+                <p className="text-xs text-muted-foreground">
+                  Your first account will appear here.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex w-full flex-row gap-4 sm:w-1/4 sm:flex-col">
+            <div className="glass-surface flex flex-1 flex-col justify-center rounded-2xl p-4">
+              <div className="h-4 w-20 rounded-md bg-muted/50" />
+              <div className="mt-2 h-7 w-24 rounded-md bg-muted/70" />
+            </div>
+            <div className="glass-surface flex flex-1 flex-col justify-center rounded-2xl p-4">
+              <div className="h-4 w-22 rounded-md bg-muted/50" />
+              <div className="mt-2 h-7 w-24 rounded-md bg-muted/70" />
+            </div>
           </div>
         </div>
       </div>
