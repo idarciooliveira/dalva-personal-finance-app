@@ -33,6 +33,7 @@ interface CategoryRowProps {
   subcategories: Doc<"subcategories">[];
   onEdit: () => void;
   onAddSubcategory: () => void;
+  onEditSubcategory: (subcategory: Doc<"subcategories">) => void;
 }
 
 export function CategoryRow({
@@ -40,6 +41,7 @@ export function CategoryRow({
   subcategories,
   onEdit,
   onAddSubcategory,
+  onEditSubcategory,
 }: CategoryRowProps) {
   const [expanded, setExpanded] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -73,6 +75,7 @@ export function CategoryRow({
           type="button"
           onClick={() => setExpanded(!expanded)}
           className="flex size-6 items-center justify-center text-muted-foreground hover:text-foreground"
+          aria-label={`${expanded ? "Collapse" : "Expand"} ${category.name} subcategories`}
         >
           {expanded ? (
             <ChevronDown className="size-4" />
@@ -116,7 +119,12 @@ export function CategoryRow({
         {/* Actions dropdown */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon-sm" className="text-muted-foreground">
+            <Button
+              variant="ghost"
+              size="icon-sm"
+              className="text-muted-foreground"
+              aria-label={`Open ${category.name} actions`}
+            >
               <MoreVertical className="size-4" />
             </Button>
           </DropdownMenuTrigger>
@@ -181,7 +189,12 @@ export function CategoryRow({
           ) : (
             <div className="space-y-1">
               {sortedSubs.map((sub) => (
-                <SubcategoryRow key={sub._id} subcategory={sub} parentColor={category.color ?? "#6B7280"} />
+                <SubcategoryRow
+                  key={sub._id}
+                  subcategory={sub}
+                  parentColor={category.color ?? "#6B7280"}
+                  onEdit={() => onEditSubcategory(sub)}
+                />
               ))}
             </div>
           )}

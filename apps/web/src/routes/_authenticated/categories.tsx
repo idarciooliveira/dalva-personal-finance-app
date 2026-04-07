@@ -41,6 +41,8 @@ function CategoriesContent() {
   );
   const [addSubcategoryFor, setAddSubcategoryFor] =
     useState<Doc<"categories"> | null>(null);
+  const [editSubcategory, setEditSubcategory] =
+    useState<Doc<"subcategories"> | null>(null);
 
   const { data: categories, isLoading } = useQuery(
     convexQuery(api.categories.listCategories, {
@@ -78,6 +80,23 @@ function CategoriesContent() {
     setCreateDialogOpen(true);
   }
 
+  function handleAddSubcategory(category: Doc<"categories">) {
+    setEditSubcategory(null);
+    setAddSubcategoryFor(category);
+  }
+
+  function handleEditSubcategory(subcategory: Doc<"subcategories">) {
+    setAddSubcategoryFor(null);
+    setEditSubcategory(subcategory);
+  }
+
+  const activeSubcategoryParent =
+    addSubcategoryFor ??
+    (editSubcategory
+      ? (categories ?? []).find((category) => category._id === editSubcategory.categoryId) ??
+        null
+      : null);
+
   return (
     <>
       {/* Header */}
@@ -109,7 +128,8 @@ function CategoriesContent() {
         subcategoriesByParent={subcategoriesByParent}
         onCreateCategory={() => handleCreateCategory("expense")}
         onEditCategory={setEditCategory}
-        onAddSubcategory={setAddSubcategoryFor}
+        onAddSubcategory={handleAddSubcategory}
+        onEditSubcategory={handleEditSubcategory}
       />
 
       {/* Income Categories */}
@@ -121,7 +141,8 @@ function CategoriesContent() {
           subcategoriesByParent={subcategoriesByParent}
           onCreateCategory={() => handleCreateCategory("income")}
           onEditCategory={setEditCategory}
-          onAddSubcategory={setAddSubcategoryFor}
+          onAddSubcategory={handleAddSubcategory}
+          onEditSubcategory={handleEditSubcategory}
         />
       </div>
 
@@ -145,11 +166,15 @@ function CategoriesContent() {
 
       {/* Add Subcategory Dialog */}
       <SubcategoryFormDialog
-        open={addSubcategoryFor !== null}
+        open={addSubcategoryFor !== null || editSubcategory !== null}
         onOpenChange={(open) => {
-          if (!open) setAddSubcategoryFor(null);
+          if (!open) {
+            setAddSubcategoryFor(null);
+            setEditSubcategory(null);
+          }
         }}
-        parentCategory={addSubcategoryFor}
+        parentCategory={activeSubcategoryParent}
+        subcategory={editSubcategory}
       />
     </>
   );

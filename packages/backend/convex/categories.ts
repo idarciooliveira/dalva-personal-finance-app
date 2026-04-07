@@ -56,6 +56,15 @@ const DEFAULT_CATEGORIES: Array<{
   },
 ];
 
+function normalizeSubcategoryName(name: string) {
+  const normalized = name.trim();
+  if (!normalized) {
+    throw new Error("Subcategory name is required");
+  }
+
+  return normalized;
+}
+
 /* -------------------------------------------------------------------------- */
 /*  Queries                                                                   */
 /* -------------------------------------------------------------------------- */
@@ -369,6 +378,8 @@ export const createSubcategory = mutation({
     const userId = await getAuthUserId(ctx);
     if (!userId) throw new Error("Not authenticated");
 
+    const name = normalizeSubcategoryName(args.name);
+
     // Verify parent ownership
     const parent = await ctx.db.get(args.categoryId);
     if (!parent || parent.userId !== userId) {
@@ -390,7 +401,7 @@ export const createSubcategory = mutation({
     return await ctx.db.insert("subcategories", {
       userId,
       categoryId: args.categoryId,
-      name: args.name,
+      name,
       archived: false,
       sortOrder: maxSort + 1,
     });
@@ -409,12 +420,14 @@ export const updateSubcategory = mutation({
     const userId = await getAuthUserId(ctx);
     if (!userId) throw new Error("Not authenticated");
 
+    const name = normalizeSubcategoryName(args.name);
+
     const sub = await ctx.db.get(args.id);
     if (!sub || sub.userId !== userId) {
       throw new Error("Subcategory not found");
     }
 
-    await ctx.db.patch(args.id, { name: args.name });
+    await ctx.db.patch(args.id, { name });
   },
 });
 

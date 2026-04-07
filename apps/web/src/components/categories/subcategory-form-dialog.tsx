@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
@@ -18,26 +19,34 @@ interface SubcategoryFormDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   parentCategory: Doc<"categories"> | null;
+  subcategory?: Doc<"subcategories"> | null;
 }
 
 export function SubcategoryFormDialog({
   open,
   onOpenChange,
   parentCategory,
+  subcategory = null,
 }: SubcategoryFormDialogProps) {
+  const isEdit = subcategory !== null;
   const [name, setName] = useState("");
   const [error, setError] = useState("");
 
   useEffect(() => {
     if (open) {
-      setName("");
+      setName(subcategory?.name ?? "");
       setError("");
     }
-  }, [open]);
+  }, [open, subcategory]);
 
-  const { mutateAsync: createSubcategory, isPending } = useMutation({
+  const { mutateAsync: createSubcategory, isPending: isCreating } = useMutation({
     mutationFn: useConvexMutation(api.categories.createSubcategory),
   });
+  const { mutateAsync: updateSubcategory, isPending: isUpdating } = useMutation({
+    mutationFn: useConvexMutation(api.categories.updateSubcategory),
+  });
+
+  const isPending = isCreating || isUpdating;
 
   async function handleSubmit(andCreateNew = false) {
     setError("");
@@ -47,6 +56,15 @@ export function SubcategoryFormDialog({
       return;
     }
     if (!parentCategory) return;
+
+    if (isEdit && subcategory) {
+      await updateSubcategory({
+        id: subcategory._id,
+        name: name.trim(),
+      });
+      onOpenChange(false);
+      return;
+    }
 
     await createSubcategory({
       categoryId: parentCategory._id,
@@ -68,13 +86,18 @@ export function SubcategoryFormDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md p-0 gap-0 overflow-hidden">
-        {/* Header */}
-        <DialogHeader className="px-5 pt-5 pb-0">
-          <DialogTitle className="text-lg font-semibold">
-            Add subcategory
-          </DialogTitle>
-        </DialogHeader>
+        <DialogContent className="max-w-md p-0 gap-0 overflow-hidden">
+          {/* Header */}
+          <DialogHeader className="px-5 pt-5 pb-0">
+            <DialogTitle className="text-lg font-semibold">
+              {isEdit ? "Edit subcategory" : "Add subcategory"}
+            </DialogTitle>
+            <DialogDescription className="sr-only">
+              {isEdit
+                ? "Rename this subcategory."
+                : "Create a subcategory under the selected category."}
+            </DialogDescription>
+          </DialogHeader>
 
         <div className="px-5 pt-4 pb-0">
           {/* ── Parent category indicator (icon-led row) ── */}
@@ -122,15 +145,17 @@ export function SubcategoryFormDialog({
 
         {/* ── Footer with actions ── */}
         <div className="flex items-center justify-end gap-3 px-5 py-4 mt-2">
-          <Button
-            type="button"
-            variant="outline"
-            size="default"
-            disabled={isPending || !name.trim()}
-            onClick={() => void handleSubmit(true)}
-          >
-            {isPending ? "Adding..." : "Save & new"}
-          </Button>
+          {!isEdit && (
+            <Button
+              type="button"
+              variant="outline"
+              size="default"
+              disabled={isPending || !name.trim()}
+              onClick={() => void handleSubmit(true)}
+            >
+              {isPending ? "Adding..." : "Save & new"}
+            </Button>
+          )}
           <Button
             type="button"
             variant="accent"
@@ -138,7 +163,13 @@ export function SubcategoryFormDialog({
             disabled={isPending || !name.trim()}
             onClick={() => void handleSubmit(false)}
           >
-            {isPending ? "Adding..." : "Add subcategory"}
+            {isPending
+              ? isEdit
+                ? "Saving..."
+                : "Adding..."
+              : isEdit
+                ? "Save"
+                : "Add subcategory"}
           </Button>
         </div>
       </DialogContent>

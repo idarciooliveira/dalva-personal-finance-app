@@ -3,7 +3,13 @@ import { useMutation } from "@tanstack/react-query";
 import { useConvexMutation } from "@convex-dev/react-query";
 import { api } from "@mpf/backend/convex/_generated/api";
 import type { Doc } from "@mpf/backend/convex/_generated/dataModel";
-import { MoreVertical, Archive, ArchiveRestore, Trash2 } from "lucide-react";
+import {
+  MoreVertical,
+  Archive,
+  ArchiveRestore,
+  Pencil,
+  Trash2,
+} from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -19,9 +25,14 @@ import { cn } from "@/lib/utils";
 interface SubcategoryRowProps {
   subcategory: Doc<"subcategories">;
   parentColor: string;
+  onEdit: () => void;
 }
 
-export function SubcategoryRow({ subcategory, parentColor }: SubcategoryRowProps) {
+export function SubcategoryRow({
+  subcategory,
+  parentColor,
+  onEdit,
+}: SubcategoryRowProps) {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
   const { mutate: archiveSub } = useMutation({
@@ -56,11 +67,20 @@ export function SubcategoryRow({ subcategory, parentColor }: SubcategoryRowProps
       )}
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="ghost" size="icon-xs" className="text-muted-foreground">
+          <Button
+            variant="ghost"
+            size="icon-xs"
+            className="text-muted-foreground"
+            aria-label={`Open ${subcategory.name} actions`}
+          >
             <MoreVertical className="size-3.5" />
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
+          <DropdownMenuItem onClick={onEdit}>
+            <Pencil className="mr-2 size-4" />
+            Edit
+          </DropdownMenuItem>
           {subcategory.archived ? (
             <DropdownMenuItem onClick={() => restoreSub({ id: subcategory._id })}>
               <ArchiveRestore className="mr-2 size-4" />

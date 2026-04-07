@@ -13,6 +13,7 @@ interface CategoryGroupProps {
   onCreateCategory: () => void;
   onEditCategory: (category: Doc<"categories">) => void;
   onAddSubcategory: (category: Doc<"categories">) => void;
+  onEditSubcategory: (subcategory: Doc<"subcategories">) => void;
 }
 
 export function CategoryGroup({
@@ -23,6 +24,7 @@ export function CategoryGroup({
   onCreateCategory,
   onEditCategory,
   onAddSubcategory,
+  onEditSubcategory,
 }: CategoryGroupProps) {
   return (
     <div>
@@ -71,6 +73,7 @@ export function CategoryGroup({
               subcategories={subcategoriesByParent.get(category._id) ?? []}
               onEdit={() => onEditCategory(category)}
               onAddSubcategory={() => onAddSubcategory(category)}
+              onEditSubcategory={onEditSubcategory}
             />
           ))
         )}

@@ -471,6 +471,47 @@ describe("categories", () => {
       expect(subs[1]!.sortOrder).toBe(1);
     });
 
+    it("trims the subcategory name before saving", async () => {
+      const t = setupTest();
+      const user = asUser(t);
+
+      const catId = await user.mutation(api.categories.createCategory, {
+        name: "Food",
+        type: "expense",
+        icon: "utensils",
+        color: "#F97316",
+      });
+
+      await user.mutation(api.categories.createSubcategory, {
+        categoryId: catId,
+        name: "  Groceries  ",
+      });
+
+      const subs = await user.query(api.categories.listSubcategories, {
+        categoryId: catId,
+      });
+      expect(subs[0]).toMatchObject({ name: "Groceries" });
+    });
+
+    it("rejects blank subcategory names", async () => {
+      const t = setupTest();
+      const user = asUser(t);
+
+      const catId = await user.mutation(api.categories.createCategory, {
+        name: "Food",
+        type: "expense",
+        icon: "utensils",
+        color: "#F97316",
+      });
+
+      await expect(
+        user.mutation(api.categories.createSubcategory, {
+          categoryId: catId,
+          name: "   ",
+        }),
+      ).rejects.toThrow("Subcategory name is required");
+    });
+
     it("throws for non-owned parent category", async () => {
       const t = setupTest();
       const alice = asUser(t, { name: "Alice", subject: "alice|s1" });
@@ -536,6 +577,55 @@ describe("categories", () => {
         categoryId: catId,
       });
       expect(subs[0]).toMatchObject({ name: "New Name" });
+    });
+
+    it("trims the updated subcategory name", async () => {
+      const t = setupTest();
+      const user = asUser(t);
+
+      const catId = await user.mutation(api.categories.createCategory, {
+        name: "Food",
+        type: "expense",
+        icon: "utensils",
+        color: "#F97316",
+      });
+      const subId = await user.mutation(api.categories.createSubcategory, {
+        categoryId: catId,
+        name: "Groceries",
+      });
+
+      await user.mutation(api.categories.updateSubcategory, {
+        id: subId,
+        name: "  Weekly groceries  ",
+      });
+
+      const subs = await user.query(api.categories.listSubcategories, {
+        categoryId: catId,
+      });
+      expect(subs[0]).toMatchObject({ name: "Weekly groceries" });
+    });
+
+    it("rejects blank updated subcategory names", async () => {
+      const t = setupTest();
+      const user = asUser(t);
+
+      const catId = await user.mutation(api.categories.createCategory, {
+        name: "Food",
+        type: "expense",
+        icon: "utensils",
+        color: "#F97316",
+      });
+      const subId = await user.mutation(api.categories.createSubcategory, {
+        categoryId: catId,
+        name: "Groceries",
+      });
+
+      await expect(
+        user.mutation(api.categories.updateSubcategory, {
+          id: subId,
+          name: "   ",
+        }),
+      ).rejects.toThrow("Subcategory name is required");
     });
 
     it("throws for non-owned subcategory", async () => {

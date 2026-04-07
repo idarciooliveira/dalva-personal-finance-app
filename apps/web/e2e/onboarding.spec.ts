@@ -55,6 +55,9 @@ test.describe("Onboarding page — navigation", () => {
   }) => {
     await page.goto("/onboarding");
     await expect(page).toHaveURL(/\/login/, { timeout: 15_000 });
+    await expect(
+      page.getByRole("heading", { name: /welcome back/i }),
+    ).toBeVisible();
 
     // Navigate back to landing
     await page.goto("/");
@@ -76,7 +79,7 @@ test.describe("Onboarding page — registration flow", () => {
     ).toBeVisible();
 
     // The register form should be present with all required fields
-    await expect(page.getByLabel(/full name/i)).toBeVisible();
+    await expect(page.getByLabel("Name")).toBeVisible();
     await expect(page.getByLabel(/email/i)).toBeVisible();
     // Password field — use locator to avoid devtools conflicts
     await expect(page.locator("#password")).toBeVisible();
