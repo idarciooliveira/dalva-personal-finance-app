@@ -25,6 +25,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { CurrencyInput, parseCurrencyInputToCents } from "@/components/ui/currency-input";
 
 interface GoalFormDialogProps {
   open: boolean;
@@ -102,7 +103,7 @@ export function GoalFormDialog({
       return;
     }
 
-    const amountCents = Math.round(parseFloat(targetAmount || "0") * 100);
+    const amountCents = parseCurrencyInputToCents(targetAmount);
     if (isNaN(amountCents) || amountCents <= 0) {
       setError("Please enter a valid target amount");
       return;
@@ -168,15 +169,10 @@ export function GoalFormDialog({
             <div className="mb-5">
               <div className="flex items-baseline gap-1 border-b-2 border-primary pb-2">
                 <span className="text-2xl font-semibold text-primary">$</span>
-                <input
-                  type="text"
-                  inputMode="decimal"
+                <CurrencyInput
                   value={targetAmount}
-                  onChange={(e) => {
-                    const v = e.target.value.replace(/[^0-9.,]/g, "");
-                    setTargetAmount(v);
-                  }}
-                  placeholder="0.00"
+                  onValueChange={setTargetAmount}
+                  placeholder="0,00"
                   autoFocus
                   className="flex-1 bg-transparent text-2xl font-semibold text-foreground outline-none placeholder:text-muted-foreground/50"
                   aria-label="Target amount"
@@ -194,15 +190,10 @@ export function GoalFormDialog({
               <Target className="size-5 text-muted-foreground shrink-0" />
               <div className="flex items-center gap-1 flex-1">
                 <span className="text-sm text-muted-foreground">$</span>
-                <input
-                  type="text"
-                  inputMode="decimal"
+                <CurrencyInput
                   value={targetAmount}
-                  onChange={(e) => {
-                    const v = e.target.value.replace(/[^0-9.,]/g, "");
-                    setTargetAmount(v);
-                  }}
-                  placeholder="0.00"
+                  onValueChange={setTargetAmount}
+                  placeholder="0,00"
                   className="flex-1 bg-transparent text-sm text-foreground outline-none placeholder:text-muted-foreground"
                   aria-label="Target amount"
                 />

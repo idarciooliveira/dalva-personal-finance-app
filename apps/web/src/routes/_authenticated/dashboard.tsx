@@ -16,7 +16,6 @@ import { DebtPaydownCard } from "@/components/dashboard/debt-paydown-card";
 import {
   mockNetWorth,
   mockBudgetSummary,
-  mockDebtPaydown,
 } from "@/lib/mock-dashboard-data";
 import type { GoalsProgressData } from "@/lib/mock-dashboard-data";
 
@@ -75,6 +74,8 @@ function DashboardPage() {
     currency: "USD",
   };
 
+  const { data: debtSummary } = useQuery(convexQuery(api.debts.getDebtSummary, {}));
+
   return (
     <div className="dashboard-glass-bg dashboard-glass flex-1 overflow-auto">
       <div className="mx-auto max-w-300 px-4 py-6 lg:px-8">
@@ -122,7 +123,17 @@ function DashboardPage() {
         </div>
         <div className="mt-4 grid gap-4 sm:grid-cols-2">
           <GoalsProgressCard data={goalsProgressData} />
-          <DebtPaydownCard data={mockDebtPaydown} />
+          <DebtPaydownCard
+            data={
+              debtSummary ?? {
+                debts: [],
+                totalRemaining: 0,
+                totalOriginal: 0,
+                recentPayment: 0,
+                currency: "USD",
+              }
+            }
+          />
         </div>
       </div>
     </div>
@@ -170,7 +181,12 @@ function buildRecentTransactionsData(
       id: tx._id,
       date: tx.date,
       description: tx.description || tx.payee || "Untitled",
-      category: tx.type === "adjustment" ? "Adjustment" : "", // category names not included in summary — keep simple
+      category:
+        tx.type === "adjustment"
+          ? "Adjustment"
+          : tx.type === "transfer"
+            ? "Transfer"
+            : "Uncategorized",
       amount: tx.type === "expense" ? -Math.abs(tx.amount) : tx.amount,
       type: tx.type,
       account: accountMap.get(tx.accountId) ?? "Unknown",

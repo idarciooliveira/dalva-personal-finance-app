@@ -11,6 +11,8 @@
 import type * as accounts from "../accounts.js";
 import type * as auth from "../auth.js";
 import type * as categories from "../categories.js";
+import type * as debtPayments from "../debtPayments.js";
+import type * as debts from "../debts.js";
 import type * as goalContributions from "../goalContributions.js";
 import type * as http from "../http.js";
 import type * as savingsGoals from "../savingsGoals.js";
@@ -28,6 +30,8 @@ declare const fullApi: ApiFromModules<{
   accounts: typeof accounts;
   auth: typeof auth;
   categories: typeof categories;
+  debtPayments: typeof debtPayments;
+  debts: typeof debts;
   goalContributions: typeof goalContributions;
   http: typeof http;
   savingsGoals: typeof savingsGoals;

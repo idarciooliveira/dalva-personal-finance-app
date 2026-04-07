@@ -129,4 +129,47 @@ export default defineSchema({
   })
     .index("by_userId", ["userId"])
     .index("by_goalId", ["goalId"]),
+
+  /* ------------------------------------------------------------------ */
+  /*  Debts                                                              */
+  /* ------------------------------------------------------------------ */
+  debts: defineTable({
+    userId: v.string(),
+    name: v.string(),
+    debtType: v.union(
+      v.literal("credit_card"),
+      v.literal("loan"),
+      v.literal("mortgage"),
+      v.literal("student_loan"),
+      v.literal("personal_loan"),
+      v.literal("other"),
+    ),
+    lender: v.optional(v.string()),
+    originalAmount: v.number(),
+    currentBalance: v.number(),
+    interestRate: v.optional(v.number()),
+    minimumPayment: v.optional(v.number()),
+    dueDate: v.optional(v.string()),
+    linkedAccountId: v.optional(v.id("accounts")),
+    archived: v.optional(v.boolean()),
+    createdAt: v.string(),
+  }).index("by_userId", ["userId"]),
+
+  /* ------------------------------------------------------------------ */
+  /*  Debt payments                                                      */
+  /* ------------------------------------------------------------------ */
+  debtPayments: defineTable({
+    userId: v.string(),
+    debtId: v.id("debts"),
+    amount: v.number(),
+    principalAmount: v.number(),
+    interestAmount: v.number(),
+    date: v.string(),
+    note: v.optional(v.string()),
+    fromAccountId: v.id("accounts"),
+    sourceTransactionId: v.id("transactions"),
+    liabilityTransactionId: v.optional(v.id("transactions")),
+  })
+    .index("by_userId", ["userId"])
+    .index("by_debtId", ["debtId"]),
 });

@@ -16,6 +16,21 @@ interface DebtPaydownCardProps {
 }
 
 export function DebtPaydownCard({ data }: DebtPaydownCardProps) {
+  if (data.debts.length === 0 || data.totalOriginal === 0) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-sm font-medium text-muted-foreground">
+            Debt Paydown
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p className="text-sm text-muted-foreground">No debts tracked yet.</p>
+        </CardContent>
+      </Card>
+    );
+  }
+
   const overallPercent = Math.round(
     ((data.totalOriginal - data.totalRemaining) / data.totalOriginal) * 100,
   );

@@ -12,6 +12,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { CurrencyInput, parseCurrencyInputToCents } from "@/components/ui/currency-input";
 import { formatCurrency } from "@/lib/format";
 import { getCurrencySymbol } from "@/lib/currencies";
 
@@ -38,7 +39,7 @@ export function AdjustBalanceDialog({
   // Reset when dialog opens
   function handleOpenChange(nextOpen: boolean) {
     if (nextOpen) {
-      setNewBalance(account ? (account.balance / 100).toFixed(2) : "");
+      setNewBalance(account ? String(account.balance) : "");
       setAdjustmentDate(new Date().toISOString().slice(0, 10));
       setNote("");
       setError("");
@@ -51,7 +52,7 @@ export function AdjustBalanceDialog({
     if (!account) return;
 
     setError("");
-    const newCents = Math.round(parseFloat(newBalance) * 100);
+    const newCents = parseCurrencyInputToCents(newBalance);
     if (isNaN(newCents)) {
       setError("Please enter a valid amount");
       return;
@@ -92,16 +93,11 @@ export function AdjustBalanceDialog({
                 <span className="text-2xl font-semibold text-primary">
                   {currencySymbol}
                 </span>
-                <input
+                <CurrencyInput
                   id="new-balance"
-                  type="text"
-                  inputMode="decimal"
                   value={newBalance}
-                  onChange={(e) => {
-                    const value = e.target.value.replace(/[^0-9.,\-]/g, "");
-                    setNewBalance(value);
-                  }}
-                  placeholder="0.00"
+                  onValueChange={setNewBalance}
+                  placeholder="0,00"
                   autoFocus
                   className="flex-1 bg-transparent text-2xl font-semibold text-foreground outline-none placeholder:text-muted-foreground/50"
                   aria-label="New balance"

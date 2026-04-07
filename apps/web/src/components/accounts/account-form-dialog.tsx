@@ -24,6 +24,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { CurrencyInput, parseCurrencyInputToCents } from "@/components/ui/currency-input";
 import { ACCOUNT_TYPES, ACCOUNT_THEMES, type AccountType } from "@/lib/accounts";
 import { CURRENCIES, getCurrencySymbol } from "@/lib/currencies";
 import { cn } from "@/lib/utils";
@@ -91,7 +92,7 @@ export function AccountFormDialog({
       });
       onOpenChange(false);
     } else {
-      const balanceCents = Math.round(parseFloat(balance || "0") * 100);
+      const balanceCents = parseCurrencyInputToCents(balance);
       if (isNaN(balanceCents)) {
         setError("Please enter a valid balance");
         return;
@@ -139,16 +140,10 @@ export function AccountFormDialog({
                 <span className="text-2xl font-semibold text-primary">
                   {currencySymbol}
                 </span>
-                <input
-                  type="text"
-                  inputMode="decimal"
+                <CurrencyInput
                   value={balance}
-                  onChange={(e) => {
-                    // Allow only numbers, dots, commas, and minus
-                    const v = e.target.value.replace(/[^0-9.,\-]/g, "");
-                    setBalance(v);
-                  }}
-                  placeholder="0.00"
+                  onValueChange={setBalance}
+                  placeholder="0,00"
                   autoFocus
                   className="flex-1 bg-transparent text-2xl font-semibold text-foreground outline-none placeholder:text-muted-foreground/50"
                   aria-label="Opening balance"

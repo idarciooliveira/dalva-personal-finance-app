@@ -19,6 +19,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { CurrencyInput, parseCurrencyInputToCents } from "@/components/ui/currency-input";
 
 interface ContributionDialogProps {
   open: boolean;
@@ -65,7 +66,7 @@ export function ContributionDialog({
 
     if (!goal) return;
 
-    const amountCents = Math.round(parseFloat(amount || "0") * 100);
+    const amountCents = parseCurrencyInputToCents(amount);
     if (isNaN(amountCents) || amountCents <= 0) {
       setError("Please enter a valid amount");
       return;
@@ -116,15 +117,10 @@ export function ContributionDialog({
           <div className="mb-5">
             <div className="flex items-baseline gap-1 border-b-2 border-primary pb-2">
               <span className="text-2xl font-semibold text-primary">$</span>
-              <input
-                type="text"
-                inputMode="decimal"
+              <CurrencyInput
                 value={amount}
-                onChange={(e) => {
-                  const v = e.target.value.replace(/[^0-9.,]/g, "");
-                  setAmount(v);
-                }}
-                placeholder="0.00"
+                onValueChange={setAmount}
+                placeholder="0,00"
                 autoFocus
                 className="flex-1 bg-transparent text-2xl font-semibold text-foreground outline-none placeholder:text-muted-foreground/50"
                 aria-label="Contribution amount"

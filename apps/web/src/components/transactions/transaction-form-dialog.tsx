@@ -29,6 +29,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { CurrencyInput, parseCurrencyInputToCents } from "@/components/ui/currency-input";
 import { Switch } from "@/components/ui/switch";
 import { ACCOUNT_THEMES } from "@/lib/accounts";
 import { cn } from "@/lib/utils";
@@ -168,8 +169,8 @@ export function TransactionFormDialog({
     setError("");
 
     // Validate
-    const amountNum = parseFloat(amount);
-    if (!amount || isNaN(amountNum) || amountNum <= 0) {
+    const amountCents = parseCurrencyInputToCents(amount);
+    if (!amount || isNaN(amountCents) || amountCents <= 0) {
       setError("Please enter a valid amount greater than 0");
       return;
     }
@@ -181,8 +182,6 @@ export function TransactionFormDialog({
       setError("Please select a date");
       return;
     }
-
-    const amountCents = Math.round(amountNum * 100);
 
     try {
       if (isEdit && transaction) {
@@ -317,15 +316,10 @@ export function TransactionFormDialog({
               )}
             >
               <Calculator className="size-5 text-muted-foreground shrink-0" />
-              <input
-                type="text"
-                inputMode="decimal"
+              <CurrencyInput
                 value={amount}
-                onChange={(e) => {
-                  const v = e.target.value.replace(/[^0-9.,\-]/g, "");
-                  setAmount(v);
-                }}
-                placeholder="0.00"
+                onValueChange={setAmount}
+                placeholder="0,00"
                 autoFocus
                 className="flex-1 bg-transparent text-2xl font-semibold text-foreground outline-none placeholder:text-muted-foreground/50"
                 aria-label="Amount"
