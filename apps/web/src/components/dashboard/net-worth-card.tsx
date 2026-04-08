@@ -1,4 +1,4 @@
-import { TrendingUp, TrendingDown, Wallet } from "lucide-react";
+import { Wallet } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -12,7 +12,27 @@ interface NetWorthCardProps {
 }
 
 export function NetWorthCard({ data }: NetWorthCardProps) {
-  const isPositive = data.changeDirection === "up";
+  if (!data.hasData) {
+    return (
+      <Card>
+        <CardHeader>
+          <div className="flex items-center gap-2 text-muted-foreground">
+            <Wallet className="size-4" />
+            <CardTitle className="text-sm font-medium text-muted-foreground">
+              Net Worth
+            </CardTitle>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <div className="flex min-h-36 items-center justify-center rounded-xl border border-dashed border-border bg-muted/20 px-4 text-center">
+            <p className="text-sm text-muted-foreground">
+              Your net worth will appear here once you add an account or debt.
+            </p>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <Card>
@@ -28,20 +48,6 @@ export function NetWorthCard({ data }: NetWorthCardProps) {
         <div className="flex items-baseline gap-3">
           <span className="text-3xl font-semibold tracking-tight text-foreground">
             {formatCurrency(data.netWorth, data.currency)}
-          </span>
-          <span
-            className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium ${
-              isPositive
-                ? "bg-wise-positive/10 text-wise-positive"
-                : "bg-destructive/10 text-destructive"
-            }`}
-          >
-            {isPositive ? (
-              <TrendingUp className="size-3" />
-            ) : (
-              <TrendingDown className="size-3" />
-            )}
-            {data.changePercent}%
           </span>
         </div>
         <div className="flex gap-6 text-sm">

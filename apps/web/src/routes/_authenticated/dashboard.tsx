@@ -14,7 +14,6 @@ import { GoalsProgressCard } from "@/components/dashboard/goals-progress-card";
 import { DebtPaydownCard } from "@/components/dashboard/debt-paydown-card";
 
 import {
-  mockNetWorth,
   mockBudgetSummary,
 } from "@/lib/mock-dashboard-data";
 import type { GoalsProgressData } from "@/lib/mock-dashboard-data";
@@ -75,6 +74,7 @@ function DashboardPage() {
   };
 
   const { data: debtSummary } = useQuery(convexQuery(api.debts.getDebtSummary, {}));
+  const { data: netWorth } = useQuery(convexQuery(api.dashboard.getNetWorth, {}));
 
   return (
     <div className="dashboard-glass-bg dashboard-glass flex-1 overflow-auto">
@@ -118,7 +118,17 @@ function DashboardPage() {
         {/*  BOTTOM ROW: All remaining widgets                           */}
         {/* ============================================================ */}
         <div className="mt-6 grid gap-4 sm:grid-cols-2">
-          <NetWorthCard data={mockNetWorth} />
+          <NetWorthCard
+            data={
+              netWorth ?? {
+                hasData: false,
+                totalAssets: 0,
+                totalDebts: 0,
+                netWorth: 0,
+                currency: "USD",
+              }
+            }
+          />
           <BudgetSummaryCard data={mockBudgetSummary} />
         </div>
         <div className="mt-4 grid gap-4 sm:grid-cols-2">

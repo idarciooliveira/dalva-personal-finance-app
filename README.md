@@ -29,7 +29,7 @@ The app is currently centered around:
 | Categories | Implemented | Default category seeding, custom categories, and subcategories |
 | Onboarding | Implemented | Currency, starter accounts, and starter category selection |
 | Savings Goals | Implemented | Goal CRUD, contribution history, progress tracking |
-| Dashboard | Partially implemented | Mix of real account/transaction/goal data and a few mock widgets |
+| Dashboard | Partially implemented | Real account, transaction, goal, debt, and net worth data; some widgets still remain mock-backed |
 | Budgets | Planned | Sidebar placeholder exists, dedicated module not built yet |
 | Debts | Planned | Sidebar placeholder exists, dedicated module not built yet |
 
@@ -74,7 +74,7 @@ Implemented today:
 - Transfer creation and editing flows
 - Categories and subcategories management
 - Savings goals with contribution tracking
-- Dashboard with real recent transactions, spending, cashflow, and goals data
+- Dashboard with real recent transactions, spending, cashflow, goals, debt, and net worth data
 
 Still not fully wired:
 
@@ -82,6 +82,7 @@ Still not fully wired:
 - Google OAuth provider setup
 - Dedicated budgets, debts, and settings pages
 - Some dashboard cards still use mock data while those modules are being built
+- Net worth trend/history badge, which needs historical balance snapshots or equivalent reporting support
 
 ---
 

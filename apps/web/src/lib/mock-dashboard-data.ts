@@ -8,11 +8,10 @@
 // ---------------------------------------------------------------------------
 
 export interface NetWorthData {
+  hasData: boolean;
   totalAssets: number; // cents
   totalDebts: number; // cents
   netWorth: number; // cents
-  changePercent: number; // month-over-month %
-  changeDirection: "up" | "down";
   currency: string;
 }
 
@@ -125,11 +124,10 @@ export interface AccountCardData {
 // ---------------------------------------------------------------------------
 
 export const mockNetWorth: NetWorthData = {
+  hasData: true,
   totalAssets: 3_285_000, // $32,850.00
   totalDebts: 800_000, // $8,000.00
   netWorth: 2_485_000, // $24,850.00
-  changePercent: 12.3,
-  changeDirection: "up",
   currency: "USD",
 };
 

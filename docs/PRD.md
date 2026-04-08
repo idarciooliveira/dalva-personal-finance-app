@@ -474,6 +474,7 @@ Important modeling rules:
 - more clients/platforms
 - imports/exports
 - richer reports
+- net worth trend/history backed by historical balance snapshots or equivalent reporting infrastructure
 - collaboration
 
 ---
