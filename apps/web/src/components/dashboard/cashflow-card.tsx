@@ -55,8 +55,8 @@ export function CashflowCard({
             Monthly Cashflow
           </CardTitle>
         </CardHeader>
-        <CardContent className="flex flex-col gap-4">
-          <div className="grid grid-cols-3 gap-4">
+        <CardContent className="flex flex-col gap-3 sm:gap-4">
+          <div className="grid grid-cols-3 gap-3 sm:gap-4">
             <Skeleton className="h-10 w-full" />
             <Skeleton className="h-10 w-full" />
             <Skeleton className="h-10 w-full" />
@@ -85,19 +85,19 @@ export function CashflowCard({
           Monthly Cashflow
         </CardTitle>
       </CardHeader>
-      <CardContent className="flex flex-col gap-4">
+      <CardContent className="flex flex-col gap-3 sm:gap-4">
         {/* Summary stats */}
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-3 gap-2.5 text-xs sm:gap-4 sm:text-sm">
           <div>
             <span className="text-xs text-muted-foreground">Income</span>
-            <p className="flex items-center gap-1 text-sm font-medium text-foreground">
+            <p className="flex items-center gap-1 text-xs font-medium text-foreground sm:text-sm">
               <ArrowUpRight className="size-3.5 text-wise-positive" />
               {formatCurrency(currentMonth.income, currency)}
             </p>
           </div>
           <div>
             <span className="text-xs text-muted-foreground">Expenses</span>
-            <p className="flex items-center gap-1 text-sm font-medium text-foreground">
+            <p className="flex items-center gap-1 text-xs font-medium text-foreground sm:text-sm">
               <ArrowDownRight className="size-3.5 text-destructive" />
               {formatCurrency(currentMonth.expenses, currency)}
             </p>
@@ -105,7 +105,7 @@ export function CashflowCard({
           <div>
             <span className="text-xs text-muted-foreground">Net</span>
             <p
-              className={`text-sm font-semibold ${isPositive ? "text-wise-positive" : "text-destructive"}`}
+              className={`text-xs font-semibold sm:text-sm ${isPositive ? "text-wise-positive" : "text-destructive"}`}
             >
               {isPositive ? "+" : ""}
               {formatCurrency(currentMonth.net, currency)}
@@ -117,8 +117,8 @@ export function CashflowCard({
         {chartData.length > 0 ? (
           <ChartContainer
             config={chartConfig}
-            className="aspect-[2/1] w-full"
-          >
+              className="aspect-[1.8/1] w-full sm:aspect-[2/1]"
+            >
             <BarChart data={chartData} barGap={2}>
               <CartesianGrid vertical={false} strokeDasharray="3 3" />
               <XAxis

@@ -122,7 +122,7 @@ export function DebtPaymentDialog({ open, onOpenChange, debt }: DebtPaymentDialo
           <div className="flex items-center gap-3 border-b border-border py-3">
             <Wallet className="size-5 shrink-0 text-muted-foreground" />
             <Select value={fromAccountId} onValueChange={setFromAccountId}>
-              <SelectTrigger className="h-auto w-full border-0 bg-transparent px-2 py-0 text-sm shadow-none ring-0 focus:ring-0">
+              <SelectTrigger className="h-auto w-full min-w-0 border-0 bg-transparent px-2 py-0 text-sm shadow-none ring-0 focus:ring-0">
                 <SelectValue placeholder="Select source account" />
               </SelectTrigger>
               <SelectContent>
@@ -186,7 +186,7 @@ export function DebtPaymentDialog({ open, onOpenChange, debt }: DebtPaymentDialo
         </div>
 
         <div className="mt-2 flex items-center justify-end gap-3 px-5 py-4">
-          <Button type="button" variant="accent" size="default" disabled={isPending} onClick={() => void handleSubmit()}>
+          <Button type="button" variant="accent" size="default" className="w-full sm:w-auto" disabled={isPending} onClick={() => void handleSubmit()}>
             {isPending ? "Saving..." : "Record payment"}
           </Button>
         </div>

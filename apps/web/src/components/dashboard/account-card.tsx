@@ -37,7 +37,7 @@ export function AccountCard({ account, holderName = "DALVA USER" }: AccountCardP
 
   return (
     <div
-      className="relative flex w-full flex-col justify-between overflow-hidden rounded-2xl p-5 text-white shadow-lg"
+      className="relative flex w-full flex-col justify-between overflow-hidden rounded-2xl p-4 text-white shadow-lg sm:p-5"
       style={{
         background: `linear-gradient(135deg, ${theme.from}, ${theme.to})`,
         aspectRatio: "1.6 / 1",
@@ -46,30 +46,30 @@ export function AccountCard({ account, holderName = "DALVA USER" }: AccountCardP
       {/* Top row: Contactless + brand */}
       <div className="flex items-start justify-between">
         <div className="flex items-center gap-2">
-          <div className="flex size-8 items-center justify-center rounded-md bg-white/20 backdrop-blur-sm">
-            <Wifi className="size-4 rotate-90" />
+          <div className="flex size-7 items-center justify-center rounded-md bg-white/20 backdrop-blur-sm sm:size-8">
+            <Wifi className="size-3.5 rotate-90 sm:size-4" />
           </div>
         </div>
-        <span className="text-xs font-medium uppercase tracking-wider opacity-80">
+        <span className="text-[10px] font-medium uppercase tracking-wider opacity-80 sm:text-xs">
           {account.type.replace("_", " ")}
         </span>
       </div>
 
       {/* Middle: Balance inside card */}
       <div className="flex items-center gap-2">
-        <p className="text-5xl font-semibold tabular-nums tracking-tight">
+        <p className="min-w-0 truncate text-2xl font-semibold tabular-nums tracking-tight sm:text-4xl lg:text-5xl">
           {showBalance
             ? formatCurrency(account.balance, account.currency)
             : "****"}
         </p>
         {account.balance < 0 && showBalance && (
-          <span className="rounded bg-white/20 px-1.5 py-0.5 text-[10px] font-medium">
-            owing
-          </span>
+            <span className="shrink-0 rounded bg-white/20 px-1.5 py-0.5 text-[10px] font-medium">
+              owing
+            </span>
         )}
         <button
           onClick={() => setShowBalance(!showBalance)}
-          className="ml-auto rounded-md p-1 text-white/60 transition-colors hover:bg-white/15 hover:text-white"
+          className="ml-auto shrink-0 rounded-md p-1 text-white/60 transition-colors hover:bg-white/15 hover:text-white"
           aria-label={showBalance ? "Hide balance" : "Show balance"}
         >
           {showBalance ? (
@@ -81,15 +81,15 @@ export function AccountCard({ account, holderName = "DALVA USER" }: AccountCardP
       </div>
 
       {/* Bottom: Card number + holder + logo */}
-      <div className="flex flex-col gap-1.5">
-        <p className="font-mono text-sm tracking-widest opacity-70">
+      <div className="flex flex-col gap-1 min-w-0">
+        <p className="truncate font-mono text-[10px] tracking-[0.22em] opacity-70 sm:text-sm sm:tracking-widest">
           **** **** **** {cardNumber}
         </p>
-        <div className="flex items-end justify-between">
-          <p className="text-xs font-medium tracking-wider uppercase">
+        <div className="flex items-end justify-between gap-2 min-w-0">
+          <p className="truncate text-[10px] font-medium tracking-wider uppercase sm:text-xs">
             {holderName}
           </p>
-          <span className="text-sm font-semibold opacity-60">DALVA</span>
+          <span className="shrink-0 text-xs font-semibold opacity-60 sm:text-sm">DALVA</span>
         </div>
       </div>
     </div>
@@ -120,14 +120,14 @@ export function AccountCardsSection({
   // Empty state when no accounts exist yet
   if (accounts.length === 0) {
     return (
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-3 sm:gap-4">
         <h2 className="text-sm font-medium text-muted-foreground">
           My Accounts
         </h2>
-        <div className="flex flex-col gap-4 sm:flex-row">
+        <div className="flex flex-col gap-3 sm:flex-row sm:gap-4">
           <div className="w-full sm:w-3/4">
             <div
-              className="glass-surface flex w-full flex-col justify-between rounded-2xl border border-dashed border-border p-5"
+               className="glass-surface flex w-full flex-col justify-between rounded-2xl border border-dashed border-border p-4 sm:p-5"
               style={{ aspectRatio: "1.6 / 1" }}
             >
               <div className="h-8 w-20 rounded-md bg-muted/70" />
@@ -144,12 +144,12 @@ export function AccountCardsSection({
             </div>
           </div>
 
-          <div className="flex w-full flex-row gap-4 sm:w-1/4 sm:flex-col">
-            <div className="glass-surface flex flex-1 flex-col justify-center rounded-2xl p-4">
+          <div className="flex w-full flex-row gap-3 sm:w-1/4 sm:flex-col sm:gap-4">
+            <div className="glass-surface flex flex-1 flex-col justify-center rounded-2xl p-3 sm:p-4">
               <div className="h-4 w-20 rounded-md bg-muted/50" />
               <div className="mt-2 h-7 w-24 rounded-md bg-muted/70" />
             </div>
-            <div className="glass-surface flex flex-1 flex-col justify-center rounded-2xl p-4">
+            <div className="glass-surface flex flex-1 flex-col justify-center rounded-2xl p-3 sm:p-4">
               <div className="h-4 w-22 rounded-md bg-muted/50" />
               <div className="mt-2 h-7 w-24 rounded-md bg-muted/70" />
             </div>
@@ -160,7 +160,7 @@ export function AccountCardsSection({
   }
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-3 sm:gap-4">
       <div className="flex items-center justify-between">
         <h2 className="text-sm font-medium text-muted-foreground">
           My Accounts
@@ -179,32 +179,32 @@ export function AccountCardsSection({
         </div>
       </div>
 
-      <div className="flex flex-col gap-4 sm:flex-row">
+      <div className="flex flex-col gap-3 sm:flex-row sm:gap-4">
         {/* Account card — full width on mobile, 75% on sm+ */}
         <div className="w-full sm:w-3/4">
           <AccountCard account={accounts[activeIndex]} holderName={holderName} />
         </div>
 
         {/* Income & Expenses summary — row on mobile, column on sm+ */}
-        <div className="flex w-full flex-row gap-4 sm:w-1/4 sm:flex-col">
+        <div className="flex w-full flex-row gap-3 sm:w-1/4 sm:flex-col sm:gap-4">
           {/* Total Income */}
-          <div className="glass-surface flex flex-1 flex-col items-center justify-center rounded-2xl p-4 sm:items-start">
+          <div className="glass-surface flex flex-1 flex-col items-center justify-center rounded-2xl p-3 sm:items-start sm:p-4">
             <div className="flex items-center gap-2 text-muted-foreground">
               <TrendingUp className="size-4 text-emerald-500" />
               <span className="text-xs font-medium">Total Income</span>
             </div>
-            <p className="mt-2 text-lg  font-semibold tabular-nums text-foreground">
+            <p className="mt-1.5 text-base font-semibold tabular-nums text-foreground sm:mt-2 sm:text-lg">
               {formatCurrency(income, currency)}
             </p>
           </div>
 
           {/* Total Expenses */}
-          <div className="glass-surface flex flex-1 flex-col items-center justify-center rounded-2xl p-4 sm:items-start">
+          <div className="glass-surface flex flex-1 flex-col items-center justify-center rounded-2xl p-3 sm:items-start sm:p-4">
             <div className="flex items-center gap-2 text-muted-foreground">
               <TrendingDown className="size-4 text-red-500" />
               <span className="text-xs font-medium">Total Expenses</span>
             </div>
-            <p className="mt-2 text-lg font-semibold tabular-nums text-foreground">
+            <p className="mt-1.5 text-base font-semibold tabular-nums text-foreground sm:mt-2 sm:text-lg">
               {formatCurrency(expenses, currency)}
             </p>
           </div>

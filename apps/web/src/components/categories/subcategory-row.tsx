@@ -48,7 +48,7 @@ export function SubcategoryRow({
   return (
     <div
       className={cn(
-        "flex min-h-12 items-center gap-3 rounded-xl px-4 py-3 pl-10 hover:bg-muted/50",
+        "flex min-h-11 items-center gap-2.5 rounded-xl px-3 py-2.5 pl-8 hover:bg-muted/50 sm:min-h-12 sm:gap-3 sm:px-4 sm:py-3 sm:pl-10",
         subcategory.archived && "opacity-60",
       )}
     >

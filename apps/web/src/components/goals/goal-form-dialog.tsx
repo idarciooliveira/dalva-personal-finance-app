@@ -155,15 +155,15 @@ export function GoalFormDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md p-0 gap-0 overflow-hidden">
+      <DialogContent className="max-w-md gap-0 overflow-hidden p-0 max-sm:max-w-[calc(100vw-1rem)]">
         {/* Header */}
-        <DialogHeader className="px-5 pt-5 pb-0">
+        <DialogHeader className="px-4 pt-4 pb-0 sm:px-5 sm:pt-5">
           <DialogTitle className="text-lg font-semibold">
             {isEdit ? "Edit goal" : "New savings goal"}
           </DialogTitle>
         </DialogHeader>
 
-        <div className="px-5 pt-4 pb-0">
+        <div className="min-w-0 px-4 pt-3.5 pb-0 sm:px-5 sm:pt-4">
           {/* ── Target amount input (prominent, top) ── */}
           {!isEdit && (
             <div className="mb-5">
@@ -174,7 +174,7 @@ export function GoalFormDialog({
                   onValueChange={setTargetAmount}
                   placeholder="0,00"
                   autoFocus
-                  className="flex-1 bg-transparent text-2xl font-semibold text-foreground outline-none placeholder:text-muted-foreground/50"
+                  className="min-w-0 flex-1 bg-transparent text-2xl font-semibold text-foreground outline-none placeholder:text-muted-foreground/50"
                   aria-label="Target amount"
                 />
               </div>
@@ -194,7 +194,7 @@ export function GoalFormDialog({
                   value={targetAmount}
                   onValueChange={setTargetAmount}
                   placeholder="0,00"
-                  className="flex-1 bg-transparent text-sm text-foreground outline-none placeholder:text-muted-foreground"
+                  className="min-w-0 flex-1 bg-transparent text-sm text-foreground outline-none placeholder:text-muted-foreground"
                   aria-label="Target amount"
                 />
               </div>
@@ -238,7 +238,7 @@ export function GoalFormDialog({
                   if (v === "virtual") setLinkedAccountId("");
                 }}
               >
-                <SelectTrigger className="h-auto border-0 bg-muted/60 px-3 py-1.5 text-sm font-medium rounded-full shadow-none ring-0 focus:ring-0 w-auto gap-1.5">
+                 <SelectTrigger className="h-auto w-full min-w-0 border-0 bg-muted/60 px-3 py-1.5 text-left text-sm font-medium rounded-full shadow-none ring-0 focus:ring-0 gap-1.5">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -256,7 +256,7 @@ export function GoalFormDialog({
                 value={linkedAccountId}
                 onValueChange={setLinkedAccountId}
               >
-                <SelectTrigger className="h-auto border-0 bg-transparent px-2 py-0 text-sm shadow-none ring-0 focus:ring-0 w-full">
+                 <SelectTrigger className="h-auto w-full min-w-0 border-0 bg-transparent px-2 py-0 text-left text-sm shadow-none ring-0 focus:ring-0">
                   <SelectValue placeholder="Select savings account" />
                 </SelectTrigger>
                 <SelectContent>
@@ -279,7 +279,7 @@ export function GoalFormDialog({
               />
               <span className="text-sm text-muted-foreground">Goal color</span>
             </div>
-            <div className="flex flex-wrap gap-2.5 pl-8">
+             <div className="flex flex-wrap gap-2 pl-8 sm:gap-2.5">
               {GOAL_COLORS.map((c) => (
                 <button
                   key={c.id}
@@ -305,12 +305,13 @@ export function GoalFormDialog({
         </div>
 
         {/* ── Footer ── */}
-        <div className="flex items-center justify-end gap-3 px-5 py-4 mt-2">
+         <div className="mt-2 flex flex-col-reverse gap-2 px-4 py-4 sm:flex-row sm:items-center sm:justify-end sm:gap-3 sm:px-5">
           {!isEdit && (
             <Button
               type="button"
               variant="outline"
               size="default"
+              className="w-full sm:w-auto"
               disabled={isPending || !name.trim()}
               onClick={() => void handleSubmit(true)}
             >
@@ -321,6 +322,7 @@ export function GoalFormDialog({
             type="button"
             variant="accent"
             size="default"
+            className="w-full sm:w-auto"
             disabled={isPending || !name.trim()}
             onClick={() => void handleSubmit(false)}
           >

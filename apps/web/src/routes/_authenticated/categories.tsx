@@ -4,11 +4,13 @@ import { convexQuery } from "@convex-dev/react-query";
 import { api } from "@mpf/backend/convex/_generated/api";
 import type { Doc } from "@mpf/backend/convex/_generated/dataModel";
 import { useState } from "react";
+import { Archive } from "lucide-react";
 
 import { CategoryGroup } from "@/components/categories/category-group";
 import { CategoryFormDialog } from "@/components/categories/category-form-dialog";
 import { SubcategoryFormDialog } from "@/components/categories/subcategory-form-dialog";
 import { CategoriesListSkeleton } from "@/components/categories/categories-list-skeleton";
+import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/_authenticated/categories")({
   component: CategoriesPage,
@@ -21,7 +23,7 @@ export const Route = createFileRoute("/_authenticated/categories")({
 function CategoriesPage() {
   return (
     <div className="flex-1 overflow-auto">
-      <div className="mx-auto max-w-200 px-4 py-6 lg:px-8">
+      <div className="mx-auto max-w-200 px-3 py-4 sm:px-4 sm:py-6 lg:px-8">
         <CategoriesContent />
       </div>
     </div>
@@ -100,24 +102,29 @@ function CategoriesContent() {
   return (
     <>
       {/* Header */}
-      <div className="mb-6">
+      <div className="mb-4 flex flex-col gap-3 sm:mb-6 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h2 className="font-heading text-2xl font-semibold text-foreground">
+          <h2 className="font-heading text-xl font-semibold text-foreground sm:text-2xl">
             Categories
           </h2>
           <p className="mt-1 text-sm text-muted-foreground">
             Organize your transactions with custom categories and subcategories.
           </p>
         </div>
-        <label className="mt-3 inline-flex items-center gap-2 text-sm text-muted-foreground whitespace-nowrap cursor-pointer">
-          <input
-            type="checkbox"
-            checked={showArchived}
-            onChange={(e) => setShowArchived(e.target.checked)}
-            className="size-4 rounded border-border accent-primary"
-          />
-          Show archived
-        </label>
+        <Button
+          variant={showArchived ? "secondary" : "outline"}
+          size="default"
+          onClick={() => setShowArchived(!showArchived)}
+          className="relative w-full sm:w-auto"
+        >
+          <Archive className="mr-1.5 size-4" />
+          Archived
+          {showArchived && (
+            <span className="ml-1.5 inline-flex size-5 items-center justify-center rounded-full bg-accent text-[11px] font-semibold text-accent-foreground">
+              1
+            </span>
+          )}
+        </Button>
       </div>
 
       {/* Expense Categories */}
@@ -133,7 +140,7 @@ function CategoriesContent() {
       />
 
       {/* Income Categories */}
-      <div className="mt-8">
+      <div className="mt-6 sm:mt-8">
         <CategoryGroup
           title="Income"
           type="income"

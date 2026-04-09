@@ -4,7 +4,7 @@ import { convexQuery } from "@convex-dev/react-query";
 import { api } from "@mpf/backend/convex/_generated/api";
 import type { Doc } from "@mpf/backend/convex/_generated/dataModel";
 import { useState } from "react";
-import { Plus, Wallet } from "lucide-react";
+import { Plus, Wallet, Archive } from "lucide-react";
 
 import { AccountRow } from "@/components/accounts/account-row";
 import { AccountFormDialog } from "@/components/accounts/account-form-dialog";
@@ -23,7 +23,7 @@ export const Route = createFileRoute("/_authenticated/accounts")({
 function AccountsPage() {
   return (
     <div className="flex-1 overflow-auto">
-      <div className="mx-auto max-w-200 px-4 py-6 lg:px-8">
+      <div className="mx-auto max-w-200 px-3 py-4 sm:px-4 sm:py-6 lg:px-8">
         <AccountsContent />
       </div>
     </div>
@@ -59,40 +59,45 @@ function AccountsContent() {
   return (
     <>
       {/* Header */}
-      <div className="mb-6">
-        <div className="flex items-start justify-between gap-4">
-          <div className="min-w-0">
-            <h2 className="font-heading text-2xl font-semibold text-foreground">
-              Accounts
-            </h2>
-            <p className="mt-1 text-sm text-muted-foreground">
-              Manage your financial accounts, balances, and settings.
-            </p>
-          </div>
+      <div className="mb-4 flex flex-col gap-3 sm:mb-6 sm:flex-row sm:items-center sm:justify-between">
+        <div className="min-w-0">
+          <h2 className="font-heading text-xl font-semibold text-foreground sm:text-2xl">
+            Accounts
+          </h2>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Manage your financial accounts, balances, and settings.
+          </p>
+        </div>
+        <div className="flex w-full items-center gap-2 sm:w-auto">
+          <Button
+            variant={showArchived ? "secondary" : "outline"}
+            size="default"
+            onClick={() => setShowArchived(!showArchived)}
+            className="relative"
+          >
+            <Archive className="mr-1.5 size-4" />
+            Archived
+            {showArchived && (
+              <span className="ml-1.5 inline-flex size-5 items-center justify-center rounded-full bg-accent text-[11px] font-semibold text-accent-foreground">
+                1
+              </span>
+            )}
+          </Button>
           <Button
             variant="accent"
             size="default"
-            className="shrink-0"
+            className="flex-1 sm:flex-none"
             onClick={() => setCreateDialogOpen(true)}
           >
             <Plus className="mr-1.5 size-4" />
             Add account
           </Button>
         </div>
-        <label className="mt-3 inline-flex items-center gap-2 text-sm text-muted-foreground whitespace-nowrap cursor-pointer">
-          <input
-            type="checkbox"
-            checked={showArchived}
-            onChange={(e) => setShowArchived(e.target.checked)}
-            className="size-4 rounded border-border accent-primary"
-          />
-          Show archived
-        </label>
       </div>
 
       {/* List */}
       {sortedAccounts.length === 0 ? (
-        <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-border py-16">
+          <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-border py-12 sm:py-16">
           <Wallet className="mb-3 size-10 text-muted-foreground/50" />
           <p className="text-sm font-medium text-muted-foreground">
             No accounts yet
@@ -100,15 +105,6 @@ function AccountsContent() {
           <p className="mt-1 text-xs text-muted-foreground">
             Add your first account to start tracking your finances.
           </p>
-          <Button
-            variant="accent"
-            size="default"
-            className="mt-4"
-            onClick={() => setCreateDialogOpen(true)}
-          >
-            <Plus className="mr-1.5 size-4" />
-            Add account
-          </Button>
         </div>
       ) : (
         <div className="space-y-3">

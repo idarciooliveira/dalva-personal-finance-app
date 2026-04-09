@@ -78,10 +78,10 @@ function DashboardPage() {
 
   return (
     <div className="dashboard-glass-bg dashboard-glass flex-1 overflow-auto">
-      <div className="mx-auto max-w-300 px-4 py-6 lg:px-8">
+      <div className="mx-auto max-w-300 px-3 py-4 sm:px-4 sm:py-6 lg:px-8">
         {/* Greeting */}
-        <div className="mb-6">
-          <h1 className="font-heading text-2xl font-semibold text-foreground">
+        <div className="mb-4 sm:mb-6">
+          <h1 className="font-heading text-xl font-semibold text-foreground sm:text-2xl">
             {greeting}, {firstName}
           </h1>
           <p className="mt-1 text-sm text-muted-foreground">
@@ -94,9 +94,9 @@ function DashboardPage() {
         {/*  Left: Account card + Recent transactions                    */}
         {/*  Right: Spending by category chart + details                 */}
         {/* ============================================================ */}
-        <div className="grid gap-6 lg:grid-cols-[1fr_380px]">
+        <div className="grid gap-4 sm:gap-5 lg:grid-cols-[1fr_380px] lg:gap-6">
           {/* --- Left column --- */}
-          <div className="flex flex-col gap-6">
+          <div className="flex flex-col gap-4 sm:gap-5 lg:gap-6">
             <AccountCardsSection
               accounts={accounts ?? []}
               income={totalIncome}
@@ -108,7 +108,7 @@ function DashboardPage() {
           </div>
 
           {/* --- Right column --- */}
-          <div className="flex flex-col gap-6">
+          <div className="flex flex-col gap-4 sm:gap-5 lg:gap-6">
             <SpendingCategoryCard month={currentMonth} />
             <CashflowCard month={currentMonth} />
           </div>
@@ -117,7 +117,7 @@ function DashboardPage() {
         {/* ============================================================ */}
         {/*  BOTTOM ROW: All remaining widgets                           */}
         {/* ============================================================ */}
-        <div className="mt-6 grid gap-4 sm:grid-cols-2">
+        <div className="mt-4 grid gap-3 sm:mt-6 sm:gap-4 sm:grid-cols-2">
           <NetWorthCard
             data={
               netWorth ?? {
@@ -131,7 +131,7 @@ function DashboardPage() {
           />
           <BudgetSummaryCard data={mockBudgetSummary} />
         </div>
-        <div className="mt-4 grid gap-4 sm:grid-cols-2">
+        <div className="mt-3 grid gap-3 sm:mt-4 sm:gap-4 sm:grid-cols-2">
           <GoalsProgressCard data={goalsProgressData} />
           <DebtPaydownCard
             data={

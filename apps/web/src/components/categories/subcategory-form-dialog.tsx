@@ -150,6 +150,7 @@ export function SubcategoryFormDialog({
               type="button"
               variant="outline"
               size="default"
+              className="flex-1 sm:flex-none"
               disabled={isPending || !name.trim()}
               onClick={() => void handleSubmit(true)}
             >
@@ -160,6 +161,7 @@ export function SubcategoryFormDialog({
             type="button"
             variant="accent"
             size="default"
+            className="flex-1 sm:flex-none"
             disabled={isPending || !name.trim()}
             onClick={() => void handleSubmit(false)}
           >

@@ -158,6 +158,7 @@ export function AdjustBalanceDialog({
               type="button"
               variant="outline"
               size="default"
+              className="flex-1 sm:flex-none"
               onClick={() => onOpenChange(false)}
             >
               Cancel
@@ -166,6 +167,7 @@ export function AdjustBalanceDialog({
               type="submit"
               variant="accent"
               size="default"
+              className="flex-1 sm:flex-none"
               disabled={isPending || !newBalance.trim()}
             >
               {isPending ? "Saving..." : "Adjust balance"}

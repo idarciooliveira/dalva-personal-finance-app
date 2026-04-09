@@ -28,21 +28,23 @@ export function CategoryGroup({
 }: CategoryGroupProps) {
   return (
     <div>
-      <div className="mb-4 flex items-center justify-between">
-        <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-          {title}
+      <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex items-center gap-2">
+          <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+            {title}
+          </h3>
           <Badge
             variant="secondary"
-            className="ml-2 text-[10px] font-normal"
+            className="shrink-0 text-[10px] font-normal"
           >
             {categories.length}
           </Badge>
-        </h3>
+        </div>
         <Button
           variant="accent"
           size="default"
           onClick={onCreateCategory}
-          className="shrink-0"
+          className="w-full sm:w-auto sm:shrink-0"
         >
           <Plus className="mr-1.5 size-4" />
           Add {type === "income" ? "income" : "expense"} category

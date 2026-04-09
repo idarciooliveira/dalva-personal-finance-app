@@ -25,6 +25,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarSeparator,
+  useSidebar,
 } from "@/components/ui/sidebar";
 
 /* -------------------------------------------------------------------------- */
@@ -64,17 +65,24 @@ export function AppSidebar({
 }: AppSidebarProps) {
   const routerState = useRouterState();
   const currentPath = routerState.location.pathname;
+  const { isMobile, setOpenMobile } = useSidebar();
+
+  const handleNavClick = () => {
+    if (isMobile) {
+      setOpenMobile(false);
+    }
+  };
 
   return (
     <Sidebar>
       {/* Logo + user */}
-      <SidebarHeader className="flex h-14 flex-row items-center gap-3 border-b border-border px-5">
-        <Link to="/" className="flex items-center gap-3">
-          <span className="font-heading  text-lg font-semibold text-sidebar-foreground">
+      <SidebarHeader className="flex h-12 flex-row items-center gap-2.5 border-b border-border px-4 sm:h-14 sm:gap-3 sm:px-5">
+        <Link to="/" className="flex items-center gap-2.5 sm:gap-3">
+          <span className="font-heading text-base font-semibold text-sidebar-foreground sm:text-lg">
             DALVA
           </span>
           {userName && (
-            <p className="text-xs text-sidebar-foreground/60 truncate max-w-35">
+            <p className="max-w-30 truncate text-[11px] text-sidebar-foreground/60 sm:max-w-35 sm:text-xs">
               {userName}
             </p>
           )}
@@ -82,9 +90,9 @@ export function AppSidebar({
       </SidebarHeader>
 
       {/* Main navigation */}
-      <SidebarContent className="px-2 pt-2">
-        <SidebarGroup className="p-0 pt-4">
-          <SidebarGroupLabel className="px-3 pb-2 text-[11px] uppercase tracking-wider text-sidebar-foreground/40">
+      <SidebarContent className="px-1.5 pt-1.5 sm:px-2 sm:pt-2">
+        <SidebarGroup className="p-0 pt-3 sm:pt-4">
+          <SidebarGroupLabel className="px-2.5 pb-1.5 text-[10px] uppercase tracking-wider text-sidebar-foreground/40 sm:px-3 sm:pb-2 sm:text-[11px]">
             Menu
           </SidebarGroupLabel>
           <SidebarGroupContent>
@@ -96,11 +104,11 @@ export function AppSidebar({
                     size="lg"
                     isActive={currentPath === item.href}
                     tooltip={item.label}
-                    className="px-3 [&_svg]:size-5"
+                    className="px-2.5 [&_svg]:size-4.5 sm:px-3 sm:[&_svg]:size-5"
                   >
-                    <Link to={item.href}>
+                    <Link to={item.href} onClick={handleNavClick}>
                       <item.icon />
-                      <span className="text-[14px]">{item.label}</span>
+                      <span className="text-[13px] sm:text-[14px]">{item.label}</span>
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
@@ -109,10 +117,10 @@ export function AppSidebar({
           </SidebarGroupContent>
         </SidebarGroup>
 
-        <SidebarSeparator className="mx-4 my-3" />
+        <SidebarSeparator className="mx-3 my-2.5 sm:mx-4 sm:my-3" />
 
         <SidebarGroup className="p-0">
-          <SidebarGroupLabel className="px-3 pb-2 text-[11px] uppercase tracking-wider text-sidebar-foreground/40">
+          <SidebarGroupLabel className="px-2.5 pb-1.5 text-[10px] uppercase tracking-wider text-sidebar-foreground/40 sm:px-3 sm:pb-2 sm:text-[11px]">
             Settings
           </SidebarGroupLabel>
           <SidebarGroupContent>
@@ -123,11 +131,11 @@ export function AppSidebar({
                     asChild
                     size="lg"
                     tooltip={item.label}
-                    className="px-3 [&_svg]:size-5"
+                    className="px-2.5 [&_svg]:size-4.5 sm:px-3 sm:[&_svg]:size-5"
                   >
-                    <Link to={item.href}>
+                    <Link to={item.href} onClick={handleNavClick}>
                       <item.icon />
-                      <span className="text-[14px]">{item.label}</span>
+                      <span className="text-[13px] sm:text-[14px]">{item.label}</span>
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
@@ -138,17 +146,17 @@ export function AppSidebar({
       </SidebarContent>
 
       {/* Footer: theme toggle + sign out */}
-      <SidebarFooter className="px-4 pb-5 pt-3">
+      <SidebarFooter className="px-3 pb-4 pt-2.5 sm:px-4 sm:pb-5 sm:pt-3">
         <SidebarMenu className="gap-1">
           <SidebarMenuItem>
             <SidebarMenuButton
               onClick={onToggleDark}
               size="lg"
               tooltip="Toggle theme"
-              className="px-3 [&_svg]:size-5"
+              className="px-2.5 [&_svg]:size-4.5 sm:px-3 sm:[&_svg]:size-5"
             >
               {isDark ? <Sun /> : <Moon />}
-              <span className="text-[14px]">
+              <span className="text-[13px] sm:text-[14px]">
                 {isDark ? "Light Mode" : "Dark Mode"}
               </span>
             </SidebarMenuButton>
@@ -158,10 +166,10 @@ export function AppSidebar({
               onClick={onSignOut}
               size="lg"
               tooltip="Sign out"
-              className="px-3 [&_svg]:size-5"
+              className="px-2.5 [&_svg]:size-4.5 sm:px-3 sm:[&_svg]:size-5"
             >
               <LogOut />
-              <span className="text-[14px]">Sign out</span>
+              <span className="text-[13px] sm:text-[14px]">Sign out</span>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>

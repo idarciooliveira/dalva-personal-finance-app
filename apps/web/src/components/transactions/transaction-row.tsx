@@ -135,32 +135,32 @@ export function TransactionRow({ transaction, onEdit, onDelete }: TransactionRow
   }
 
   return (
-    <div className="flex min-h-22 items-center gap-5 rounded-2xl border border-border/60 bg-card px-5 py-4 transition-colors">
+    <div className="flex min-h-20 items-center gap-3 rounded-2xl border border-border/60 bg-card px-3 py-3.5 transition-colors sm:min-h-22 sm:gap-5 sm:px-5 sm:py-4">
       {/* Type icon */}
       <div
         className={cn(
-          "flex size-12 items-center justify-center rounded-xl",
+          "flex size-10 items-center justify-center rounded-xl sm:size-12",
           config.iconBg,
         )}
       >
-        <Icon className={cn("size-5", config.iconColor)} />
+        <Icon className={cn("size-4.5 sm:size-5", config.iconColor)} />
       </div>
 
       {/* Description + meta */}
       <div className="min-w-0 flex-1">
-        <p className="truncate text-base font-medium text-foreground">
+        <p className="truncate text-sm font-medium text-foreground sm:text-base">
           {transaction.description || transaction.payee || "Untitled"}
         </p>
-        <p className="mt-1 text-sm text-muted-foreground">
+        <p className="mt-0.5 text-xs text-muted-foreground sm:mt-1 sm:text-sm">
           {subtitle}
         </p>
       </div>
 
       {/* Amount + date */}
-      <div className="text-right shrink-0">
+      <div className="shrink-0 text-right">
         <p
           className={cn(
-            "text-xl font-semibold tabular-nums",
+            "text-lg font-semibold tabular-nums sm:text-xl",
             isAdjustment
               ? signedAmount >= 0
                 ? "text-emerald-500"
@@ -182,7 +182,7 @@ export function TransactionRow({ transaction, onEdit, onDelete }: TransactionRow
             account?.currency ?? "USD",
           )}
         </p>
-        <p className="mt-1 text-sm text-muted-foreground">
+        <p className="mt-0.5 text-xs text-muted-foreground sm:mt-1 sm:text-sm">
           {formatDate(transaction.date)}
         </p>
       </div>

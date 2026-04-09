@@ -38,6 +38,30 @@ const typeColors = {
 } as const;
 
 export function RecentTransactionsCard({ data }: RecentTransactionsCardProps) {
+  if (data.transactions.length === 0) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-sm font-medium text-muted-foreground">
+            Recent Transactions
+          </CardTitle>
+          <CardAction>
+            <Button variant="link" size="sm" className="text-xs" asChild>
+              <Link to="/transactions">View all</Link>
+            </Button>
+          </CardAction>
+        </CardHeader>
+        <CardContent>
+          <div className="flex min-h-32 items-center justify-center rounded-xl border border-dashed border-border bg-muted/20 px-3 text-center sm:min-h-36 sm:px-4">
+            <p className="text-sm text-muted-foreground">
+              Your latest transactions will appear here once you add a record.
+            </p>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
   return (
     <Card>
       <CardHeader>
@@ -60,13 +84,13 @@ export function RecentTransactionsCard({ data }: RecentTransactionsCardProps) {
             return (
               <div
                 key={txn.id}
-                className="flex items-center justify-between gap-3 py-3 first:pt-0 last:pb-0"
+                className="flex items-center justify-between gap-2.5 py-2.5 first:pt-0 last:pb-0 sm:gap-3 sm:py-3"
               >
-                <div className="flex items-center gap-3">
+                <div className="flex min-w-0 items-center gap-2.5 sm:gap-3">
                   <div
-                    className={`inline-flex size-8 items-center justify-center rounded-lg ${colorClass}`}
+                    className={`inline-flex size-7 items-center justify-center rounded-lg sm:size-8 ${colorClass}`}
                   >
-                    <Icon className="size-4" />
+                    <Icon className="size-3.5 sm:size-4" />
                   </div>
                   <div className="min-w-0">
                     <p className="truncate text-sm font-medium text-foreground">
@@ -77,7 +101,7 @@ export function RecentTransactionsCard({ data }: RecentTransactionsCardProps) {
                     </p>
                   </div>
                 </div>
-                <div className="text-right shrink-0">
+                <div className="shrink-0 text-right">
                   <p
                     className={`text-sm font-medium tabular-nums ${
                       txn.type === "transfer"

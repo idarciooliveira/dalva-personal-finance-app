@@ -54,24 +54,24 @@ export function AccountRow({ account, onEdit, onAdjustBalance }: AccountRowProps
   return (
     <div
       className={cn(
-        "flex min-h-22 items-center gap-5 rounded-2xl border border-border/60 bg-card px-5 py-4 transition-colors",
+        "flex min-h-20 items-center gap-3 rounded-2xl border border-border/60 bg-card px-3 py-3.5 transition-colors sm:min-h-22 sm:gap-5 sm:px-5 sm:py-4",
         account.archived && "opacity-60",
       )}
     >
       {/* Icon with theme color */}
       <div
-        className="flex size-12 items-center justify-center rounded-xl"
+        className="flex size-10 items-center justify-center rounded-xl sm:size-12"
         style={{
           background: `linear-gradient(135deg, ${theme.from}, ${theme.to})`,
         }}
       >
-        {Icon && <Icon className="size-5.5 text-white" />}
+          {Icon && <Icon className="size-4.5 text-white sm:size-5.5" />}
       </div>
 
       {/* Name + type */}
       <div className="min-w-0 flex-1">
         <div className="flex items-center gap-2">
-          <span className="truncate text-base font-medium text-foreground">
+            <span className="truncate text-sm font-medium text-foreground sm:text-base">
             {account.name}
           </span>
           {account.archived && (
@@ -80,23 +80,23 @@ export function AccountRow({ account, onEdit, onAdjustBalance }: AccountRowProps
             </Badge>
           )}
         </div>
-        <span className="mt-1 block text-sm text-muted-foreground">
+        <span className="mt-0.5 block text-xs text-muted-foreground sm:mt-1 sm:text-sm">
           {accountType?.label ?? account.type} · {account.currency}
         </span>
       </div>
 
       {/* Balance */}
-      <div className="text-right">
+      <div className="shrink-0 text-right">
         <span
           className={cn(
-            "text-xl font-semibold tabular-nums",
+            "text-lg font-semibold tabular-nums sm:text-xl",
             isNegative ? "text-destructive" : "text-foreground",
           )}
         >
           {formatCurrency(Math.abs(account.balance), account.currency)}
         </span>
         {isNegative && (
-          <span className="ml-1 text-sm text-destructive">owing</span>
+          <span className="ml-1 text-xs text-destructive sm:text-sm">owing</span>
         )}
       </div>
 

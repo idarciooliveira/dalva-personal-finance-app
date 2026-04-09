@@ -150,7 +150,7 @@ export function DebtFormDialog({ open, onOpenChange, debt }: DebtFormDialogProps
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-[calc(100%-2rem)] gap-0 overflow-hidden p-0 sm:max-w-[57.6rem]">
+      <DialogContent className="max-w-md gap-0 overflow-hidden p-0">
         <DialogHeader className="px-5 pt-5 pb-0">
           <DialogTitle className="text-lg font-semibold">
             {isEdit ? "Edit debt" : "New debt"}
@@ -204,7 +204,7 @@ export function DebtFormDialog({ open, onOpenChange, debt }: DebtFormDialogProps
           <div className="flex items-center gap-3 border-b border-border py-3">
             <Wallet className="size-5 shrink-0 text-muted-foreground" />
             <Select value={debtType} onValueChange={setDebtType}>
-              <SelectTrigger className="h-auto w-full border-0 bg-transparent px-2 py-0 text-sm shadow-none ring-0 focus:ring-0">
+              <SelectTrigger className="h-auto w-full min-w-0 border-0 bg-transparent px-2 py-0 text-sm shadow-none ring-0 focus:ring-0">
                 <SelectValue placeholder="Debt type" />
               </SelectTrigger>
               <SelectContent>
@@ -271,7 +271,7 @@ export function DebtFormDialog({ open, onOpenChange, debt }: DebtFormDialogProps
           <div className="flex items-center gap-3 border-b border-border py-3">
             <Wallet className="size-5 shrink-0 text-muted-foreground" />
             <Select value={linkedAccountId} onValueChange={setLinkedAccountId}>
-              <SelectTrigger className="h-auto w-full border-0 bg-transparent px-2 py-0 text-sm shadow-none ring-0 focus:ring-0">
+              <SelectTrigger className="h-auto w-full min-w-0 border-0 bg-transparent px-2 py-0 text-sm shadow-none ring-0 focus:ring-0">
                 <SelectValue placeholder="Link liability account" />
               </SelectTrigger>
               <SelectContent>
@@ -289,7 +289,7 @@ export function DebtFormDialog({ open, onOpenChange, debt }: DebtFormDialogProps
         </div>
 
         <div className="mt-2 flex items-center justify-end gap-3 px-5 py-4">
-          <Button type="button" variant="accent" size="default" disabled={isPending} onClick={() => void handleSubmit()}>
+          <Button type="button" variant="accent" size="default" className="w-full sm:w-auto" disabled={isPending} onClick={() => void handleSubmit()}>
             {isPending ? "Saving..." : isEdit ? "Save changes" : "Create debt"}
           </Button>
         </div>

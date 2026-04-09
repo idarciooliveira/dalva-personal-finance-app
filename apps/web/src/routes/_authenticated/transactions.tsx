@@ -32,7 +32,7 @@ export const Route = createFileRoute("/_authenticated/transactions")({
 function TransactionsPage() {
   return (
     <div className="flex-1 overflow-auto">
-      <div className="mx-auto max-w-200 px-4 py-6 lg:px-8">
+      <div className="mx-auto max-w-200 px-3 py-4 sm:px-4 sm:py-6 lg:px-8">
         <TransactionsContent />
       </div>
     </div>
@@ -81,21 +81,25 @@ function TransactionsContent() {
   return (
     <>
       {/* Header */}
-      <div className="mb-6 flex items-center justify-between">
+      <div className="mb-4 flex flex-col gap-3 sm:mb-6 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h2 className="font-heading text-2xl font-semibold text-foreground">
+          <h2 className="font-heading text-xl font-semibold text-foreground sm:text-2xl">
             Transactions
           </h2>
           <p className="mt-1 text-sm text-muted-foreground">
             Record and manage your income and expenses.
           </p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex w-full items-center gap-2 sm:w-auto">
           <TransactionFilterButton
             filters={filters}
             onClick={() => setFiltersOpen(true)}
           />
-          <Button variant="accent" onClick={() => setCreateDialogOpen(true)}>
+          <Button
+            variant="accent"
+            className="flex-1 sm:flex-none"
+            onClick={() => setCreateDialogOpen(true)}
+          >
             <Plus className="mr-1.5 size-4" />
             Add transaction
           </Button>
@@ -106,7 +110,7 @@ function TransactionsContent() {
       {isLoading ? (
         <TransactionsListSkeleton />
       ) : transactions.length === 0 ? (
-        <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-border py-16">
+        <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-border py-12 sm:py-16">
           <ArrowLeftRight className="mb-3 size-10 text-muted-foreground/50" />
           <p className="text-sm font-medium text-muted-foreground">
             No transactions yet
@@ -114,15 +118,6 @@ function TransactionsContent() {
           <p className="mt-1 text-xs text-muted-foreground">
             Add your first transaction to start tracking your finances.
           </p>
-          <Button
-            variant="accent"
-            size="sm"
-            className="mt-4"
-            onClick={() => setCreateDialogOpen(true)}
-          >
-            <Plus className="mr-1.5 size-4" />
-            Add transaction
-          </Button>
         </div>
       ) : (
         <div className="space-y-3">

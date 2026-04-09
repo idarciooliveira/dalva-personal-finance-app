@@ -72,7 +72,7 @@ function AuthenticatedLayout() {
           />
           <SidebarInset>
             {/* Top bar */}
-            <header className="sticky top-0 z-30 flex h-14 items-center gap-3 border-b border-border bg-background/80 px-4 backdrop-blur-md lg:px-8">
+            <header className="sticky top-0 z-30 flex h-12 items-center gap-2.5 border-b border-border bg-background/80 px-3 backdrop-blur-md sm:h-14 sm:gap-3 sm:px-4 lg:px-8">
               <SidebarTrigger />
             </header>
 

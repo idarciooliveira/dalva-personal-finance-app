@@ -270,17 +270,17 @@ export function TransactionFormDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md p-0 gap-0 overflow-hidden">
+      <DialogContent className="max-w-md gap-0 overflow-hidden p-0 max-sm:max-w-[calc(100vw-1rem)]">
         {/* Header */}
-        <DialogHeader className="px-5 pt-5 pb-0">
+        <DialogHeader className="px-4 pt-4 pb-0 sm:px-5 sm:pt-5">
           <DialogTitle className="text-lg font-semibold">
             {typeLabel}
           </DialogTitle>
         </DialogHeader>
 
-        <div className="px-5 pt-4 pb-0">
+        <div className="min-w-0 px-4 pt-3.5 pb-0 sm:px-5 sm:pt-4">
           {/* ── Type toggle (compact pill) ── */}
-          <div className="flex items-center gap-2 mb-4">
+          <div className="mb-4 flex flex-wrap items-center gap-2">
             <button
               type="button"
               onClick={() => setType("income")}
@@ -321,7 +321,7 @@ export function TransactionFormDialog({
                 onValueChange={setAmount}
                 placeholder="0,00"
                 autoFocus
-                className="flex-1 bg-transparent text-2xl font-semibold text-foreground outline-none placeholder:text-muted-foreground/50"
+                className="min-w-0 flex-1 bg-transparent text-2xl font-semibold text-foreground outline-none placeholder:text-muted-foreground/50"
                 aria-label="Amount"
               />
             </div>
@@ -341,7 +341,7 @@ export function TransactionFormDialog({
           {/* ── Date field (quick picks) ── */}
           <div className="flex items-center gap-3 border-b border-border py-3">
             <CalendarDays className="size-5 text-muted-foreground shrink-0" />
-            <div className="flex items-center gap-2 flex-1">
+            <div className="flex flex-1 flex-wrap items-center gap-2">
               <button
                 type="button"
                 onClick={() => {
@@ -426,7 +426,7 @@ export function TransactionFormDialog({
               value={categoryId || "__none__"}
               onValueChange={(v) => setCategoryId(v === "__none__" ? "" : v)}
             >
-              <SelectTrigger className="h-auto border-0 bg-muted/60 px-3 py-1.5 text-sm font-medium rounded-full shadow-none ring-0 focus:ring-0 w-auto gap-1.5">
+              <SelectTrigger className="h-auto w-full min-w-0 border-0 bg-muted/60 px-3 py-1.5 text-left text-sm font-medium rounded-full shadow-none ring-0 focus:ring-0 gap-1.5">
                 <SelectValue>
                   {selectedCategory ? (
                     <span className="flex items-center gap-1.5">
@@ -463,14 +463,14 @@ export function TransactionFormDialog({
 
           {/* ── Subcategory (only if category is selected and has subcategories) ── */}
           {categoryId && (subcategories ?? []).length > 0 && (
-            <div className="flex items-center gap-3 border-b border-border py-3 pl-8">
+             <div className="flex items-center gap-3 border-b border-border py-3 pl-8">
               <Select
                 value={subcategoryId || "__none__"}
                 onValueChange={(v) =>
                   setSubcategoryId(v === "__none__" ? "" : v)
                 }
               >
-                <SelectTrigger className="h-auto border-0 bg-muted/60 px-3 py-1.5 text-sm font-medium rounded-full shadow-none ring-0 focus:ring-0 w-auto gap-1.5">
+               <SelectTrigger className="h-auto w-full min-w-0 border-0 bg-muted/60 px-3 py-1.5 text-left text-sm font-medium rounded-full shadow-none ring-0 focus:ring-0 gap-1.5">
                   <SelectValue>
                     {subcategoryId
                       ? (subcategories ?? []).find(
@@ -498,7 +498,7 @@ export function TransactionFormDialog({
               value={accountId || "__none__"}
               onValueChange={(v) => setAccountId(v === "__none__" ? "" : v)}
             >
-              <SelectTrigger className="h-auto border-0 bg-muted/60 px-3 py-1.5 text-sm font-medium rounded-full shadow-none ring-0 focus:ring-0 w-auto gap-1.5">
+              <SelectTrigger className="h-auto w-full min-w-0 border-0 bg-muted/60 px-3 py-1.5 text-left text-sm font-medium rounded-full shadow-none ring-0 focus:ring-0 gap-1.5">
                 <SelectValue>
                   {selectedAccount ? (
                     <span className="flex items-center gap-1.5">
@@ -594,12 +594,13 @@ export function TransactionFormDialog({
         </div>
 
         {/* ── Footer with actions ── */}
-        <div className="flex items-center justify-end gap-3 px-5 py-4 mt-2">
+         <div className="mt-2 flex flex-col-reverse gap-2 px-4 py-4 sm:flex-row sm:items-center sm:justify-end sm:gap-3 sm:px-5">
           {!isEdit && (
             <Button
               type="button"
               variant="outline"
               size="default"
+              className="w-full sm:w-auto"
               disabled={isPending}
               onClick={() => void handleSubmit(true)}
             >
@@ -610,6 +611,7 @@ export function TransactionFormDialog({
             type="button"
             variant="accent"
             size="default"
+            className="w-full sm:w-auto"
             disabled={isPending}
             onClick={() => void handleSubmit(false)}
           >

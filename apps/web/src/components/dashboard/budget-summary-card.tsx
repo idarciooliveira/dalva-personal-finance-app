@@ -47,9 +47,9 @@ export function BudgetSummaryCard({ data }: BudgetSummaryCardProps) {
           Budget Summary
         </CardTitle>
       </CardHeader>
-      <CardContent className="flex flex-col gap-4">
+      <CardContent className="flex flex-col gap-3 sm:gap-4">
         {/* Status pills */}
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-1.5 sm:gap-2">
           <StatusPill
             count={data.onTrack}
             label="On track"
@@ -68,7 +68,7 @@ export function BudgetSummaryCard({ data }: BudgetSummaryCardProps) {
         </div>
 
         {/* Budget bars */}
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-2.5 sm:gap-3">
           {data.budgets.map((budget) => {
             const config = statusConfig[budget.status];
             const percent = Math.min(
@@ -78,11 +78,11 @@ export function BudgetSummaryCard({ data }: BudgetSummaryCardProps) {
 
             return (
               <div key={budget.id} className="flex flex-col gap-1.5">
-                <div className="flex items-center justify-between text-sm">
-                  <span className="font-medium text-foreground">
+                <div className="flex items-center justify-between gap-3 text-sm">
+                  <span className="truncate font-medium text-foreground">
                     {budget.category}
                   </span>
-                  <span className="text-xs tabular-nums text-muted-foreground">
+                  <span className="shrink-0 text-[11px] tabular-nums text-muted-foreground sm:text-xs">
                     {formatCurrency(budget.spent, data.currency)} /{" "}
                     {formatCurrency(budget.limit, data.currency)}
                   </span>
@@ -108,7 +108,7 @@ function StatusPill({
 }) {
   return (
     <span
-      className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium ${className}`}
+      className={`inline-flex items-center gap-1 rounded-full px-2 py-1 text-[11px] font-medium sm:px-2.5 sm:text-xs ${className}`}
     >
       {count} {label}
     </span>

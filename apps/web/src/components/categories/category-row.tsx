@@ -69,7 +69,7 @@ export function CategoryRow({
       )}
     >
       {/* Main row */}
-      <div className="flex min-h-22 items-center gap-5 px-5 py-4">
+      <div className="flex min-h-20 items-start gap-3 px-3 py-3.5 sm:min-h-22 sm:items-center sm:gap-5 sm:px-5 sm:py-4">
         {/* Expand toggle */}
         <button
           type="button"
@@ -86,32 +86,39 @@ export function CategoryRow({
 
         {/* Icon */}
         <div
-          className="flex size-12 items-center justify-center rounded-xl"
+          className="flex size-10 items-center justify-center rounded-xl sm:size-12"
           style={{ backgroundColor: (category.color ?? "#6B7280") + "20" }}
         >
-          <Icon className="size-5" style={{ color: category.color ?? "#6B7280" }} />
+          <Icon className="size-4.5 sm:size-5" style={{ color: category.color ?? "#6B7280" }} />
         </div>
 
         {/* Name */}
-        <div className="min-w-0 flex-1">
-          <span className="text-base font-medium text-foreground">
+        <div className="min-w-0 flex-1 pt-0.5 sm:pt-0">
+          <p className="break-words text-sm font-medium text-foreground sm:text-base">
             {category.name}
-          </span>
-          {category.archived && (
-            <Badge variant="secondary" className="ml-2 text-[10px]">
-              Archived
-            </Badge>
-          )}
-          {hasSubcategories && (
-            <span className="ml-2 text-sm text-muted-foreground">
-              {sortedSubs.length} subcategor{sortedSubs.length === 1 ? "y" : "ies"}
-            </span>
+          </p>
+          {(category.archived || hasSubcategories) && (
+            <div className="mt-1 flex flex-wrap items-center gap-1.5 sm:gap-2">
+              {category.archived && (
+                <Badge variant="secondary" className="text-[10px]">
+                  Archived
+                </Badge>
+              )}
+              {hasSubcategories && (
+                <span className="text-xs text-muted-foreground sm:text-sm">
+                  {sortedSubs.length} subcategor{sortedSubs.length === 1 ? "y" : "ies"}
+                </span>
+              )}
+            </div>
           )}
         </div>
 
-        {/* Default badge */}
+        {/* Default badge — hidden on mobile to avoid crowding */}
         {category.isDefault && (
-          <Badge variant="outline" className="text-[10px] font-normal">
+          <Badge
+            variant="outline"
+            className="mt-0.5 hidden shrink-0 text-[10px] font-normal sm:mt-0 sm:inline-flex"
+          >
             Default
           </Badge>
         )}
@@ -122,7 +129,7 @@ export function CategoryRow({
             <Button
               variant="ghost"
               size="icon-sm"
-              className="text-muted-foreground"
+              className="mt-0.5 shrink-0 text-muted-foreground sm:mt-0"
               aria-label={`Open ${category.name} actions`}
             >
               <MoreVertical className="size-4" />
@@ -174,9 +181,9 @@ export function CategoryRow({
 
       {/* Subcategories (expanded) */}
       {expanded && (
-        <div className="border-t border-border/40 px-5 pb-4 pt-3">
+        <div className="border-t border-border/40 px-3 pb-3.5 pt-2.5 sm:px-5 sm:pb-4 sm:pt-3">
           {sortedSubs.length === 0 ? (
-            <p className="py-2 pl-10 text-sm text-muted-foreground">
+            <p className="py-2 pl-8 text-sm text-muted-foreground sm:pl-10">
               No subcategories.{" "}
               <button
                 type="button"
@@ -187,7 +194,7 @@ export function CategoryRow({
               </button>
             </p>
           ) : (
-            <div className="space-y-1">
+            <div className="space-y-0.5 sm:space-y-1">
               {sortedSubs.map((sub) => (
                 <SubcategoryRow
                   key={sub._id}
@@ -200,7 +207,7 @@ export function CategoryRow({
           )}
           <button
             type="button"
-            className="mt-3 flex items-center gap-1.5 pl-10 text-sm font-medium text-primary hover:underline underline-offset-4"
+            className="mt-2.5 flex items-center gap-1.5 pl-8 text-sm font-medium text-primary underline-offset-4 hover:underline sm:mt-3 sm:pl-10"
             onClick={onAddSubcategory}
           >
             <Plus className="size-3.5" />

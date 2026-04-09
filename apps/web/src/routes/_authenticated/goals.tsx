@@ -22,7 +22,7 @@ export const Route = createFileRoute("/_authenticated/goals")({
 function GoalsPage() {
   return (
     <div className="flex-1 overflow-auto">
-      <div className="mx-auto max-w-200 px-4 py-6 lg:px-8">
+      <div className="mx-auto max-w-200 px-3 py-4 sm:px-4 sm:py-6 lg:px-8">
         <GoalsContent />
       </div>
     </div>
@@ -59,10 +59,10 @@ function GoalsContent() {
   return (
     <>
       {/* Header */}
-      <div className="mb-6">
-        <div className="flex items-start justify-between gap-4">
+      <div className="mb-4 sm:mb-6">
+        <div className="flex flex-col items-start justify-between gap-3 sm:flex-row sm:gap-4">
           <div className="min-w-0">
-            <h2 className="font-heading text-2xl font-semibold text-foreground">
+            <h2 className="font-heading text-xl font-semibold text-foreground sm:text-2xl">
               Savings Goals
             </h2>
             <p className="mt-1 text-sm text-muted-foreground">
@@ -72,7 +72,7 @@ function GoalsContent() {
           <Button
             variant="accent"
             size="default"
-            className="shrink-0"
+            className="w-full sm:w-auto sm:shrink-0"
             onClick={() => setCreateDialogOpen(true)}
           >
             <Plus className="mr-1.5 size-4" />
@@ -83,7 +83,7 @@ function GoalsContent() {
 
       {/* Goals list */}
       {allGoals.length === 0 ? (
-        <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-border py-16">
+          <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-border py-12 sm:py-16">
           <Target className="mb-3 size-10 text-muted-foreground/50" />
           <p className="text-sm font-medium text-muted-foreground">
             No savings goals yet
@@ -91,18 +91,9 @@ function GoalsContent() {
           <p className="mt-1 text-xs text-muted-foreground">
             Create your first goal to start saving toward something.
           </p>
-          <Button
-            variant="accent"
-            size="default"
-            className="mt-4"
-            onClick={() => setCreateDialogOpen(true)}
-          >
-            <Plus className="mr-1.5 size-4" />
-            Add goal
-          </Button>
         </div>
       ) : (
-        <div className="grid gap-4 sm:grid-cols-2">
+          <div className="grid gap-3 sm:gap-4 sm:grid-cols-2">
           {allGoals.map((goal) => (
             <GoalCard
               key={goal._id}

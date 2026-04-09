@@ -24,7 +24,7 @@ export function NetWorthCard({ data }: NetWorthCardProps) {
           </div>
         </CardHeader>
         <CardContent>
-          <div className="flex min-h-36 items-center justify-center rounded-xl border border-dashed border-border bg-muted/20 px-4 text-center">
+          <div className="flex min-h-32 items-center justify-center rounded-xl border border-dashed border-border bg-muted/20 px-3 text-center sm:min-h-36 sm:px-4">
             <p className="text-sm text-muted-foreground">
               Your net worth will appear here once you add an account or debt.
             </p>
@@ -46,11 +46,11 @@ export function NetWorthCard({ data }: NetWorthCardProps) {
       </CardHeader>
       <CardContent className="flex flex-col gap-3">
         <div className="flex items-baseline gap-3">
-          <span className="text-3xl font-semibold tracking-tight text-foreground">
+          <span className="text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
             {formatCurrency(data.netWorth, data.currency)}
           </span>
         </div>
-        <div className="flex gap-6 text-sm">
+        <div className="flex gap-4 text-sm sm:gap-6">
           <div>
             <span className="text-muted-foreground">Assets</span>
             <p className="font-medium text-foreground">

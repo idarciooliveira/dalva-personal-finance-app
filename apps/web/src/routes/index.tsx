@@ -47,36 +47,37 @@ function Nav() {
 
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-background/80 backdrop-blur-md">
-      <div className="mx-auto flex h-20 max-w-360 items-center justify-between px-6 lg:px-20">
-        <div className="flex items-center gap-3">
-          <img src="/logo.svg" alt="DALVA logo" className="size-12" />
-          <span className="font-heading text-2xl font-semibold text-foreground">
+      <div className="mx-auto flex h-14 max-w-360 items-center justify-between px-3 sm:h-16 sm:px-4 lg:h-20 lg:px-20">
+        <div className="flex shrink-0 items-center gap-2 sm:gap-3">
+          <img src="/logo.svg" alt="DALVA logo" className="size-9 shrink-0 sm:size-10 lg:size-12" />
+          <span className="whitespace-nowrap font-heading text-lg font-semibold text-foreground sm:text-xl lg:text-2xl">
             DALVA
           </span>
         </div>
-        <div className="flex items-center gap-4">
+        <div className="flex shrink-0 items-center gap-1.5 sm:gap-2 lg:gap-4">
           <Button
             variant="ghost"
             size="icon"
             onClick={toggle}
             aria-label={dark ? "Switch to light mode" : "Switch to dark mode"}
+            className="size-11 sm:size-11"
           >
-            {dark ? <Sun className="size-5" /> : <Moon className="size-5" />}
+            {dark ? <Sun className="size-4 sm:size-5" /> : <Moon className="size-4 sm:size-5" />}
           </Button>
 
           <AuthLoading>
             {/* Skeleton placeholders while auth state loads */}
-            <div className="h-12 w-28 animate-pulse rounded-xl bg-muted" />
+            <div className="h-10 w-24 animate-pulse rounded-xl bg-muted sm:h-11 sm:w-28" />
           </AuthLoading>
 
           <Unauthenticated>
             <Link to="/login">
-              <Button variant="ghost" size="default">
+              <Button variant="ghost" size="default" className="px-3 sm:px-4">
                 Log in
               </Button>
             </Link>
             <Link to="/register">
-              <Button variant="accent" size="default">
+              <Button variant="accent" size="default" className="px-3.5 sm:px-4 lg:px-5">
                 Get Started
               </Button>
             </Link>
@@ -84,17 +85,18 @@ function Nav() {
 
           <Authenticated>
             <Link to="/dashboard">
-              <Button variant="accent" size="default">
+              <Button variant="accent" size="default" className="px-3.5 sm:px-4 lg:px-5">
                 Dashboard
               </Button>
             </Link>
             <Button
               variant="ghost"
               size="icon"
+              className="size-11 sm:size-11"
               onClick={() => void signOut()}
               aria-label="Sign out"
             >
-              <LogOut className="size-5" />
+              <LogOut className="size-4 sm:size-5" />
             </Button>
           </Authenticated>
         </div>
@@ -110,30 +112,30 @@ function Nav() {
 function Hero() {
   return (
     <section className="relative overflow-hidden">
-      <div className="mx-auto grid max-w-[1440px] gap-14 px-6 py-20 md:py-28 lg:grid-cols-2 lg:items-center lg:gap-20 lg:px-20 lg:py-36">
+      <div className="mx-auto grid max-w-[1440px] gap-10 px-4 py-14 sm:px-6 sm:py-20 md:py-28 lg:grid-cols-2 lg:items-center lg:gap-20 lg:px-20 lg:py-36">
         {/* Copy */}
         <div className="max-w-xl">
-          <p className="mb-4 text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+          <p className="mb-3 text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground sm:mb-4 sm:text-sm">
             Privacy-first finance
           </p>
-          <h1 className="font-heading text-4xl font-semibold leading-tight tracking-tight md:text-5xl lg:text-6xl">
+          <h1 className="font-heading text-3xl font-semibold leading-tight tracking-tight sm:text-4xl md:text-5xl lg:text-6xl">
             Take control of{" "}
             <span className="text-wise-forest-green dark:text-wise-bright-green">
               your money
             </span>
           </h1>
-          <p className="mt-6 text-lg leading-relaxed text-muted-foreground md:text-xl">
+          <p className="mt-4 text-base leading-relaxed text-muted-foreground sm:mt-6 sm:text-lg md:text-xl">
             Track accounts, budgets, goals, and debts — all in one place. No
             bank integrations needed. You are the source of truth.
           </p>
-          <div className="mt-8 flex flex-wrap gap-4">
+          <div className="mt-6 flex flex-col gap-3 sm:mt-8 sm:flex-row sm:flex-wrap sm:gap-4">
             <Link to="/register">
-              <Button variant="accent" size="lg">
+              <Button variant="accent" size="lg" className="w-full sm:w-auto">
                 Get Started Free
               </Button>
             </Link>
             <a href="#features">
-              <Button variant="outline" size="lg">
+              <Button variant="outline" size="lg" className="w-full sm:w-auto">
                 Learn More
               </Button>
             </a>
@@ -253,34 +255,34 @@ function Features() {
   return (
     <section
       id="features"
-      className="border-t border-border bg-secondary/40 py-20 md:py-28"
+      className="border-t border-border bg-secondary/40 py-14 sm:py-20 md:py-28"
     >
-      <div className="mx-auto max-w-[1440px] px-6 lg:px-20">
+      <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-20">
         <div className="mx-auto max-w-2xl text-center">
-          <h2 className="font-heading text-3xl font-semibold tracking-tight md:text-4xl">
+          <h2 className="font-heading text-2xl font-semibold tracking-tight sm:text-3xl md:text-4xl">
             Everything you need to manage your finances
           </h2>
-          <p className="mt-4 text-lg text-muted-foreground">
+          <p className="mt-3 text-base text-muted-foreground sm:mt-4 sm:text-lg">
             Six powerful modules that work DALVA to give you complete visibility
             and control.
           </p>
         </div>
 
-        <div className="mt-16 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-10 grid gap-4 sm:mt-16 sm:gap-6 sm:grid-cols-2 lg:gap-8 lg:grid-cols-3">
           {features.map((f) => (
             <div
               key={f.title}
-              className="rounded-3xl border border-border bg-card p-7 transition-shadow hover:shadow-md"
+              className="rounded-2xl border border-border bg-card p-4 transition-shadow hover:shadow-md sm:rounded-3xl sm:p-6 lg:p-7"
             >
               <div
-                className={`inline-flex size-14 items-center justify-center rounded-2xl ${f.color}`}
+                className={`inline-flex size-11 items-center justify-center rounded-xl sm:size-14 sm:rounded-2xl ${f.color}`}
               >
-                <f.icon className="size-7" />
+                <f.icon className="size-5 sm:size-7" />
               </div>
-              <h3 className="mt-5 text-xl font-semibold text-foreground">
+              <h3 className="mt-4 text-lg font-semibold text-foreground sm:mt-5 sm:text-xl">
                 {f.title}
               </h3>
-              <p className="mt-3 text-base leading-relaxed text-muted-foreground">
+              <p className="mt-2.5 text-sm leading-relaxed text-muted-foreground sm:mt-3 sm:text-base">
                 {f.description}
               </p>
             </div>
@@ -318,28 +320,28 @@ const principles = [
 
 function HowItWorks() {
   return (
-    <section className="py-20 md:py-28">
-      <div className="mx-auto max-w-360 px-6 lg:px-20">
+    <section className="py-14 sm:py-20 md:py-28">
+      <div className="mx-auto max-w-360 px-4 sm:px-6 lg:px-20">
         <div className="mx-auto max-w-2xl text-center">
-          <h2 className="font-heading text-3xl font-semibold tracking-tight md:text-4xl">
+          <h2 className="font-heading text-2xl font-semibold tracking-tight sm:text-3xl md:text-4xl">
             Built on principles you can trust
           </h2>
-          <p className="mt-4 text-lg text-muted-foreground">
+          <p className="mt-3 text-base text-muted-foreground sm:mt-4 sm:text-lg">
             Full transparency, complete control, zero dependencies on external
             services.
           </p>
         </div>
 
-        <div className="mt-16 grid gap-10 md:grid-cols-3">
+        <div className="mt-10 grid gap-6 sm:mt-16 sm:gap-8 md:grid-cols-3 md:gap-10">
           {principles.map((p) => (
             <div key={p.title} className="text-center">
-              <div className="mx-auto inline-flex size-16 items-center justify-center rounded-3xl bg-wise-forest-green text-wise-bright-green">
-                <p.icon className="size-7" />
+              <div className="mx-auto inline-flex size-12 items-center justify-center rounded-2xl bg-wise-forest-green text-wise-bright-green sm:size-16 sm:rounded-3xl">
+                <p.icon className="size-5 sm:size-7" />
               </div>
-              <h3 className="mt-5 text-xl font-semibold text-foreground">
+              <h3 className="mt-4 text-lg font-semibold text-foreground sm:mt-5 sm:text-xl">
                 {p.title}
               </h3>
-              <p className="mt-3 text-base leading-relaxed text-muted-foreground">
+              <p className="mt-2.5 text-sm leading-relaxed text-muted-foreground sm:mt-3 sm:text-base">
                 {p.description}
               </p>
             </div>
@@ -347,16 +349,16 @@ function HowItWorks() {
         </div>
 
         {/* CTA band */}
-        <div className="mt-16 rounded-2xl bg-wise-forest-green p-10 text-center md:p-14">
-          <h3 className="font-heading text-2xl font-semibold text-wise-bright-green md:text-3xl">
+        <div className="mt-10 rounded-2xl bg-wise-forest-green p-6 text-center sm:mt-16 sm:p-10 md:p-14">
+          <h3 className="font-heading text-xl font-semibold text-wise-bright-green sm:text-2xl md:text-3xl">
             Ready to take control of your finances?
           </h3>
-          <p className="mx-auto mt-3 max-w-lg text-sm leading-relaxed text-wise-bright-green/70 md:text-base">
+          <p className="mx-auto mt-2.5 max-w-lg text-sm leading-relaxed text-wise-bright-green/70 sm:mt-3 md:text-base">
             Start tracking your money today. It's free, private, and yours.
           </p>
-          <div className="mt-8">
+          <div className="mt-6 sm:mt-8">
             <Link to="/register">
-              <Button variant="accent" size="lg">
+              <Button variant="accent" size="lg" className="w-full sm:w-auto">
                 Get Started Free
               </Button>
             </Link>
@@ -374,11 +376,11 @@ function HowItWorks() {
 function Footer() {
   return (
     <footer className="border-t border-border">
-      <div className="mx-auto flex max-w-360 flex-col items-center justify-between gap-4 px-6 py-8 md:flex-row lg:px-20">
+      <div className="mx-auto flex max-w-360 flex-col items-center justify-between gap-3 px-4 py-6 sm:gap-4 sm:px-6 sm:py-8 md:flex-row lg:px-20">
         <span className="font-heading text-sm font-semibold text-foreground">
           DALVA
         </span>
-        <nav className="flex gap-6 text-sm text-muted-foreground">
+        <nav className="flex gap-4 text-sm text-muted-foreground sm:gap-6">
           <a href="#" className="transition-colors hover:text-foreground">
             Privacy
           </a>

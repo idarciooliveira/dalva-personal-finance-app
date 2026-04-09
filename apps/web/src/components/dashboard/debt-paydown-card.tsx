@@ -42,11 +42,11 @@ export function DebtPaydownCard({ data }: DebtPaydownCardProps) {
           Debt Paydown
         </CardTitle>
       </CardHeader>
-      <CardContent className="flex flex-col gap-4">
+      <CardContent className="flex flex-col gap-3 sm:gap-4">
         {/* Overall progress */}
         <div>
           <div className="flex items-baseline justify-between">
-            <span className="text-2xl font-semibold tabular-nums text-foreground">
+            <span className="text-xl font-semibold tabular-nums text-foreground sm:text-2xl">
               {formatCurrency(data.totalRemaining, data.currency)}
             </span>
             <span className="text-xs text-muted-foreground">
@@ -60,17 +60,17 @@ export function DebtPaydownCard({ data }: DebtPaydownCardProps) {
         </div>
 
         {/* Individual debts */}
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-2.5 sm:gap-3">
           {data.debts.map((debt) => (
             <div
               key={debt.id}
               className="flex items-center justify-between gap-3"
             >
-              <div className="flex items-center gap-3">
-                <div className="inline-flex size-8 items-center justify-center rounded-lg bg-destructive/10 text-destructive">
-                  <CreditCard className="size-4" />
+              <div className="flex min-w-0 items-center gap-2.5 sm:gap-3">
+                <div className="inline-flex size-7 items-center justify-center rounded-lg bg-destructive/10 text-destructive sm:size-8">
+                  <CreditCard className="size-3.5 sm:size-4" />
                 </div>
-                <div>
+                <div className="min-w-0">
                   <p className="text-sm font-medium text-foreground">
                     {debt.name}
                   </p>
@@ -79,7 +79,7 @@ export function DebtPaydownCard({ data }: DebtPaydownCardProps) {
                   </p>
                 </div>
               </div>
-              <div className="text-right">
+              <div className="shrink-0 text-right">
                 <p className="text-sm font-medium tabular-nums text-foreground">
                   {formatCurrency(debt.currentBalance, data.currency)}
                 </p>

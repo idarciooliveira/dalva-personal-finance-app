@@ -136,7 +136,7 @@ export function ContributionDialog({
             <div className="flex items-center gap-3 border-b border-border py-3">
               <Wallet className="size-5 text-muted-foreground shrink-0" />
               <Select value={fromAccountId} onValueChange={setFromAccountId}>
-                <SelectTrigger className="h-auto border-0 bg-transparent px-2 py-0 text-sm shadow-none ring-0 focus:ring-0 w-full">
+                <SelectTrigger className="h-auto border-0 bg-transparent px-2 py-0 text-sm shadow-none ring-0 focus:ring-0 w-full min-w-0">
                   <SelectValue placeholder="Select source account" />
                 </SelectTrigger>
                 <SelectContent>
@@ -185,6 +185,7 @@ export function ContributionDialog({
             type="button"
             variant="accent"
             size="default"
+            className="w-full sm:w-auto"
             disabled={isPending}
             onClick={() => void handleSubmit()}
           >

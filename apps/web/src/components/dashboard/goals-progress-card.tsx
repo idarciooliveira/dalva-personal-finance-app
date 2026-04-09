@@ -11,6 +11,25 @@ interface GoalsProgressCardProps {
 }
 
 export function GoalsProgressCard({ data }: GoalsProgressCardProps) {
+  if (data.goals.length === 0) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-sm font-medium text-muted-foreground">
+            Savings Goals
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex min-h-32 items-center justify-center rounded-xl border border-dashed border-border bg-muted/20 px-3 text-center sm:min-h-36 sm:px-4">
+            <p className="text-sm text-muted-foreground">
+              Your savings goals will appear here once you create one.
+            </p>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
   return (
     <Card>
       <CardHeader>
@@ -18,7 +37,7 @@ export function GoalsProgressCard({ data }: GoalsProgressCardProps) {
           Savings Goals
         </CardTitle>
       </CardHeader>
-      <CardContent className="flex flex-col gap-4">
+      <CardContent className="flex flex-col gap-3 sm:gap-4">
         {data.goals.map((goal) => {
           const progressColor =
             goal.percentComplete >= 80
@@ -28,11 +47,11 @@ export function GoalsProgressCard({ data }: GoalsProgressCardProps) {
                 : "bg-chart-2";
 
           return (
-            <div key={goal.id} className="flex flex-col gap-2">
+            <div key={goal.id} className="flex flex-col gap-1.5 sm:gap-2">
               <div className="flex items-start justify-between gap-2">
                 <div className="flex items-center gap-2">
-                  <div className="inline-flex size-7 items-center justify-center rounded-lg bg-muted text-muted-foreground">
-                    <Target className="size-3.5" />
+                  <div className="inline-flex size-6 items-center justify-center rounded-lg bg-muted text-muted-foreground sm:size-7">
+                    <Target className="size-3 sm:size-3.5" />
                   </div>
                   <div>
                     <p className="text-sm font-medium text-foreground">
@@ -49,14 +68,14 @@ export function GoalsProgressCard({ data }: GoalsProgressCardProps) {
                     )}
                   </div>
                 </div>
-                <span className="text-sm font-semibold tabular-nums text-foreground">
+                <span className="text-xs font-semibold tabular-nums text-foreground sm:text-sm">
                   {goal.percentComplete}%
                 </span>
               </div>
               <ProgressBar
                 percent={goal.percentComplete}
                 barColor={progressColor}
-                className="h-4"
+                className="h-3.5 sm:h-4"
               />
               <div className="flex justify-between text-xs text-muted-foreground">
                 <span>

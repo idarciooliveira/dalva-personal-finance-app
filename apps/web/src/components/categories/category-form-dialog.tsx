@@ -118,30 +118,30 @@ export function CategoryFormDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md p-0 gap-0 overflow-hidden flex flex-col h-105">
+      <DialogContent className="max-w-md p-0 gap-0 overflow-hidden flex flex-col max-h-[85vh] sm:h-105">
         {/* Header */}
-        <DialogHeader className="px-6 pt-6 pb-0 shrink-0">
-          <DialogTitle className="text-xl font-semibold">
+        <DialogHeader className="px-5 pt-5 pb-0 shrink-0">
+          <DialogTitle className="text-lg font-semibold">
             {isEdit ? "Edit category" : `New ${type} category`}
           </DialogTitle>
         </DialogHeader>
 
-        <div className="flex-1 min-h-0 overflow-y-auto px-6 pt-5 pb-2">
+        <div className="flex-1 min-h-0 overflow-y-auto px-5 pt-4 pb-2">
           {/* ── Name field (underline input) ── */}
-          <div className="border-b border-border pb-2 mb-6">
+          <div className="border-b border-border pb-2 mb-5">
             <input
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="Name"
               autoFocus
-              className="w-full bg-transparent text-base text-foreground outline-none placeholder:text-muted-foreground/60"
+              className="w-full bg-transparent text-sm text-foreground outline-none placeholder:text-muted-foreground/60 sm:text-base"
               aria-label="Category name"
             />
           </div>
 
-          {/* ── Color & Icon side by side ── */}
-          <div className="flex gap-6">
+          {/* ── Color & Icon side by side (stacked on narrow screens) ── */}
+          <div className="flex flex-col gap-5 sm:flex-row sm:gap-6">
             {/* Color column */}
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 mb-3">
@@ -150,14 +150,14 @@ export function CategoryFormDialog({
                   Category color
                 </span>
               </div>
-              <div className="flex flex-wrap gap-2.5">
+              <div className="flex flex-wrap gap-2">
                 {visibleColors.map((c) => (
                   <button
                     key={c}
                     type="button"
                     onClick={() => setColor(c)}
                     className={cn(
-                      "relative size-10 rounded-full transition-transform hover:scale-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary",
+                      "relative size-9 rounded-full transition-transform hover:scale-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:size-10",
                       color === c && "scale-110",
                     )}
                     style={{ backgroundColor: c }}
@@ -206,7 +206,7 @@ export function CategoryFormDialog({
                       type="button"
                       onClick={() => setIcon(iconName)}
                       className={cn(
-                        "flex size-10 items-center justify-center rounded-full transition-colors",
+                        "flex size-9 items-center justify-center rounded-full transition-colors sm:size-10",
                         icon === iconName
                           ? "bg-primary text-primary-foreground"
                           : "bg-muted/60 text-muted-foreground hover:bg-muted hover:text-foreground",
@@ -246,13 +246,13 @@ export function CategoryFormDialog({
         </div>
 
         {/* ── Footer ── */}
-        <div className="flex items-center justify-end gap-3 px-6 py-5 shrink-0">
+        <div className="flex items-center justify-end gap-3 px-5 py-4 shrink-0">
           {!isEdit && (
             <Button
               type="button"
               variant="ghost"
               size="default"
-              className="rounded-full text-muted-foreground"
+              className="flex-1 rounded-full text-muted-foreground sm:flex-none"
               disabled={isPending || !name.trim()}
               onClick={() => void handleSubmit(true)}
             >
@@ -263,7 +263,7 @@ export function CategoryFormDialog({
             type="button"
             variant="secondary"
             size="default"
-            className="rounded-full px-8"
+            className="flex-1 rounded-full px-8 sm:flex-none"
             disabled={isPending || !name.trim()}
             onClick={() => void handleSubmit(false)}
           >
