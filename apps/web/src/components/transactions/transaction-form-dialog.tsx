@@ -120,7 +120,7 @@ export function TransactionFormDialog({
   useEffect(() => {
     if (transaction) {
       setType(isEditableTransactionType(transaction.type) ? transaction.type : "expense");
-      setAmount(String(transaction.amount / 100));
+      setAmount(String(transaction.amount));
       setAccountId(transaction.accountId);
       setCategoryId(transaction.categoryId ?? "");
       setSubcategoryId(transaction.subcategoryId ?? "");

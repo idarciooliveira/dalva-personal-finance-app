@@ -1,21 +1,21 @@
-import { test, expect } from "@playwright/test";
+import { expect, test } from "@playwright/test";
 
-test.describe("Transactions page — unauthenticated", () => {
+import { registerAndCompleteOnboarding } from "./helpers/auth";
+
+test.describe("Transactions page - unauthenticated", () => {
   test("redirects unauthenticated users to /login", async ({ page }) => {
     await page.goto("/transactions");
 
-    // The ProtectedPageLayout auth guard should redirect to /login
     await expect(page).toHaveURL(/\/login/, { timeout: 15_000 });
   });
 });
 
-test.describe("Transactions page — route exists", () => {
+test.describe("Transactions page - route exists", () => {
   test("the /transactions route is registered and does not 404", async ({
     page,
   }) => {
     const response = await page.goto("/transactions");
 
-    // Should get a 200 (SSR renders the page, then client-side redirects)
     expect(response?.status()).toBe(200);
   });
 
@@ -24,25 +24,20 @@ test.describe("Transactions page — route exists", () => {
   }) => {
     await page.goto("/transactions");
 
-    // After auth guard redirect, we land on /login
     await expect(page).toHaveURL(/\/login/, { timeout: 15_000 });
-
-    // Login page should render correctly after redirect
     await expect(
       page.getByRole("heading", { name: /welcome back/i }),
     ).toBeVisible();
   });
 });
 
-test.describe("Transactions page — sidebar navigation", () => {
+test.describe("Transactions page - sidebar navigation", () => {
   test("sidebar Transactions link points to /transactions", async ({
     page,
   }) => {
-    // Navigate to /transactions — will redirect to login since unauthenticated
     await page.goto("/transactions");
     await expect(page).toHaveURL(/\/login/, { timeout: 15_000 });
 
-    // Verify the app doesn't crash and we can navigate
     await page.goto("/");
     await expect(
       page.getByRole("heading", { name: "Take control of your money" }),
@@ -50,17 +45,59 @@ test.describe("Transactions page — sidebar navigation", () => {
   });
 });
 
-test.describe("Transactions page — navigation from landing", () => {
+test.describe("Transactions page - navigation from landing", () => {
   test("navigating to /transactions from landing works", async ({ page }) => {
     await page.goto("/");
     await expect(
       page.getByRole("heading", { name: "Take control of your money" }),
     ).toBeVisible();
 
-    // Navigate to /transactions directly
     await page.goto("/transactions");
 
-    // Should redirect to login since unauthenticated
     await expect(page).toHaveURL(/\/login/, { timeout: 15_000 });
+  });
+});
+
+test.describe("Transactions page - edit flow", () => {
+  test("editing a transaction without changing the amount preserves its value", async ({
+    page,
+  }) => {
+    await registerAndCompleteOnboarding(page);
+
+    await page.goto("/transactions");
+    await expect(
+      page.getByRole("heading", { name: "Transactions" }),
+    ).toBeVisible();
+
+    await page.getByRole("button", { name: /add transaction/i }).click();
+    await expect(
+      page.getByRole("heading", { name: "New expense" }),
+    ).toBeVisible();
+
+    await page.getByLabel("Amount").fill("2000");
+    await page.getByLabel("Description").fill("Lunch");
+    await page.getByRole("combobox").filter({ hasText: "Account" }).click();
+    await page.getByRole("option", { name: "Main Checking" }).click();
+    await page.getByRole("button", { name: "Save", exact: true }).click();
+
+    await expect(page.getByText("Lunch", { exact: true })).toBeVisible();
+
+    await page.getByRole("button", { name: "Open Lunch actions" }).click();
+    await page.getByRole("menuitem", { name: "Edit" }).click();
+
+    await expect(
+      page.getByRole("heading", { name: "Edit expense" }),
+    ).toBeVisible();
+    await expect(page.getByLabel("Amount")).toHaveValue("20,00");
+
+    await page.getByRole("button", { name: "Save changes" }).click();
+
+    await expect(
+      page.getByRole("heading", { name: "Edit expense" }),
+    ).not.toBeVisible();
+
+    await page.getByRole("button", { name: "Open Lunch actions" }).click();
+    await page.getByRole("menuitem", { name: "Edit" }).click();
+    await expect(page.getByLabel("Amount")).toHaveValue("20,00");
   });
 });
