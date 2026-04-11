@@ -110,7 +110,7 @@ export function TransferFormDialog({
   // Reset form when opening/closing or switching between create/edit
   useEffect(() => {
     if (transfer) {
-      setAmount(String(transfer.amount / 100));
+      setAmount(String(transfer.amount));
       setFromAccountId(transfer.fromAccountId);
       setToAccountId(transfer.toAccountId);
       setDate(transfer.date);

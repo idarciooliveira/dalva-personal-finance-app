@@ -194,6 +194,7 @@ export function TransactionRow({ transaction, onEdit, onDelete }: TransactionRow
             variant="ghost"
             size="icon-sm"
             className="text-muted-foreground"
+            aria-label={`Open ${transaction.description || transaction.payee || "Untitled"} actions`}
           >
             <MoreVertical className="size-4" />
           </Button>
