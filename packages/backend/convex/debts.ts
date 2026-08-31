@@ -40,6 +40,28 @@ function validateDebtAmounts(originalAmount: number, currentBalance: number) {
   }
 }
 
+function compareDebtDates(a: { dueDate?: string; createdAt: string }, b: { dueDate?: string; createdAt: string }) {
+  if (a.dueDate && b.dueDate) {
+    return a.dueDate.localeCompare(b.dueDate);
+  }
+
+  // Debts without a due date should come after dated debts, while retaining
+  // a deterministic order for debts in the same group.
+  if (a.dueDate) return -1;
+  if (b.dueDate) return 1;
+  return a.createdAt.localeCompare(b.createdAt);
+}
+
+function sortDebts<T extends { currentBalance: number; dueDate?: string; createdAt: string }>(debts: T[]) {
+  return [...debts].sort((a, b) => {
+    const aCompleted = a.currentBalance === 0;
+    const bCompleted = b.currentBalance === 0;
+
+    if (aCompleted !== bCompleted) return aCompleted ? 1 : -1;
+    return compareDebtDates(a, b);
+  });
+}
+
 export const listDebts = query({
   args: {
     includeArchived: v.optional(v.boolean()),
@@ -53,8 +75,11 @@ export const listDebts = query({
       .withIndex("by_userId", (q) => q.eq("userId", userId))
       .take(100);
 
-    if (args.includeArchived) return debts;
-    return debts.filter((debt) => !debt.archived);
+    const visibleDebts = args.includeArchived
+      ? debts
+      : debts.filter((debt) => !debt.archived);
+
+    return sortDebts(visibleDebts);
   },
 });
 

@@ -12,6 +12,7 @@ import { RecentTransactionsCard } from "@/components/dashboard/recent-transactio
 import { BudgetSummaryCard } from "@/components/dashboard/budget-summary-card";
 import { GoalsProgressCard } from "@/components/dashboard/goals-progress-card";
 import { DebtPaydownCard } from "@/components/dashboard/debt-paydown-card";
+import { buildRecentTransactionsData } from "@/lib/dashboard-data";
 
 import {
   mockBudgetSummary,
@@ -35,6 +36,10 @@ function DashboardPage() {
     convexQuery(api.accounts.listAccounts, {}),
   );
 
+  const { data: categories } = useQuery(
+    convexQuery(api.categories.listCategories, {}),
+  );
+
   // Get current month string (e.g. "2026-04")
   const currentMonth = getCurrentMonth();
 
@@ -51,6 +56,7 @@ function DashboardPage() {
   const recentTransactionsData = buildRecentTransactionsData(
     summary?.recentTransactions ?? [],
     accounts ?? [],
+    categories ?? [],
   );
 
   // Fetch real savings goals
@@ -165,42 +171,4 @@ function getGreeting(): string {
 function getCurrentMonth(): string {
   const d = new Date();
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
-}
-
-/**
- * Build RecentTransactionsData from real transaction documents.
- * Falls back to empty state if no transactions exist.
- */
-function buildRecentTransactionsData(
-  transactions: Array<{
-    _id: string;
-    type: "income" | "expense" | "adjustment" | "transfer";
-    amount: number;
-    date: string;
-    description?: string;
-    payee?: string;
-    accountId: string;
-    categoryId?: string;
-  }>,
-  accounts: Array<{ _id: string; name: string }>,
-): import("@/lib/mock-dashboard-data").RecentTransactionsData {
-  const accountMap = new Map(accounts.map((a) => [a._id, a.name]));
-
-  return {
-    transactions: transactions.map((tx) => ({
-      id: tx._id,
-      date: tx.date,
-      description: tx.description || tx.payee || "Untitled",
-      category:
-        tx.type === "adjustment"
-          ? "Adjustment"
-          : tx.type === "transfer"
-            ? "Transfer"
-            : "Uncategorized",
-      amount: tx.type === "expense" ? -Math.abs(tx.amount) : tx.amount,
-      type: tx.type,
-      account: accountMap.get(tx.accountId) ?? "Unknown",
-    })),
-    currency: "USD",
-  };
 }

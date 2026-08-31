@@ -72,6 +72,43 @@ describe("debts", () => {
       });
       expect(debts).toHaveLength(2);
     });
+
+    it("sorts active debts by due date and puts completed debts last", async () => {
+      const t = setupTest();
+      const user = asUser(t);
+
+      await createDebt(user, {
+        name: "Completed later",
+        currentBalance: 0,
+        dueDate: "2026-12-01",
+      });
+      await createDebt(user, {
+        name: "No due date",
+      });
+      await createDebt(user, {
+        name: "Due soon",
+        dueDate: "2026-04-01",
+      });
+      await createDebt(user, {
+        name: "Completed sooner",
+        currentBalance: 0,
+        dueDate: "2026-03-01",
+      });
+      await createDebt(user, {
+        name: "Due later",
+        dueDate: "2026-09-01",
+      });
+
+      const debts = await user.query(api.debts.listDebts, {});
+
+      expect(debts.map((debt) => debt.name)).toEqual([
+        "Due soon",
+        "Due later",
+        "No due date",
+        "Completed sooner",
+        "Completed later",
+      ]);
+    });
   });
 
   describe("getDebt", () => {
